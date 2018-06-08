@@ -617,3 +617,34 @@ def get_eval_op(metrics_to_norms, output_values=False):
         return eval_summary_op, metrics
     else:
         return eval_summary_op
+    
+    
+def extract_config(event_file):
+    """Extract config dictionnary for a Tensorboard event file"""
+    import ast
+    def parse_config_line(l, config):
+        key, value = l.split(' = ', 1)
+        key = key.replace('"', '').lower()
+        try:
+            config[key] = ast.literal_eval(value)
+        except(ValueError, SyntaxError):
+            config[key] = value
+        
+    configs = {}
+    for event in tf.train.summary_iterator(event_file):
+        vals = event.summary.value
+        # Find the configuration summaries
+        if len(vals) and 'config_summary' in vals[0].tag:
+            for val in vals:
+                # Get content
+                header = val.tag.split('/')
+                if header[-1] == 'configuration':
+                    base_name = header[-2]
+                    obj = val.tensor.string_val
+                    assert len(obj) == 1
+                    config = {}
+                    # Parse
+                    for line in obj[0].decode("utf-8").split('\n\t')[1:]:
+                        parse_config_line(line, config)
+                    configs[base_name] = config
+            return configs

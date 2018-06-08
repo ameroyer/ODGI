@@ -46,3 +46,10 @@ Most of the training process can be monitored via Tensorboard (the default outpu
      * group flag *confusion matrix*
      
 Note that in the ODGI case, durig training the two stages are trained independently hence summaries can also be read independently. While for evaluation we always test the full pipeline hence we have an additional summary that contains the boxes predicted by the last stage of the pipeline merged with the ones kept back at earlier stages.
+
+
+### Launch a pre-trained model
+
+`load_and_eval` is a small example of how to load a pretrained model (ODGI or standard) and compute detection metrics on a given dataset as well as output the resulting images. 
+
+Note that it uses the default graph configuration, in order to customize it (e.g., to change the number of extracted crops etc.), it is easier to modify `train_{odgi, standard}` by removing the train graph part, loading an existing model weights and customizing the configuration.
