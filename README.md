@@ -1,5 +1,4 @@
 ## README
----
 
 This is the official Tensorflow implementation for `ODGI: Object Detection with Grouped Instances`.
 
