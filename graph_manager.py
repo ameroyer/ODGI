@@ -457,7 +457,7 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=['']):
     Returns:
         A list of tuples (tensor containing the loss, list of variables to optimize)
     """
-    print('    Collect losses%s' % ('' if splits == [''] else (' (scopes: %s)' % ','.join(splits))))
+    print('    Collect losses%s' % ('' if splits == [''] else (' (scopes: %s)' % ', '.join(splits))))
     losses = []
     for split in splits:
         ## Collect losses from  `*_loss' collections
@@ -529,8 +529,8 @@ def get_train_op(full_losses,
     else:
         raise NotImplementedError(optimizer_type)
     
-    train_ops = [get_optimizer_op().minimize(
-        full_loss, var_list=var_list, colocate_gradients_with_ops=True) for full_loss, var_list in full_losses]
+    train_ops = [get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True) 
+                 for full_loss, var_list in full_losses]
     global_step_op = tf.assign_add(global_step, 1)
     
     # Update op for batch norm
