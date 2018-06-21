@@ -511,7 +511,7 @@ def get_train_op(full_losses,
     print('  > Build train operation')
     optimizer, learning_rate = get_defaults(kwargs, ['optimizer', 'learning_rate'], verbose=verbose)
     global_step = tf.train.get_or_create_global_step()    
-    print('  > Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
+    print('    Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
         
     # Train op       
     if optimizer == 'MOMENTUM':
@@ -535,7 +535,7 @@ def get_train_op(full_losses,
     
     # Update op for batch norm
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-    print('  >', len(update_ops), 'update operations found')
+    print('   ', len(update_ops), 'update operations found')
     
     # Return
     final_op = tf.group(global_step_op, *train_ops, *update_ops) 

@@ -74,7 +74,7 @@ def get_detection_outputs(activations,
         
     Kwargs:
         with_classification: whether to predict class output. Defaults to False
-        num_classes: number of classes to predict. Defaults to 80
+        num_classes: number of classes to predict.
         num_boxes: number of boxes to predict per cells
     """
     # Kwargs
@@ -103,14 +103,14 @@ def get_detection_outputs(activations,
             
         # Split
         if verbose:
-            print('    Output layer shape\x1b[32m', out.get_shape(), '\x1b[0m')
+            print('    Output layer shape *%s*' % out.get_shape())
         out = tf.split(out, num_outputs, axis=-1)
 
         # Confidence and class outputs
         # detection_scores: (batch_size, num_cells, num_cells, num_preds, num_classes or 1)
         get_confidence_output(out[1], outputs)             
         if with_classification:
-            if verbose: print('    Classification task with \x1b[32m%d\x1b[0m classes' % num_classes)
+            if verbose: print('    Classification task with %d classes' % num_classes)
             get_classes_output(out[2], outputs)
 
         # Coordinates output
