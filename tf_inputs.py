@@ -543,7 +543,7 @@ def get_next_stage_inputs(inputs,
     # new_image: (num_patches, image_size, image_size, 3)
     with tf.name_scope('extract_image_patches'):
         # Re-load full res image (flip if necessary)
-        if image_folder is not None:
+        if image_folder is not None and full_image_size > 0:
             full_images = []
             for i in range(inputs['batch_size']):
                 image = tf.cond(inputs['im_id'][i] >= 0,

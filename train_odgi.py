@@ -1,11 +1,9 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-from math import ceil
 
 import argparse
 import time
 
-import numpy as np
 import tensorflow as tf
 print("Tensorflow version", tf.__version__)
 from tensorflow.python.training.summary_io import SummaryWriterCache
@@ -16,9 +14,11 @@ from odgi_graph import *
 
 
 ########################################################################## Command line parser
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('data', type=str, help='Dataset to use. One of "vedai", "stanford" or "dota"')
 parser.add_argument('--size', default=512, type=int, help='size of images at the first stage')
+parser.add_argument('--full_image_size', default=1024, type=int, help=
+                    'Size of the images to extract patches. Set to <=0 to not reload images and use direct output of stage 1')
 parser.add_argument('--num_epochs', type=int, help='size of images at the first stage')
 parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs to use')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
@@ -84,7 +84,7 @@ graph_manager.finalize_configuration(configuration, verbose=2)
 
 ########################################################################## ODGI Config
 multistage_configuration = configuration.copy()
-multistage_configuration['full_image_size'] = 1024
+multistage_configuration['full_image_size'] = args.full_image_size
 stage1_configuration = multistage_configuration.copy()
 stage2_configuration = multistage_configuration.copy()
 
@@ -164,7 +164,7 @@ with tf.Graph().as_default() as graph:
             
     ############################### Eval
     with tf.name_scope('eval'):        
-        print('\nVal Graph:')
+        print('\nTest Graph:')
         update_metrics_op = []    # Store operations to update the metrics
         clear_metrics_op = []     # Store operations to reset the metrics
         metrics_to_norms = {}
@@ -221,7 +221,6 @@ with tf.Graph().as_default() as graph:
             start_time = time.time()
             
             print('\nStart training:')
-            last_eval_step = 1
             while not sess.should_stop(): 
                     
                 # Train
@@ -233,7 +232,6 @@ with tf.Graph().as_default() as graph:
                     num_epochs = multistage_configuration["test_num_iters_per_epoch"]
                     sess.run(clear_metrics_op)
                     for epoch in range(num_epochs):
-                        sess.run(update_metrics_op) 
                         if epoch == num_epochs - 1: 
                             _, accuracy_, eval_summary = sess.run([update_metrics_op, accuracy, eval_summary_op])
                         else:

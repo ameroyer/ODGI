@@ -8,6 +8,9 @@ import tf_inputs
 import tf_utils
 
 
+"""Helper functions to build the train and eval graph for ODGI."""
+
+
 def forward_pass(inputs, 
                  outputs, 
                  configuration,
