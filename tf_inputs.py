@@ -376,8 +376,11 @@ def get_tf_dataset(tfrecords_file,
             for s in range(num_splits):
                 inputs[s][key] = tf.identity(splits[s], name="%s_device%d" % (key, i))
                 
-    if verbose:
+    if verbose == 1:
         print('\n'.join("    \033[32m%s\033[0m: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
+                        for key, value in inputs[0].items() if key != 'batch_size'))
+    elif verbose > 1:
+        print('\n'.join("    *%s*: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
                         for key, value in inputs[0].items() if key != 'batch_size'))
     return inputs  
 
@@ -409,7 +412,7 @@ def extract_groups(inputs,
     (confidence_threshold, nms_threshold, num_outputs) = graph_manager.get_defaults(
         kwargs, ['%s_patch_confidence_threshold' % mode, 'patch_nms_threshold', '%s_num_crops' % mode], verbose=verbose)
     if verbose:        
-        print('    extracting \x1b[32m%d\x1b[0m crops' % num_outputs)
+        print('  > extracting %d crops' % num_outputs)
         
     ## Flatten
     # predicted_score: (batch, num_boxes, 1)
@@ -618,7 +621,10 @@ def get_next_stage_inputs(inputs,
         out_ = new_inputs        
     out_['batch_size'] = batch_size       
     
-    if verbose:
+    if verbose == 1:
         print('\n'.join("    \033[32m%s\033[0m: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
+                        for key, value in out_.items() if key != 'batch_size'))
+    elif verbose > 1:
+        print('\n'.join("    *%s*: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
                         for key, value in out_.items() if key != 'batch_size'))
     return out_   

@@ -27,11 +27,12 @@ def finalize_grid_offsets(configuration, finalize_retrieval_top_n=True):
     print("grid size", configuration['num_cells'])   
     
 
-def finalize_configuration(configuration):
+def finalize_configuration(configuration, verbose=2):
     """ Finalize and print the given configuration object.
     
     Args:
-        configuration dictionnary   
+        configuration dictionnary
+        verbose: verbosity mode (0 - low, 1 - verbose with colored output, 2 - simple verbose)
     """
     assert 'feature_keys' in configuration
     assert 'image_folder' in configuration
@@ -63,10 +64,12 @@ def finalize_configuration(configuration):
                                                configuration['test_num_iters_per_epoch']))    
     
     ## Print final config
-    print('\n\033[41mConfig:\033[0m')
-    print('\n'.join('\033[96m%s:\033[0m %s' % (k, v) 
-                    for k, v in sorted(configuration.items())
-                    if k != 'grid_offsets'))
+    if verbose == 1: 
+        print('\n\033[41mConfig:\033[0m')
+        print('\n'.join('\033[96m%s:\033[0m %s' % (k, v) for k, v in sorted(configuration.items()) if k != 'grid_offsets'))
+    elif verbose > 1:
+        print('\nConfig:')
+        print('\n'.join('  *%s*: %s' % (k, v) for k, v in sorted(configuration.items()) if k != 'grid_offsets'))
     
     
 def get_defaults(kwargs, defaults, verbose=False):
@@ -166,6 +169,7 @@ def generate_log_dir(configuration, verbose=True):
 def get_monitored_training_session(with_ready_op=False,
                                    model_path=None,
                                    log_dir=None,
+                                   log_device_placement=False,
                                    verbose=True,
                                    **kwargs):
     """Returns a monitored training session object with the specified global configuration.
@@ -199,7 +203,8 @@ def get_monitored_training_session(with_ready_op=False,
     # GPU config
     config = tf.ConfigProto(
         gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac),
-        log_device_placement=True, allow_soft_placement=True)
+        log_device_placement=log_device_placement,
+        allow_soft_placement=True)
         
     # Stop at given number of iterations
     hooks = ([] if num_steps <= 0 else [tf.train.StopAtStepHook(num_steps=num_steps)])
@@ -325,7 +330,10 @@ def get_inputs(mode='train',
         image_folder = image_folder % mode
     except TypeError:
         pass
-    print('    pad \x1b[32m%s\x1b[0m inputs with \x1b[32m%d\x1b[0m dummy samples' % (mode, pad_with_dummies))
+    if verbose == 1:
+        print('    pad \x1b[32m%s\x1b[0m inputs with \x1b[32m%d\x1b[0m dummy samples' % (mode, pad_with_dummies))
+    elif verbose > 1:
+        print('    pad %s inputs with %d dummy samples' % (mode, pad_with_dummies))
         
     return tf_inputs.get_tf_dataset(
         tfrecords_path,    
@@ -449,7 +457,7 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=['']):
     Returns:
         A list of tuples (tensor containing the loss, list of variables to optimize)
     """
-    print('  > Collect losses%s' % ('' if splits == [''] else (' (scopes: %s)' % ','.join(splits))))
+    print('    Collect losses%s' % ('' if splits == [''] else (' (scopes: %s)' % ','.join(splits))))
     losses = []
     for split in splits:
         ## Collect losses from  `*_loss' collections
@@ -503,7 +511,7 @@ def get_train_op(full_losses,
     print('  > Build train operation')
     optimizer, learning_rate = get_defaults(kwargs, ['optimizer', 'learning_rate'], verbose=verbose)
     global_step = tf.train.get_or_create_global_step()    
-    print('  > Using optimizer \x1b[32m%s\x1b[0m with learning rate \x1b[32m%.2e\x1b[0m' % (optimizer, learning_rate))
+    print('  > Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
         
     # Train op       
     if optimizer == 'MOMENTUM':

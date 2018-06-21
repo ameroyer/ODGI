@@ -1,4 +1,5 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 from math import ceil
 
 import argparse
@@ -13,9 +14,6 @@ import graph_manager
 import viz
 from odgi_graph import *
 
-import logging
-logging.getLogger("tensorflow").setLevel(logging.WARNING)
-
 
 ########################################################################## Command line parser
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -27,7 +25,7 @@ parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fract
 parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
 parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
 args = parser.parse_args()
-print('ODGI - %s, Input size %d' % (args.data, args.size)) 
+print('ODGI - %s, Input size %d\n' % (args.data, args.size)) 
 
 
 ########################################################################## Main Config
@@ -81,7 +79,7 @@ configuration['confidence_loss_weight']  = 5.
 configuration['noobj_confidence_loss_weight']  = 1.
 configuration['group_classification_loss_weight']  = 1.
 configuration['offsets_loss_weight']  = 1.
-graph_manager.finalize_configuration(configuration)
+graph_manager.finalize_configuration(configuration, verbose=2)
 
 
 ########################################################################## ODGI Config
@@ -125,11 +123,10 @@ print('Retrieval top k = %d (final)' % stage2_configuration['retrieval_top_n'])
 with tf.Graph().as_default() as graph:          
     ############################### Train
     with tf.name_scope('train'):
-        print('\n\033[44mLoad inputs:\033[0m')
-        inputs = graph_manager.get_inputs(mode='train', verbose=True, **stage1_configuration)   
+        print('\nLoad inputs:')
+        inputs = graph_manager.get_inputs(mode='train', verbose=2, **stage1_configuration)   
         
-        print('\n\033[43mTrain Graph:\033[0m')
-        viz.display_graph_size('inputs(train)')        
+        print('\nTrain Graph:')     
         for i, train_inputs in enumerate(inputs):
             with tf.device('/gpu:%d' % i):
                 with tf.name_scope('dev%d' % i):
@@ -137,40 +134,37 @@ with tf.Graph().as_default() as graph:
                     train_s1_outputs = train_pass(train_inputs, stage1_configuration, 
                                                   intermediate_stage=True, is_chief=is_chief)    
                     train_s2_inputs = feed_pass(train_inputs, train_s1_outputs, stage2_configuration,
-                                                mode='train', is_chief=is_chief)
+                                                mode='train', is_chief=is_chief, verbose=2*int(is_chief))
                     train_s2_outputs = train_pass(train_s2_inputs, stage2_configuration,
                                                   intermediate_stage=False, is_chief=is_chief) 
                     if is_chief:
-                        print(' \033[34msummaries:\033[0m')
+                        print(' > summaries:')
                         graph_manager.add_summaries(train_inputs, train_s1_outputs, mode='train', 
                                                     family="train_stage1", **stage1_configuration)
                         graph_manager.add_summaries(train_s2_inputs, train_s2_outputs, mode='train', verbose=0,
                                                     family="train_stage2", **stage2_configuration)
-            viz.display_graph_size('train net (gpu:%d)' % i)
 
         # Training Objective
         with tf.name_scope('losses'):
             losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'])            
             full_loss = tf.add_n([x[0] for x in losses])
-        viz.display_graph_size('full loss')
 
         # Train op    
         with tf.name_scope('train_op'):   
             global_step, train_op = graph_manager.get_train_op(losses, **multistage_configuration)
-        viz.display_graph_size('train op')
         
         # Additional info
         with tf.name_scope('config_summary'):
             viz.add_text_summaries(stage1_configuration, family="stage1") 
             viz.add_text_summaries(stage2_configuration, family="stage2") 
-            print('\n\033[43mLosses:\033[0m')
-            print('\n'.join(["    \033[35m%s:\033[0m %s tensors" % (x, len(tf.get_collection(x)))  
+            print('\nLosses:')
+            print('\n'.join(["    *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
                             for x in tf.get_default_graph().get_all_collection_keys() 
                             if x.endswith('_loss')]))
             
     ############################### Eval
     with tf.name_scope('eval'):        
-        print('\n\033[43mVal Graph:\033[0m')
+        print('\nVal Graph:')
         update_metrics_op = []    # Store operations to update the metrics
         clear_metrics_op = []     # Store operations to reset the metrics
         metrics_to_norms = {}
@@ -184,7 +178,7 @@ with tf.Graph().as_default() as graph:
                         val_inputs, stage1_configuration, metrics_to_norms, clear_metrics_op,
                         update_metrics_op, device=i, is_chief=is_chief) 
                     val_s2_inputs = feed_pass(val_inputs, val_s1_outputs, stage2_configuration,
-                                              mode='test', is_chief=is_chief)
+                                              mode='test', is_chief=is_chief, verbose=2*int(is_chief))
                     val_s2_outputs, val_s2_unscaled_outputs = eval_pass_final_stage(
                         val_s2_inputs, val_inputs,  val_s1_outputs, stage2_configuration, metrics_to_norms, 
                         clear_metrics_op, update_metrics_op, device=i, is_chief=is_chief)
@@ -201,23 +195,23 @@ with tf.Graph().as_default() as graph:
                                                         display_inputs=False, **stage2_configuration)
 
         with tf.name_scope('eval'):
-            print('    \x1b[32m%d\x1b[0m eval update ops' % len(update_metrics_op))
-            print('    \x1b[32m%d\x1b[0m eval clear ops' % len(clear_metrics_op))
+            print('    %d eval update ops' % len(update_metrics_op))
+            print('    %d eval clear ops' % len(clear_metrics_op))
             update_metrics_op = tf.group(*update_metrics_op)
             clear_metrics_op = tf.group(*clear_metrics_op)
             eval_summary_op, metrics = graph_manager.get_eval_op(metrics_to_norms, output_values=True)
             accuracy = metrics['stage2_avgprec_at0.50_eval']
         
         # Additional info
-        print('\n\033[43mEval metrics:\033[0m')
-        print('\n'.join(["    \033[35m%s:\033[0m %s tensors" % (x, len(tf.get_collection(x)))  
+        print('\nEval metrics:')
+        print('\n'.join(["    *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
                         for x in tf.get_default_graph().get_all_collection_keys() 
                         if x.endswith('_eval')]))
-        print('total graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
 
     ########################################################################## Run Session
+    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
     try:
-        print('\n\033[44mLaunch session:\033[0m')
+        print('\nLaunch session:')
         graph_manager.generate_log_dir(multistage_configuration)
         summary_writer = SummaryWriterCache.get(multistage_configuration["log_dir"])
         print('    Log directory', os.path.abspath(multistage_configuration["log_dir"]))
@@ -226,7 +220,7 @@ with tf.Graph().as_default() as graph:
             global_step_ = 0
             start_time = time.time()
             
-            print('\n\033[44mStart training:\033[0m')
+            print('\nStart training:')
             last_eval_step = 1
             while not sess.should_stop(): 
                     

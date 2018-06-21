@@ -55,7 +55,7 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False):
     return outputs
 
 
-def feed_pass(inputs, outputs, configuration, mode='train', is_chief=False):
+def feed_pass(inputs, outputs, configuration, mode='train', is_chief=False, verbose=False):
     """
         Args:
             inputs: inputs dictionnary
@@ -65,9 +65,9 @@ def feed_pass(inputs, outputs, configuration, mode='train', is_chief=False):
         Returns:
             Dictionnary of inputs for the next stage
     """
-    if is_chief: print(' > extract patches:\033[0m')
+    if is_chief: print(' > create stage 2 inputs:')
     return graph_manager.get_stage2_inputs(
-        inputs, outputs['crop_boxes'], mode=mode, verbose=is_chief, **configuration)
+        inputs, outputs['crop_boxes'], mode=mode, verbose=verbose, **configuration)
         
     
 def eval_pass_intermediate_stage(inputs, configuration, metrics_to_norms, clear_metrics_op, 

@@ -171,14 +171,14 @@ def get_detection_with_groups_outputs(activations,
             
         # Split
         if verbose:
-            print('    Output layer shape\x1b[32m', out.get_shape(), '\x1b[0m')
+            print('    Output layer shape *%s*' % out.get_shape())
         out = tf.split(out, num_outputs, axis=-1)
         
         # Confidence and class outputs
         # detection_scores: (batch_size, num_cells, num_cells, 1, num_classes or 1)
         get_confidence_output(out[1], outputs)             
         if with_classification:
-            if verbose: print('    Classification task with \x1b[32m%d\x1b[0m classes' % num_classes)
+            if verbose: print('    Classification task with %d classes' % num_classes)
             get_classes_output(out[-1], outputs)
 
         # Coordinates output: (batch_size, num_cells, num_cells, 1,, 4)
@@ -214,8 +214,6 @@ def tiny_yolo_v2(images,
         num_filters. number of filters per layer. Defaults to [16, 32, 64, 128, 256, 512, 1024]
     """
     # kwargs:
-    if verbose: 
-        print('  > Use custom \x1b[32mtiny yolo v2\x1b[0m')
     weight_decay, normalizer_decay, num_filters = graph_manager.get_defaults(
         kwargs, ['weight_decay', 'normalizer_decay', 'num_filters'], verbose=verbose)
               
