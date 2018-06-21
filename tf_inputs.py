@@ -341,7 +341,7 @@ def get_tf_dataset(tfrecords_file,
             output.append(group_class_labels)
           
         # is_reversed flag: ()
-        output.append(0.)
+        output.append(tf.constant(0.))
         return output
                     
         
