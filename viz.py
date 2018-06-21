@@ -187,14 +187,18 @@ def display_loss(loss_widget,
         num_samples: Total number of samples in the dataset
     """
     elapsed_time = time.time() - start_time
-    loss_widget.value = ('<span style="color:rgb(0, 255, 255)">' + 
-                         '<u>Step %d</u></span> ' % global_step_ +
-                         '<i>(epoch %d)</i>: ' % ((global_step_ * iter_size) // num_samples + 1)  + 
-                         '%.5f' % (full_loss_) +
-                         '&nbsp;' * 10 +
-                         time.strftime('%Hh %Mmn %Ss', 
-                                       time.gmtime(elapsed_time))
-                        )  
+    if loss_widget is not None:
+        loss_widget.value = ('<span style="color:rgb(0, 255, 255)">' + 
+                             '<u>Step %d</u></span> ' % global_step_ +
+                             '<i>(epoch %d)</i>: ' % ((global_step_ * iter_size) // num_samples + 1)  + 
+                             '%.5f' % (full_loss_) +
+                             '&nbsp;' * 10 +
+                             time.strftime('%Hh %Mmn %Ss', 
+                                           time.gmtime(elapsed_time))
+                            )  
+    else:
+        epoch = (global_step_ * iter_size) // num_samples + 1
+        print('  > Step %d (epoch %d): loss = %.5f' % (global_step_, epoch, full_loss_))
     assert not np.isnan(full_loss_), 'loss has NaN values'
     
     
