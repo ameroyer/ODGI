@@ -2,7 +2,7 @@
 #SBATCH -N 1                            # number of nodes (usually 1)
 #SBATCH -n 4                            # number of cores
 #SBATCH --mail-user=aroyer@ist.ac.at    # send mail to user
-#SBATCH --mail-type=FAIL                # if a job fails
+#SBATCH --mail-type=FAIL,END            # if a job fails or ends
 #SBATCH --mem 16G                       # memory pool for all cores
 #SBATCH --time 1-00:00                  # max runtime (D-HH:MM)
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
