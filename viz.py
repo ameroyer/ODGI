@@ -187,19 +187,20 @@ def display_loss(loss_widget,
         num_samples: Total number of samples in the dataset
     """
     elapsed_time = time.time() - start_time
+    epoch = (global_step_ * iter_size) // num_samples + 1
+    if type(full_loss_) is list:
+        loss_string = ', '.join('%s loss = %.5f' % (name, loss) for name, loss in full_loss_)
+        assert not np.isnan(sum(x[1] for x in full_loss_)), 'loss has NaN values'
+    else:
+        loss_string = 'loss = %.5f' % full_loss_
+        assert not np.isnan(full_loss_), 'loss has NaN values'
+    # display
     if loss_widget is not None:
         loss_widget.value = ('<span style="color:rgb(0, 255, 255)">' + 
-                             '<u>Step %d</u></span> ' % global_step_ +
-                             '<i>(epoch %d)</i>: ' % ((global_step_ * iter_size) // num_samples + 1)  + 
-                             '%.5f' % (full_loss_) +
-                             '&nbsp;' * 10 +
-                             time.strftime('%Hh %Mmn %Ss', 
-                                           time.gmtime(elapsed_time))
-                            )  
+                             '<u>Step %d</u></span> ' % global_step_ + '<i>(epoch %d)</i>: ' % epoch  + 
+                             loss_string + '&nbsp;' * 10 + time.strftime('%Hh %Mmn %Ss', time.gmtime(elapsed_time)))  
     else:
-        epoch = (global_step_ * iter_size) // num_samples + 1
-        print('  > Step %d (epoch %d): loss = %.5f' % (global_step_, epoch, full_loss_))
-    assert not np.isnan(full_loss_), 'loss has NaN values'
+        print('  > Step %d (epoch %d): %s' % (global_step_, epoch, loss_string))
     
     
 def display_eval(loss_widget, 
