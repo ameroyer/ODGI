@@ -3,7 +3,7 @@
 #SBATCH -n 4                            # number of cores
 #SBATCH --mail-user=aroyer@ist.ac.at    # send mail to user
 #SBATCH --mail-type=FAIL                # if a job fails
-#SBATCH --mem 32G                       # memory pool for all cores
+#SBATCH --mem 16G                       # memory pool for all cores
 #SBATCH --time 1-00:00                  # max runtime (D-HH:MM)
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:2                    # how many GPUs to reserve

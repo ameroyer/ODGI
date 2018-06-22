@@ -8,12 +8,12 @@
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:2                    # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
-#SBATCH -o ./log/output_logs/odgi-sdd.%N.%j.out     # logfile for stdout
-#SBATCH -e ./log/error_logs/odgi-sdd.%N.%j.err # logfile for stderr
+#SBATCH -o ./log/output_logs/odgi-dota.%N.%j.out     # logfile for stdout
+#SBATCH -e ./log/error_logs/odgi-dota.%N.%j.err # logfile for stderr
 
 SIZE=512                              
-DATA='stanford'                           
-NUM_EPOCHS=120
+DATA='dota'                           
+NUM_EPOCHS=100
 NUM_GPUS=2
 DISPLAY_LOSS_EVERY_N_STEPS=500
 BATCH_SIZE=16
