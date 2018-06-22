@@ -25,6 +25,7 @@ parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fract
 parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
 parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
 parser.add_argument('--learning_rate', type=float, default=2e-4, help='Learning rate')
+parser.add_argument('--stage2_momentum', type=float, default=0.9, help='Beta1 parameter for ADAM in stage 2')
 args = parser.parse_args()
 print('ODGI - %s, Input size %d\n' % (args.data, args.size)) 
 
@@ -117,6 +118,7 @@ num_crops, retrieval_top_n = graph_manager.get_defaults(
     stage2_configuration, ['test_num_crops', 'retrieval_top_n'], verbose=False)
 num_outputs_final = num_crops * num_outputs_stage2 + num_outputs_stage1
 stage2_configuration['retrieval_top_n'] = min(retrieval_top_n, num_outputs_final)
+stage2_configuration['beta1'] = args.stage2_momentum
 print('Retrieval top k = %d (final)' % stage2_configuration['retrieval_top_n'])
     
 
@@ -147,8 +149,9 @@ with tf.Graph().as_default() as graph:
 
         # Training Objective
         with tf.name_scope('losses'):
-            losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'])            
-            full_loss = tf.add_n([x[0] for x in losses])
+            losses_splits = ['stage1', 'stage2']
+            losses = graph_manager.get_total_loss(splits=losses_splits)
+            full_loss = [x[0] for x in losses]
 
         # Train op    
         with tf.name_scope('train_op'):   
@@ -244,7 +247,7 @@ with tf.Graph().as_default() as graph:
                     
                 # Display
                 if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
-                    viz.display_loss(None, global_step_, full_loss_, start_time,
+                    viz.display_loss(None, global_step_, list(zip(losses_splits, full_loss_)), start_time,
                                      multistage_configuration["train_num_samples_per_iter"],
                                      multistage_configuration["train_num_samples"])
                 
