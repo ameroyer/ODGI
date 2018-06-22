@@ -22,6 +22,7 @@ parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs to u
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
 parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
+parser.add_argument('--learning_rate', type=float, default=2e-4, help='Learning rate')
 args = parser.parse_args()
 print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 
@@ -66,7 +67,7 @@ configuration['shuffle_buffer'] = 2000
 configuration['subset'] = -1
     
 ## Training
-configuration['learning_rate'] = 1e-3
+configuration['learning_rate'] = args.learning_rate
 configuration['centers_localization_loss_weight'] = 1.
 configuration['scales_localization_loss_weight']  = 1.
 configuration['confidence_loss_weight']  = 5.
