@@ -3,8 +3,8 @@
 #SBATCH -n 4                            # number of cores
 #SBATCH --mail-user=aroyer@ist.ac.at    # send mail to user
 #SBATCH --mail-type=FAIL,END            # if a job fails or ends
-#SBATCH --mem 16G                       # memory pool for all cores
-#SBATCH --time 1-00:00                  # max runtime (D-HH:MM)
+#SBATCH --mem 32G                       # memory pool for all cores
+#SBATCH --time 5-00:00                  # max runtime (D-HH:MM)
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:2                    # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
@@ -16,7 +16,7 @@ DATA='dota'
 NUM_EPOCHS=100
 NUM_GPUS=2
 DISPLAY_LOSS_EVERY_N_STEPS=500
-BATCH_SIZE=16
+BATCH_SIZE=12
 FULL_IMAGE_SIZE=1024
 LEARNING_RATE=2e-4
 STAGE2_MOMENTUM=0.7
