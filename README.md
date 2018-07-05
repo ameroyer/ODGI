@@ -1,4 +1,10 @@
-## README
+![license](https://img.shields.io/github/license/ameroyer/ODGI.svg)
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/ameroyer/ODGI.svg)
+![GitHub top language](https://img.shields.io/github/languages/top/ameroyer/ODGI.svg)
+![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/ameroyer/ODGI.svg)
+
+# [ODGI] Object Detection with Grouped Instances
 
 This is the official Tensorflow implementation for `ODGI: Object Detection with Grouped Instances`.
 
