@@ -544,6 +544,7 @@ def get_next_stage_inputs(inputs,
     with tf.name_scope('extract_image_patches'):
         # Re-load full res image (flip if necessary)
         if image_folder is not None and full_image_size > 0:
+            print('Upscale patch from %dx%d ground-truth' % (full_image_size, full_image_size))
             full_images = []
             for i in range(inputs['batch_size']):
                 image = tf.cond(inputs['im_id'][i] >= 0,
@@ -553,6 +554,7 @@ def get_next_stage_inputs(inputs,
             full_images = tf.stack(full_images, axis=0)     
             full_images = tf.where(inputs["is_flipped"] > 0., tf.reverse(full_images, [2]), full_images)
         else:
+            print('   > Extract patch directly from input image')
             full_images = inputs['image']
         # Extract patches and resize
         # crop_boxes_indices: (batch * num_crops,)
