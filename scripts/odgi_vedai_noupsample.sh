@@ -1,5 +1,5 @@
 #!/bin/bash
-SIZE=256               
+SIZE=128               
 
 NUM_GPUS=2
 BATCH_SIZE=16       

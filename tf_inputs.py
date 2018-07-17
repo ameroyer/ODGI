@@ -544,7 +544,7 @@ def get_next_stage_inputs(inputs,
     with tf.name_scope('extract_image_patches'):
         # Re-load full res image (flip if necessary)
         if image_folder is not None and full_image_size > 0:
-            print('Upscale patch from %dx%d ground-truth' % (full_image_size, full_image_size))
+            print('   > Upscale patch from %dx%d ground-truth' % (full_image_size, full_image_size))
             full_images = []
             for i in range(inputs['batch_size']):
                 image = tf.cond(inputs['im_id'][i] >= 0,
