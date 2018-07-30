@@ -17,9 +17,14 @@ def finalize_grid_offsets(configuration, finalize_retrieval_top_n=True):
     Args:
         configuration dictionnary   
     """
-    num_filters, top_retrieval_n, num_boxes, image_size = get_defaults(
-        configuration, ['num_filters', 'retrieval_top_n', 'num_boxes', 'image_size'])
-    configuration['num_cells'] = get_num_cells(image_size, len(num_filters) - 2)
+    network, top_retrieval_n, num_boxes, image_size = get_defaults(
+        configuration, ['network', 'retrieval_top_n', 'num_boxes', 'image_size'])
+    if network == 'tiny-yolov2':        
+        configuration['num_cells'] = get_num_cells(image_size, 5)
+    elif network == 'yolov2':        
+        configuration['num_cells'] = get_num_cells(image_size, 5)
+    else:
+        raise NotImplementedError('Uknown network architecture', network)
     configuration['grid_offsets'] = precompute_grid_offsets(configuration['num_cells'])
     if finalize_retrieval_top_n:
         configuration['retrieval_top_n'] = min(

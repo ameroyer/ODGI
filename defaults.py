@@ -20,10 +20,10 @@ defaults_dict = {
     "lr_decay_steps": 1,                                   # If using Momentum optimizer
     "max_to_keep": 1,                                      # maximum number of checkpoints to keep
     "momentum": 0.9,                                       # If using momentum optimizer
+    "network": 'tiny-yolov2',                              # One of tiny-yolov2 or yolov2
     "noobj_confidence_loss_weight": 1.0,
     "normalizer_decay": 0.9,                               # Batch norm decay
     "num_boxes": 1,                                        # Number of boxes per cell to predict
-    "num_filters": [16, 32, 64, 128, 256, 512, 1024],      # Number of filters per layer in the network
     "num_gpus": 1,                                         # Number of gpus to use
     "num_steps": -1,                                       
     "num_summaries": 3,                                    # Number of summaries to display

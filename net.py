@@ -199,7 +199,8 @@ def tiny_yolo_v2(images,
                  verbose=False,
                  scope_name='tinyyolov2_net',
                  **kwargs):
-    """ Base tiny-YOLOv2 architecture
+    """ Base tiny-YOLOv2 architecture.
+    Based on https://github.com/pjreddie/darknet/blob/master/cfg/yolov2-tiny.cfg
     
     Args:
         images: input images
@@ -211,11 +212,11 @@ def tiny_yolo_v2(images,
     Kwargs:
         weight_decay: Regularization cosntant. Defaults to 0.
         normalizer_decay: Batch norm decay. Defaults to 0.9
-        num_filters. number of filters per layer. Defaults to [16, 32, 64, 128, 256, 512, 1024]
     """
     # kwargs:
-    weight_decay, normalizer_decay, num_filters = graph_manager.get_defaults(
-        kwargs, ['weight_decay', 'normalizer_decay', 'num_filters'], verbose=verbose)
+    weight_decay, normalizer_decay = graph_manager.get_defaults(
+        kwargs, ['weight_decay', 'normalizer_decay'], verbose=verbose)
+    num_filters = [16, 32, 64, 128, 256, 512, 1024]
               
     # Config
     weights_initializer = tf.truncated_normal_initializer(stddev=0.1)
@@ -260,7 +261,101 @@ def tiny_yolo_v2(images,
                                                       stride=pool_strides[i], 
                                                       scope='pool%d' % (i + 1))  
                         # Last conv
-                        net = slim.conv2d(net, 512, [1, 1], scope='conv_out_2')
+                        net = tf.pad(net, paddings)
+                        net = slim.conv2d(net, 512, [3, 3], scope='conv_out_2')
 
                         # Outputs
-                        return net                 
+                        return net              
+                    
+                    
+def yolo_v2(images,
+            is_training=True,
+            reuse=False,
+            verbose=False,
+            scope_name='yolov2_net',
+            **kwargs):
+    """ Base YOLOv2 architecture
+    Based on https://github.com/pjreddie/darknet/blob/master/cfg/yolov2.cfg
+    
+    Args:
+        images: input images
+        is_training: training bool for batch norm
+        scope_name: scope name
+        reuse: whether to reuse the scope
+        verbose: verbosity level
+        
+    Kwargs:
+        weight_decay: Regularization cosntant. Defaults to 0.
+        normalizer_decay: Batch norm decay. Defaults to 0.9
+    """
+    # kwargs:
+    weight_decay, normalizer_decay = graph_manager.get_defaults(
+        kwargs, ['weight_decay', 'normalizer_decay'], verbose=verbose)
+              
+    # Config
+    weights_initializer = tf.truncated_normal_initializer(stddev=0.1)
+    weights_regularizer = tf.contrib.layers.l2_regularizer(weight_decay)
+    activation_fn = lambda x: tf.nn.leaky_relu(x, 0.1)
+    normalizer_fn = slim.batch_norm
+    normalizer_params = {'is_training': is_training, 'decay': normalizer_decay}
+    
+    # Network
+    with tf.variable_scope(scope_name, reuse=reuse):
+        # Convolutions
+        with slim.arg_scope([slim.conv2d],
+                            stride=1, 
+                            padding='SAME',
+                            weights_initializer=weights_initializer,
+                            weights_regularizer=weights_regularizer,
+                            activation_fn=activation_fn,
+                            normalizer_fn=normalizer_fn,
+                            normalizer_params=normalizer_params):      
+            with slim.arg_scope([slim.max_pool2d], padding='SAME'):     
+
+                # Input 448 x 448 in [0., 1.]
+                with tf.control_dependencies([tf.assert_greater_equal(images, 0.)]):
+                    with tf.control_dependencies([tf.assert_less_equal(images, 1.)]):
+                        net = images
+
+                        # Convolutions 
+                        # conv 1
+                        net = slim.conv2d(net, 32, [3, 3], scope='conv1')
+                        net = slim.max_pool2d(net, [2, 2], stride=2, scope='pool1')  
+                        # conv 2
+                        net = slim.conv2d(net, 64, [3, 3], scope='conv2')
+                        net = slim.max_pool2d(net, [2, 2], stride=2, scope='pool2')  
+                        # conv 3
+                        net = slim.conv2d(net, 128, [3, 3], scope='conv3_1')
+                        net = slim.conv2d(net, 64, [1, 1], scope='conv3_2')
+                        net = slim.conv2d(net, 128, [3, 3], scope='conv3_3')
+                        net = slim.max_pool2d(net, [2, 2], stride=2, scope='pool3')  
+                        # conv 4
+                        net = slim.conv2d(net, 256, [3, 3], scope='conv4_1')
+                        net = slim.conv2d(net, 128, [1, 1], scope='conv4_2')
+                        net = slim.conv2d(net, 256, [3, 3], scope='conv4_3')
+                        net = slim.max_pool2d(net, [2, 2], stride=2, scope='pool4')  
+                        # conv 5
+                        net = slim.conv2d(net, 512, [3, 3], scope='conv5_1')
+                        net = slim.conv2d(net, 256, [1, 1], scope='conv5_2')
+                        net = slim.conv2d(net, 512, [3, 3], scope='conv5_3')
+                        net = slim.conv2d(net, 256, [1, 1], scope='conv5_4')
+                        # routing
+                        route = slim.conv2d(net, 512, [3, 3], scope='conv5_5')
+                        net = slim.max_pool2d(route, [2, 2], stride=2, scope='pool5') 
+                        # conv 6
+                        net = slim.conv2d(net, 1024, [3, 3], scope='conv6_1')
+                        net = slim.conv2d(net, 512, [1, 1], scope='conv6_2')
+                        net = slim.conv2d(net, 1024, [3, 3], scope='conv6_3')
+                        net = slim.conv2d(net, 512, [1, 1], scope='conv6_4')
+                        net = slim.conv2d(net, 1024, [3, 3], scope='conv6_5')
+                        net = slim.conv2d(net, 1024, [3, 3], scope='conv6_6')
+                        net = slim.conv2d(net, 1024, [3, 3], scope='conv6_7')
+                        # routing
+                        route = slim.conv2d(route, 64, [3, 3], scope='conv_route')
+                        route = tf.space_to_depth(route, 2)
+                        net = tf.concat([net, route], axis=-1)
+                        # Last conv
+                        net = slim.conv2d(net, 1024, [3, 3], scope='conv_out')
+
+                        # Outputs
+                        return net           
