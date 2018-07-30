@@ -16,6 +16,7 @@ from odgi_graph import *
 ########################################################################## Command line parser
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('data', type=str, help='Dataset to use. One of "vedai", "stanford" or "dota"')
+parser.add_argument('network', type=str, help='network. One of "tiny-yolov2" or "yolov2"')
 parser.add_argument('--size', default=512, type=int, help='size of images at the first stage')
 parser.add_argument('--full_image_size', default=1024, type=int, help=
                     'Size of the images to extract patches. Set to <=0 to not reload images and use direct output of stage 1')
@@ -34,6 +35,7 @@ print('ODGI - %s, Input size %d\n' % (args.data, args.size))
 ## Set dataset
 configuration = {}
 data = args.data
+configuration['network'] = args.network
 if data == 'vedai':
     configuration['setting'] = 'vedai'
     configuration['exp_name'] = 'vedai'

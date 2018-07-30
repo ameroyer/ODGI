@@ -16,6 +16,7 @@ from standard_graph import *
 ########################################################################## Command line parser
 parser = argparse.ArgumentParser(description='Standard Object Detection.')
 parser.add_argument('data', type=str, help='Dataset to use. One of "vedai", "stanford" or "dota"')
+parser.add_argument('network', type=str, help='network. One of "tiny-yolov2" or "yolov2"')
 parser.add_argument('--size', default=1024, type=int, help='size of input images')
 parser.add_argument('--num_epochs', type=int, help='size of images at the first stage')
 parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs to use')
@@ -30,6 +31,7 @@ print('Standard detection - %s, Input size %d\n' % (args.data, args.size))
 ########################################################################## Main Config
 ## Set dataset
 configuration = {}
+configuration['network'] = args.network
 data = args.data
 if data == 'vedai':
     configuration['setting'] = 'vedai'

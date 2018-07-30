@@ -19,9 +19,16 @@ def forward_pass(inputs,
                  verbose=False,
                  scope_name='model'):
     """Forward-pass in the net"""
+    network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
     with tf.variable_scope(scope_name, reuse=reuse):        
-        activations = net.tiny_yolo_v2(
-            inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
+        if network == 'tiny-yolov2':
+            activations = net.tiny_yolo_v2(
+                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
+        elif network == 'yolov2':
+            activations = net.yolo_v2(
+                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
+        else:
+            raise NotImplementedError('Uknown network architecture', network)
         net.get_detection_with_groups_outputs(
             activations, outputs, reuse=reuse, verbose=verbose, **configuration)
             
