@@ -192,7 +192,7 @@ def get_detection_with_groups_outputs(activations,
         if with_group_flags:            
             outputs['group_classification_logits'] = tf.identity(out[3 if with_offsets else 2], name='flags_logits_out')  
 
-       
+            
 def tiny_yolo_v2(images,
                  is_training=True,
                  reuse=False,
@@ -203,7 +203,7 @@ def tiny_yolo_v2(images,
     Based on https://github.com/pjreddie/darknet/blob/master/cfg/yolov2-tiny.cfg
     
     Args:
-        images: input images
+        images: input images in [0., 1.]
         is_training: training bool for batch norm
         scope_name: scope name
         reuse: whether to reuse the scope
@@ -238,7 +238,7 @@ def tiny_yolo_v2(images,
                             normalizer_params=normalizer_params):      
             with slim.arg_scope([slim.max_pool2d], padding='SAME'):     
 
-                # Input 448 x 448 in [0., 1.]
+                # Input in [0., 1.]
                 with tf.control_dependencies([tf.assert_greater_equal(images, 0.)]):
                     with tf.control_dependencies([tf.assert_less_equal(images, 1.)]):
                         net = images
@@ -278,7 +278,7 @@ def yolo_v2(images,
     Based on https://github.com/pjreddie/darknet/blob/master/cfg/yolov2.cfg
     
     Args:
-        images: input images
+        images: input images in [0., 1.]
         is_training: training bool for batch norm
         scope_name: scope name
         reuse: whether to reuse the scope
@@ -312,7 +312,7 @@ def yolo_v2(images,
                             normalizer_params=normalizer_params):      
             with slim.arg_scope([slim.max_pool2d], padding='SAME'):     
 
-                # Input 448 x 448 in [0., 1.]
+                # Input in [0., 1.]
                 with tf.control_dependencies([tf.assert_greater_equal(images, 0.)]):
                     with tf.control_dependencies([tf.assert_less_equal(images, 1.)]):
                         net = images
