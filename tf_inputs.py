@@ -63,108 +63,11 @@ def parse_basic_feature(parsed_features, num_classes, image_folder, image_size=4
     image = load_image(im_id, num_classes, image_size, image_folder)        
     num_boxes = tf.cast(parsed_features['num_boxes'], tf.int32)
     bounding_boxes = parsed_features["bounding_boxes"]
-    return im_id, image, num_boxes, bounding_boxes           
+    return {'im_id': im_id, 'image': image, 'num_boxes': num_boxes, 'bounding_boxes': bounding_boxes}           
 
 
-def get_inputs_keys(record_keys, with_groups=True, with_classes=True):
-    """Infer the keys to be added to the inputs dictionnary
-    
-    Args:
-        record_keys: List of keys that are being loaded from the TFRecord
-        with_groups: Whether to add group ground-truth
-        with_classification: Whether to load class specific information
-        
-    Returns: 
-        List of keys in the inputs dictionnary. Subset of :
-            im_id: int () Image ID
-            image: float (w, h, 2) Image
-            num_boxes: int () Number of valid bounding boxes
-            bounding_boxes: float (max_num_bbs, 4) Ground truth individual boxes
-            class_labels: int (max_num_bbs, num_classes) Class per individual box
-            obj_i_mask_bbs: (num_cells, num_cells, 1, max_num_bbs) mask indicating whether a'
-                bounding box is present in a cell
-            num_group_boxes: int () Number of valid bounding boxes after grouping.
-            group_bounding_boxes_per_cells: float (num_cells, num_cells, 1, 4) per cell bounding boxes with groups.
-            group_flags: float (num_cells, num_cells, 1, 1) per cell binary group flag
-            group_class_labels: int (num_cells, num_cells, 1, num_classes) per cell class with groups
-            is_flipped: float () indicates whether the image was left-right flipped duing data annotations
-    """
-    # Basic features
-    keys = ['im_id', 'image', 'num_boxes', 'bounding_boxes']
-    
-    if with_classes:
-        keys.append('class_labels')
-        
-    keys.append("obj_i_mask_bbs")
-                    
-    # Groups computed on the fly
-    if with_groups:
-        keys.append("num_group_boxes")
-        keys.append("group_bounding_boxes_per_cell")
-        keys.append("group_flags") 
-        if with_classes:      
-            keys.append("group_class_labels") 
-        
-    # Whether the image has been flipped in data augmentation
-    keys.append("is_flipped")
-    return keys
-
-
-def get_dummy_dataset(keys,
-                      num_repeats, 
-                      image_size, 
-                      num_classes, 
-                      num_cells,
-                      max_num_bbs):
-    """Create dummy data samples to pad the validation dataset
-    
-    Args:
-        keys: keys present in the inputs dictionnary
-        num_repeats: Number of dummy samples to add
-        image_size: Size of images in the dataset
-        num_classes: Number of classes in the dataset 
-        num_cells: Number of cells in the output grid
-        max_num_bbs: Maximum number of gt bounding boxes
-        
-    Returns:
-        A dummy dataset with `num_repeats` entry
-    """
-    assert num_repeats > 0
-    in_ = []
-    
-    # im_id = -1, image, num_boxes, bounding boxes
-    in_.append(-1)
-    in_.append(tf.zeros((image_size, image_size, 3)))
-    in_.append(0)
-    in_.append(tf.zeros((max_num_bbs, 4)) + [1., 1., 0., 0.])
-    
-    # classes
-    if "class_labels" in keys:
-        in_.append(tf.zeros((max_num_bbs, num_classes), dtype=tf.int32) - 1)
-    
-    # obj_i_mask_bbs
-    in_.append(tf.zeros((num_cells[0], num_cells[1], 1, max_num_bbs)))
-        
-    # groups
-    if "num_group_boxes" in keys:
-        in_.append(0)        
-    if "group_bounding_boxes_per_cell" in keys:
-        in_.append(tf.zeros((num_cells[0], num_cells[1], 1, 4)) + [1., 1., 0., 0.])
-    if "group_flags" in keys:
-        in_.append(tf.zeros((num_cells[0], num_cells[1], 1, 1)))
-    if "group_class_labels" in keys:
-        in_.append(- tf.ones((num_cells[0], num_cells[1], 1, num_classes)))
-            
-    # is_flipped
-    in_.append(0.)   
-        
-    dataset = tf.data.Dataset.from_tensors(tuple(in_))
-    dataset = dataset.repeat(num_repeats)
-    return dataset
-
-
-def apply_data_augmentation(in_, num_samples, keys, data_augmentation_threshold):
-    """ Perform data augmentation.
+def apply_data_augmentation(in_, num_samples, data_augmentation_threshold):
+    """ Perform data augmentation (left/right flip).
     
     Args:
         in_: A batch from the dataset (output of iterator.get_next()).
@@ -173,49 +76,40 @@ def apply_data_augmentation(in_, num_samples, keys, data_augmentation_threshold)
         data_augmentation_threshold: threshold in [0, 1]
         
     Returns:
-        in_ after data_augmentation applied
+        Dataset with left/right data augmentation applied
     """
-    condition = (tf.random_uniform((num_samples,)) > data_augmentation_threshold)
+    condition_shape = tf.shape(in_['image'])[:1]
+    condition = (tf.random_uniform(condition_shape) > data_augmentation_threshold)
         
     # Flip image
-    index = keys.index('image')
-    in_[index] = tf.where(condition, in_[index], tf.reverse(in_[index], [2]))
+    in_['image'] = tf.where(condition, in_['image'], tf.reverse(in_['image'], [2]))
     
-    # Add is_flipped flag
-    index = keys.index('is_flipped')
-    in_[index] = tf.where(condition, in_[index], 1. - in_[index])
+    # Set is_flipped flag
+    in_['is_flipped'] = tf.where(condition, in_['is_flipped'], 1. - in_['is_flipped'])
     
-    # Flip bounding_boxes (batch, num_bbs, 4)
-    index = keys.index('bounding_boxes')
-    in_[index] = tf.where(condition, in_[index], tf.abs([1., 0., 1., 0.] - tf.gather(in_[index], [2, 1, 0, 3], axis=-1)))
+    # Flip bounding boxes coordinates, (batch, num_bbs, 4)
+    in_['bounding_boxes'] = tf.where(condition, in_['bounding_boxes'], 
+                                     tf.abs([1., 0., 1., 0.] - tf.gather(in_['bounding_boxes'], [2, 1, 0, 3], axis=-1)))
         
-    # Flip empty cell mask (batch, num_cells_x, num_cells_y, 1, num_bbs)
-    index = keys.index('obj_i_mask_bbs')
-    in_[index] = tf.where(condition, in_[index], tf.reverse(in_[index], [2]))
+    # Flip active/empty cell mask, (batch, num_cells_x, num_cells_y, 1, num_bbs)
+    in_['obj_i_mask_bbs'] = tf.where(condition, in_['obj_i_mask_bbs'], tf.reverse(in_['obj_i_mask_bbs'], [2]))
 
-    # Flip groups boxes (batch, num_cells, num_cells, 1, 4)
-    try:
-        index = keys.index('group_bounding_boxes_per_cell')
-        in_[index] = tf.where(
-            condition, in_[index], tf.abs([1., 0., 1., 0.] - tf.gather(
-            tf.reverse(in_[index], [2]), [2, 1, 0, 3], axis=-1))
-                             )
-    except ValueError:
-        pass
+    # Flip groups bounding boxes coordinates, (batch, num_cells, num_cells, 1, 4)
+    if 'group_bounding_boxes_per_cell' in in_:
+        in_['group_bounding_boxes_per_cell'] = tf.where(
+            condition, in_['group_bounding_boxes_per_cell'], tf.abs([1., 0., 1., 0.] - tf.gather(
+            tf.reverse(in_['group_bounding_boxes_per_cell'], [2]), [2, 1, 0, 3], axis=-1)))
         
-    # Flip groups flags (batch, num_cells, num_cells, 1, 1)
-    try:
-        index = keys.index('group_flags')
-        in_[index] = tf.where(condition, in_[index], tf.reverse(in_[index], [2]))
-    except ValueError:
-        pass
+    # Flip groups ground-truth flags, (batch, num_cells, num_cells, 1, 1)
+    if 'group_flags' in in_:
+        in_['group_flags'] = tf.where(condition, in_['group_flags'], tf.reverse(in_['group_flags'], [2]))
         
-    # Flip groups classes (batch, num_cells, num_cells, 1, num_classes)
-    try:
-        index = keys.index('group_class_labels')
-        in_[index] = tf.where(condition, in_[index], tf.reverse(in_[index], [2]))
-    except ValueError:
-        pass            
+    # Flip groups classes, (batch, num_cells, num_cells, 1, num_classes)
+    if 'group_class_labels' in in_:
+        in_['group_class_labels'] = tf.where(condition, in_['group_class_labels'],
+                                             tf.reverse(in_['group_class_labels'], [2]))
+        
+    # Return
     return in_
 
 
@@ -223,43 +117,48 @@ def get_tf_dataset(tfrecords_file,
                    record_keys,
                    max_num_bbs,
                    num_classes,
-                   with_classes=True,
+                   with_classes=False,
                    with_groups=True,
                    grid_offsets=None,
                    batch_size=1,
+                   num_epochs=1,
                    image_size=448,
                    image_folder='',
                    data_augmentation_threshold=0.5,
-                   num_splits=1,
-                   num_threads=1,
+                   num_shards=1,
+                   shard_index=0,
+                   num_threads=4,
                    subset=-1,
                    shuffle_buffer=1,
                    prefetch_capacity=1,
-                   pad_with_dummies=0,
-                   verbose=True):
+                   make_initializable_iterator=False,
+                   verbose=1):
     """Returns a queue containing the inputs batches.
 
     Args:
       tfrecords_file: Path to the TFRecords file containing the data.
-      feature_keys: Feature keys present in the TFrecords
+      record_keys: Feature keys present in the TFrecords. Loaded from the metadata file
       max_num_bbs: Maximum number of bounding boxes in the dataset. Used for reshaping the `bounding_boxes` records.   
-      num_classes: Number of classes in the dataset.
+      num_classes: Number of classes in the dataset. Used to infer the correct dataset and loading format.
       with_classes: wheter to use class information
-      with_groups: whether to pre-compute clustered groups ground-truth
-      grid_offsets: Precomputed grid offset 
+      with_groups: whether to pre-compute grouped instances ground-truth
+      grid_offsets: Precomputed grid offsets 
       batch_size: Batch size.
+      num_epochs: Number of epochs to repeat.
       image_size: The square size which to resize images to.
       image_folder: path to the directory containing the images in the dataset.
       data_augmentation_threshold: Data augmentation probabilitiy (in [0, 1])
-      num_splits: Create num_splits splits of the data each of size batch-size
+      num_shards: Number of shards. Each shard gets a data batch of size "batch_size"
+      shard_index: Index of the sard, default to 0
       num_threads: Number of readers for the batch queue.
       subset: If positive, extract the given number of samples as a subset of the dataset
       shuffle_buffer: Size of the shuffling buffer.
       prefetch_capacity: Buffer size for prefetching.
-      pad_with_dummies: If positive, pad the dataset with the given number of dummy samples *before* repeat
+      make_initializable_iterator: if True, make an initializable and add its initializer to the collection `iterator_init`
+      verbose: Verbosity level
 
     Returns: 
-      A list of `num_splits` dictionnary of inputs.
+      A tf.Data.dataset iterator (and its initializer if initializable_iterator)
     """
     # Asserts
     assert num_classes in [6, 9, 15]
@@ -269,45 +168,44 @@ def get_tf_dataset(tfrecords_file,
     assert 0. <= data_augmentation_threshold <= 1.
     if grid_offsets is not None:
         num_cells = grid_offsets.shape[:2]
-    assert num_splits > 0
+    assert num_shards > 0
+    assert shard_index >= 0
+    assert shard_index < num_shards
     assert num_threads > 0
     assert shuffle_buffer > 0
-    assert pad_with_dummies < batch_size * num_splits
     
-    # Create TFRecords feature
-    keys = get_inputs_keys(record_keys, with_groups, with_classes)
-    features = tfrecords_utils.read_tfrecords(record_keys, max_num_bbs=max_num_bbs)
-    
+    if verbose == 2:
+        print(' \033[31m> load_inputs\033[0m')
+    elif verbose == 1:
+        print(' > load_inputs')
     # Normalize grid cells offsets
     if grid_offsets is not None:
         grid_offsets_mins = grid_offsets / num_cells
         grid_offsets_maxs = (grid_offsets + 1.) / num_cells 
     
+    # Create TFRecords feature
+    features = tfrecords_utils.read_tfrecords(record_keys, max_num_bbs=max_num_bbs)
+    
     # Preprocess
     def parsing_function(example_proto):
         # Basic features
         parsed_features = tf.parse_single_example(example_proto, features)
-        output = list(parse_basic_feature(parsed_features, num_classes, image_folder, image_size))
-        bounding_boxes = output[-1]
+        output = parse_basic_feature(parsed_features, num_classes, image_folder, image_size)
+        bounding_boxes = output['bounding_boxes']
         
-        if 'class_labels' in keys:
-            class_labels = tf.one_hot(parsed_features['classes'], num_classes, 
-                                      axis=-1, on_value=1, off_value=0, dtype=tf.int32)
-            output.append(class_labels)   
-        
+        # Empty/active cells mask
         # obj_i_mask_bbs: (num_cells, num_cells, 1, num_bbs)
-        assert 'obj_i_mask_bbs' in keys
         mins, maxs = tf.split(bounding_boxes, 2, axis=-1) # (num_bbs, 2)
         inters = tf.maximum(0., tf.minimum(maxs, grid_offsets_maxs) - tf.maximum(mins, grid_offsets_mins))
         inters = tf.reduce_prod(inters, axis=-1)
         obj_i_mask = tf.expand_dims(tf.to_float(inters > 0.) , axis=-2)
-        output.append(obj_i_mask)
+        output["obj_i_mask_bbs"] = obj_i_mask
                     
-        # Grouped bounding boxes 
-        if "group_bounding_boxes_per_cell" in keys:
-            assert "num_group_boxes" in keys
-            assert "group_flags" in keys
-            # group_bounding_boxes_per_cell: (num_cells, num_cells, 1, 4)
+        # Grouped instances 
+        # group_bounding_boxes_per_cell: (num_cells, num_cells, 1, 4), cell bounding box after grouping
+        # group_flags: (num_cells, num_cells, 1, 1), whether a cell contains a group or not
+        # num_group_boxes: (), number of bounding boxes after grouping
+        if with_groups:
             obj_i_mask = tf.transpose(obj_i_mask, (0, 1, 3, 2)) # (num_cells, num_cells, num_bbs, 1)
             mins = mins + 1. - obj_i_mask 
             mins = tf.reduce_min(mins, axis=2, keep_dims=True) # (num_cells, num_cells, 1, 2)
@@ -315,33 +213,34 @@ def get_tf_dataset(tfrecords_file,
             maxs = tf.reduce_max(maxs, axis=2, keep_dims=True)
             group_bounding_boxes_per_cell = tf.concat([mins, maxs], axis=-1)
             group_bounding_boxes_per_cell = tf.clip_by_value(group_bounding_boxes_per_cell, 0., 1.)
+            output["group_bounding_boxes_per_cell"] = group_bounding_boxes_per_cell
             
-            # group_flags: (num_cells, num_cells, 1, 1)
-            # num_group_boxes: ()
             num_bbs_per_cell = tf.reduce_sum(obj_i_mask, axis=2, keep_dims=True)
             num_group_boxes = tf.reduce_sum(tf.to_int32(num_bbs_per_cell > 0))
+            output["num_group_boxes"] = num_group_boxes
+            
             group_flags = tf.maximum(tf.minimum(num_bbs_per_cell, 2.) - 1., 0.)
-            
-            # Add to outputs
-            output.append(num_group_boxes)
-            output.append(group_bounding_boxes_per_cell)
-            output.append(group_flags)
-            
-        # Group classes (majority vote) # (num_cells, num_cells, 1, num_classes)
-        if "group_class_labels" in keys:
-            assert "group_bounding_boxes_per_cell" in keys
-            assert "class_labels" in keys
-            percell_class_labels = tf.expand_dims(tf.expand_dims(class_labels, axis=0), axis=0)
-            percell_class_labels = obj_i_mask * tf.to_float(percell_class_labels) # (num_cells, num_cells, num_bbs, num_classes)
-            percell_class_labels = tf.reduce_sum(percell_class_labels, axis=2, keep_dims=True)
-            group_class_labels = tf.argmax(percell_class_labels, axis=-1)
-            group_class_labels = tf.one_hot(group_class_labels, num_classes,
-                                            axis=-1, on_value=1, off_value=0, dtype=tf.int32)
-            group_class_labels = tf.to_int32(percell_class_labels * tf.to_float(group_class_labels))
-            output.append(group_class_labels)
+            output["group_flags"] = group_flags
           
-        # is_reversed flag: ()
-        output.append(tf.constant(0.))
+        # is_flipped flag: (), indicates whether the image has been flipped during data augmentation
+        output["is_flipped"] = tf.constant(0.)
+            
+        # Optional : add classes
+        if with_classes:
+            class_labels = tf.one_hot(parsed_features['classes'], num_classes, 
+                                      axis=-1, on_value=1, off_value=0, dtype=tf.int32)
+            output['class_labels'] = class_labels
+            
+            # Group classes (majority vote) # (num_cells, num_cells, 1, num_classes)
+            if with_groups:
+                percell_class_labels = tf.expand_dims(tf.expand_dims(class_labels, axis=0), axis=0)
+                percell_class_labels = obj_i_mask * tf.to_float(percell_class_labels)
+                percell_class_labels = tf.reduce_sum(percell_class_labels, axis=2, keep_dims=True)
+                group_class_labels = tf.argmax(percell_class_labels, axis=-1)
+                group_class_labels = tf.one_hot(group_class_labels, num_classes,
+                                                axis=-1, on_value=1, off_value=0, dtype=tf.int32)
+                group_class_labels = tf.to_int32(percell_class_labels * tf.to_float(group_class_labels))
+                output["group_class_labels"] = group_class_labels
         return output
                     
         
@@ -349,40 +248,44 @@ def get_tf_dataset(tfrecords_file,
     with tf.name_scope('load_dataset'):
         # Parse data
         dataset = tf.data.TFRecordDataset(tfrecords_file)
-        if subset > 0: dataset = dataset.take(subset)
+        if subset > 0: 
+            dataset = dataset.take(subset)
+        # Shard
+        if num_shards > 1:
+            dataset = dataset.shard(num_shards, shard_index)       
+        # Map
         dataset = dataset.shuffle(buffer_size=shuffle_buffer)
         dataset = dataset.map(parsing_function, num_parallel_calls=num_threads)
-        # Pad samples for test data
-        if pad_with_dummies > 0:
-            pad_dataset = get_dummy_dataset(keys, pad_with_dummies, image_size, num_classes, num_cells, max_num_bbs)
-            dataset = dataset.concatenate(pad_dataset)
-        dataset = dataset.repeat()
+        # Repeat
+        if num_epochs > 1:
+            dataset = dataset.repeat(num_epochs)
         # Batch
-        dataset = dataset.batch(num_splits * batch_size)
+        dataset = dataset.batch(batch_size)
         if prefetch_capacity > 0: dataset = dataset.prefetch(prefetch_capacity)
         # Iterator
-        iterator = dataset.make_one_shot_iterator()    
-        in_ = list(iterator.get_next())
+        if make_initializable_iterator:
+            iterator = dataset.make_initializable_iterator()
+            iterator_init = iterator.initializer
+            tf.add_to_collection('iterator_init', iterator_init)
+        else:
+            iterator = dataset.make_one_shot_iterator()    
+            iterator_init = None
+        in_ = iterator.get_next()
+        in_['batch_size'] = batch_size
         
     ## Data augmentation
     with tf.name_scope('data_augmentation'):
-        apply_data_augmentation(in_, num_splits * batch_size, keys, data_augmentation_threshold)
-    
-    ## Create inputs dictionary
-    with tf.name_scope('create_inputs'):
-        inputs = [{'batch_size': batch_size} for _ in range(num_splits)]    
-        for i, key in enumerate(keys):
-            splits = tf.split(in_[i], num_splits, axis=0)
-            for s in range(num_splits):
-                inputs[s][key] = tf.identity(splits[s], name="%s_device%d" % (key, i))
-                
-    if verbose == 1:
+        if data_augmentation_threshold > 0.:
+            apply_data_augmentation(in_, batch_size, data_augmentation_threshold)
+              
+    ## Verbose log
+    if verbose == 2:
         print('\n'.join("    \033[32m%s\033[0m: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
-                        for key, value in inputs[0].items() if key != 'batch_size'))
-    elif verbose > 1:
+                        for key, value in in_.items() if key != 'batch_size'))
+    elif verbose == 1:
         print('\n'.join("    *%s*: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
-                        for key, value in inputs[0].items() if key != 'batch_size'))
-    return inputs  
+                        for key, value in in_.items() if key != 'batch_size'))
+    return in_, iterator_init
 
 
 def extract_groups(inputs, 
