@@ -417,7 +417,8 @@ def get_stage2_inputs(inputs,
                                            verbose=verbose)
         
     
-def add_losses_to_graph(loss_fn, inputs, outputs, configuration, is_chief=False, verbose=False):
+############################################################ Training operation
+def add_losses_to_graph(loss_fn, inputs, outputs, configuration, is_chief=False, verbose=0):
     """Add losses to graph collections.
     
     Args:
@@ -426,16 +427,17 @@ def add_losses_to_graph(loss_fn, inputs, outputs, configuration, is_chief=False,
         outputs: outputs dictionary
         configuration: configuration dictionary
         is_chief: Whether the current process is chief or not
+        verbose: Verbosity level
     """
-    losses = loss_fn(inputs, outputs, is_chief=is_chief, verbose=verbose, **configuration)
+    losses = loss_fn(inputs, outputs, is_chief=is_chief, verbose=is_chief * verbose, **configuration)
     
     for key, loss in losses:
-        if not key.endswith('_loss'):
+        if not key.endswith('_loss') and is_chief:
             print('\033[31mWarning:\033[0m %s will be ignored. Losses name should end with "_loss"' % key)
         tf.add_to_collection(key, loss)
         
         
-def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbose=True):
+def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbose=0):
     """Retrieve the total loss over all collections and all devices.
     All collections ending with '_loss' will be taken as a loss function
     
@@ -444,6 +446,7 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbos
         add_summaries: Whether to add summaries to the graph
         splits: Create separate losses (given to different optimizers) for the given scopes. The default just sum all the 
             losses present in the graph for all the trainable variables
+        verbose: Verbosity level
         
     Returns:
         A list of tuples (tensor containing the loss, list of variables to optimize)
@@ -503,15 +506,16 @@ def get_train_op(full_losses,
         global step tensor
         train operation
     """
+    optimizer, learning_rate = get_defaults(kwargs, ['optimizer', 'learning_rate'], verbose=verbose)
+    global_step = tf.train.get_or_create_global_step()    
     if verbose == 1:
         print(' > Build train operation')
     elif verbose == 2:
         print(' \033[31m> Build train operation\033[0m')
-    optimizer, learning_rate = get_defaults(kwargs, ['optimizer', 'learning_rate'], verbose=verbose)
-    global_step = tf.train.get_or_create_global_step()    
-    print('    Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
+    if verbose:
+        print('    Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
         
-    # Train op       
+    # Optimizer    
     if optimizer == 'MOMENTUM':
         learning_rate_decay_steps, learning_rate_decay_rate = get_defaults(
             kwargs, ['lr_decay_steps', 'lr_decay_rate', 'momentum'], verbose=verbose)
@@ -527,19 +531,21 @@ def get_train_op(full_losses,
     else:
         raise NotImplementedError(optimizer_type)
     
+    # Train op for each stage
     train_ops = [get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True) 
                  for full_loss, var_list in full_losses]
-    global_step_op = tf.assign_add(global_step, 1)
     
-    # Update op for batch norm
+    # Collect update_ops for batch norm
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
     print('   ', len(update_ops), 'update operations found')
     
     # Return
+    global_step_op = tf.assign_add(global_step, 1)
     final_op = tf.group(global_step_op, *train_ops, *update_ops) 
     return global_step, final_op
 
 
+############################################################ Train Summaries
 def add_summaries(inputs, 
                   outputs, 
                   mode='train',
@@ -574,81 +580,7 @@ def add_summaries(inputs,
                             display_inputs=display_inputs)
     
     
-def add_metrics_to_graph(eval_fn, inputs, outputs, metrics_to_norms, clear_ops, update_ops, configuration, 
-                         device=0, verbose=True):
-    """Add metrics update operations.
-    
-    Args:
-        eval_fn: Eval function. Should have signature f: (dict, dict, **kwargs)
-        inputs: inputs dictionary
-        outputs: outputs dictionary
-        metrics_to_norms: Dictionnary mapping keys of a metric to the key of the denominator to use to normalize it
-        clear_op: List to store the clear emtrics operations
-        update_ops: List to store the metrics update operations
-        configuration: configuration dictionary
-        device: Device name, used to create independeng variable scope for each metric
-    """
-    new_metrics = eval_fn(inputs, outputs, verbose=verbose, **configuration)
-    
-    for key, norm_key, new_metric in new_metrics:    
-        # Create variable on each device
-        with tf.variable_scope('metrics_dev_%d' % device):
-            metric = tf.get_variable('%s_running' % key, shape=(), initializer=tf.zeros_initializer(),
-                                     trainable=False, collections=[tf.GraphKeys.GLOBAL_VARIABLES, key])
-        metrics_to_norms[key] = norm_key
-        # Clear operation
-        clear_ops.append(tf.assign(metric, tf.constant(0., dtype=tf.float32, shape=())))
-        # Update operation
-        update_ops.append(tf.assign_add(metric, new_metric))    
-    
-    
-def get_eval_op(metrics_to_norms, output_values=False): 
-    """ Return evaluation summary operation.
-    
-    Args:
-        metrics_keys_to_norms: Maps the name of a metrics collections (key) to another (value) that will be used to 
-            normalize the key collection
-    """
-    metrics = {}
-    for metric_key, norm_key in metrics_to_norms.items():
-        metric = tf.add_n(tf.get_collection(metric_key))
-        if norm_key is None:
-            tf.summary.scalar(metric_key, metric, collections=['evaluation'])                
-        else:
-            norm = tf.maximum(1., tf.add_n(tf.get_collection(norm_key)))
-            tf.summary.scalar(metric_key, metric / norm, collections=['evaluation'])
-            metrics[metric_key] = metric / norm
-    eval_summary_op = tf.summary.merge_all(key='evaluation')
-    if output_values:
-        return eval_summary_op, metrics
-    else:
-        return eval_summary_op
-    
-    
-def append_individuals_detection_output(file_path,
-                                        image_ids, 
-                                        num_gt_boxes, 
-                                        gt_boxes, 
-                                        pred_boxes,
-                                        pred_confidences):
-    with open(file_path, 'a') as f:
-        for im_id, num_gt, gt, pred, c in zip(image_ids, num_gt_boxes, gt_boxes, pred_boxes, pred_confidences):
-            # flatten            
-            pred_confidences_flat = np.reshape(pred_confidences, (-1, 1))
-            pred_boxes_flat = np.reshape(pred_boxes, (-1, 4))
-            # first line (id, number of ground-truth, ground-truth boxes)
-            f.write('%s-gt\t%d\t%s\n' % (im_id, num_gt, '\t'.join(
-                ','.join('%.5f' % x for x in b) for b in gt[:num_gt])))
-            # sort predictions by confidences
-            pred_confidences_flat = np.reshape(pred_confidences, (-1, 1))
-            pred_boxes_flat = np.reshape(pred_boxes, (-1, 4))
-            indices = np.argsort(- pred_confidences_flat, axis=None)
-            pred = np.concatenate([pred_boxes_flat[indices, :], pred_confidences_flat[indices, :]], axis=1)
-            # second line (id, number of  predictions, predictions with confidences)
-            f.write('%s-pred\t%d\t%s\n' % (im_id, pred_boxes_flat.shape[0], '\t'.join(
-                ','.join('%.5f' % x for x in b) for b in pred)))
-    
-    
+############################################################ USELESS 
 def extract_config(event_file):
     """Extract config dictionnary for a Tensorboard event file"""
     import ast
