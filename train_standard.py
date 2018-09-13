@@ -8,6 +8,7 @@ import tensorflow as tf
 print("Tensorflow version", tf.__version__)
 from tensorflow.python.training.summary_io import SummaryWriterCache
 
+import eval_utils
 import graph_manager
 import viz
 from standard_graph import *
@@ -171,13 +172,17 @@ with tf.Graph().as_default() as graph:
                         f.write('Validation results at step %d\n' % global_step_)
                     sess.run(eval_initializer, feed_dict=feed_dict)
                     try:
+                        it = 0
                         while 1:
                             out_ = sess.run([eval_inputs['im_id'], 
                                              eval_inputs['num_boxes'],
                                              eval_inputs['bounding_boxes'],                                             
                                              eval_outputs['bounding_boxes'],
-                                             eval_outputs['detection_scores']], feed_dict=feed_dict)          
-                            graph_manager.append_individuals_detection_output(validation_results_path, *out_)
+                                             eval_outputs['detection_scores']], 
+                                            feed_dict=feed_dict)
+                            eval_utils.append_individuals_detection_output(
+                                validation_results_path, *out_, verbose=args.verbose and (it == 0), **standard_configuration)
+                            it += 1
                     except tf.errors.OutOfRangeError:
                         pass
                     # Compute PASCAL VOC map metrics
