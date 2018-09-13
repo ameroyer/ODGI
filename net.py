@@ -53,6 +53,7 @@ def get_bounding_boxes_coordinates(out, outputs, grid_offsets):
                                            out_centers + out_scales / 2], 
                                           axis=-1,
                                           name='bounding_boxes_out')
+    outputs['bounding_boxes'] = tf.clip_by_value(outputs['bounding_boxes'], 0., 1.)
             
             
 def get_detection_outputs(activations,
