@@ -16,28 +16,30 @@ from standard_graph import *
 ########################################################################## Command line parser
 parser = argparse.ArgumentParser(description='Standard Object Detection.')
 parser.add_argument('data', type=str, help='Dataset to use. One of "vedai", "stanford" or "dota"')
-parser.add_argument('network', type=str, help='network. One of "tiny-yolov2" or "yolov2"')
+parser.add_argument('--network', type=str, default="tiny-yolov2", help='network. One of "tiny-yolov2" or "yolov2"')
 parser.add_argument('--size', default=1024, type=int, help='size of input images')
-parser.add_argument('--num_epochs', type=int, help='size of images at the first stage')
-parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs to use')
+parser.add_argument('--num_epochs', type=int, help='Number of training epochs')
+parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs workers to use')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
 parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
 parser.add_argument('--learning_rate', type=float, default=1e-3, help='Learning rate')
+parser.add_argument('--summaries', action='store_true', help='Save Tensorboard summaries while training')
+parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
 args = parser.parse_args()
 print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 
 
 ########################################################################## Main Config
-## Set dataset
+## Configuration
 configuration = {}
 configuration['network'] = args.network
 data = args.data
 if data == 'vedai':
     configuration['setting'] = 'vedai'
     configuration['exp_name'] = 'vedai'
-    configuration['save_summaries_steps'] = 100
-    configuration['save_evaluation_steps'] = 250
+    configuration['save_summaries_steps'] = 100    # Save tensorboard summaries
+    configuration['save_evaluation_steps'] = 1#250   # Run evaluation on the validation set
     configuration['num_epochs'] = 1000 if args.num_epochs is None else args.num_epochs
 elif data == 'stanford':
     configuration['setting'] = 'sdd'
@@ -52,14 +54,14 @@ elif data == 'dota':
     configuration['save_evaluation_steps'] = 1000
     configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
     
-## Metadata
+## Add dataset specific configuration stored in metadata
 tfrecords_path = 'Data/metadata_%s.txt'
 metadata = graph_manager.load_metadata(tfrecords_path % configuration['setting'])
 configuration.update(metadata)
 configuration['num_classes'] = len(configuration['data_classes'])
 
 ## GPUs
-configuration['num_gpus'] = args.num_gpus                                 
+configuration['num_gpus'] = args.num_gpus               
 configuration['gpu_mem_frac'] = max(0., min(1., args.gpu_mem_frac))
 
 ## Inputs Pipeline
@@ -79,127 +81,114 @@ configuration['offsets_loss_weight']  = 1.
 ## Evaluation
 configuration['save_checkpoint_secs'] = 3600
 configuration['retrieval_intersection_threshold'] = [0.25, 0.5, 0.75]
+graph_manager.finalize_configuration(configuration, verbose=args.verbose)
 
-graph_manager.finalize_configuration(configuration, verbose=2)
-
-
-########################################################################## ODGI Config
-vanilla_configuration = configuration.copy()
-vanilla_configuration['base_name'] =  'tinyyolov2'
-# Set resolution parameter [I, J] and K
-vanilla_configuration['image_size'] = args.size
-vanilla_configuration['num_boxes'] = 1
-# Finalize
-vanilla_configuration['exp_name'] += '/yolov2_%d' % vanilla_configuration['image_size']
-graph_manager.finalize_grid_offsets(vanilla_configuration)
-print('Retrieval top k = %d (final)' % vanilla_configuration['retrieval_top_n'])
+## Network configuration
+standard_configuration = configuration.copy()
+standard_configuration['base_name'] =  args.network
+standard_configuration['image_size'] = args.size
+standard_configuration['num_boxes'] = 1
+standard_configuration['exp_name'] += '/%s_standard_%d' % (standard_configuration['network'], 
+                                                           standard_configuration['image_size'])
+graph_manager.finalize_grid_offsets(standard_configuration)
 
 
 ########################################################################## Graph
 with tf.Graph().as_default() as graph:          
     ############################### Train
-    with tf.name_scope('train'):
-        print('\nLoad inputs:')
-        inputs = graph_manager.get_inputs(mode='train', verbose=2, **vanilla_configuration)   
-        
-        print('\nTrain Graph:')      
-        for i, train_inputs in enumerate(inputs):
+    with tf.name_scope('train'):        
+        print('\nGraph:')      
+        for i in range(configuration['num_gpus']): 
+            is_chief = (i == 0)
             with tf.device('/gpu:%d' % i):
+                with tf.name_scope('inputs%d' % i):
+                    train_inputs, _ = graph_manager.get_inputs(
+                        mode='train', shard_index=i, verbose=args.verbose * int(is_chief), **standard_configuration) 
+                    
                 with tf.name_scope('dev%d' % i):
-                    is_chief = (i == 0)
-                    train_outputs = train_pass(train_inputs, vanilla_configuration, is_chief=is_chief)   
-                    if is_chief:
+                    train_outputs = train_pass(train_inputs, standard_configuration,
+                                               is_chief=is_chief, verbose=args.verbose)   
+                    if is_chief and args.summaries:
                         print(' > summaries:')
                         graph_manager.add_summaries(
-                            train_inputs, train_outputs, mode='train', **vanilla_configuration)
+                            train_inputs, train_outputs, mode='train', **standard_configuration)
 
         # Training Objective
         with tf.name_scope('losses'):
-            losses = graph_manager.get_total_loss()
-            full_loss = tf.add_n([x[0] for x in losses])
+            losses = graph_manager.get_total_loss(verbose=args.verbose, add_summaries=args.summaries)
+            full_loss = tf.add_n([x[0] for x in losses])            
 
         # Train op    
         with tf.name_scope('train_op'):   
-            global_step, train_op = graph_manager.get_train_op(losses, **vanilla_configuration)
+            global_step, train_op = graph_manager.get_train_op(losses, verbose=args.verbose, **standard_configuration)
         
         # Additional info
-        with tf.name_scope('config_summary'):
-            viz.add_text_summaries(vanilla_configuration) 
-            print('\nLosses:')
-            print('\n'.join(["    *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
-                            for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
-            
-    ############################### Eval
-    with tf.name_scope('eval'):        
-        print('\nTest Graph:')
-        update_metrics_op = []    # Store operations to update the metrics
-        clear_metrics_op = []     # Store operations to reset the metrics
-        metrics_to_norms = {}
-
-        inputs = graph_manager.get_inputs(mode='test', verbose=False, **vanilla_configuration)         
-
-        for i, val_inputs in enumerate(inputs):
-            with tf.device('/gpu:%d' % i):
-                with tf.name_scope('dev%d' % i):
-                    is_chief = (i == 0)
-                    val_outputs = eval_pass(val_inputs, vanilla_configuration, metrics_to_norms, 
-                                            clear_metrics_op, update_metrics_op, device=i, is_chief=is_chief) 
-                    if is_chief:
-                        graph_manager.add_summaries(
-                            val_inputs, val_outputs, mode='test', **vanilla_configuration)
-
-        with tf.name_scope('eval'):
-            print('    %d eval update ops' % len(update_metrics_op))
-            print('    %d eval clear ops' % len(clear_metrics_op))
-            update_metrics_op = tf.group(*update_metrics_op)
-            clear_metrics_op = tf.group(*clear_metrics_op)
-            eval_summary_op, metrics = graph_manager.get_eval_op(metrics_to_norms, output_values=True)
-            accuracy = metrics['tinyyolov2_avgprec_at0.50_eval']
-
-        # Additional info
-        print('\nEval metrics:')
+        print('\nLosses:')
         print('\n'.join(["    *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
-                        for x in tf.get_default_graph().get_all_collection_keys() 
-                        if x.endswith('_eval')]))
+                        for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
+        if args.summaries:
+            with tf.name_scope('config_summary'):
+                viz.add_text_summaries(standard_configuration) 
+
+            
+    ############################### Validation and Test
+    with tf.name_scope('eval'):     
+        # Cannot use placeholder for max_num_bbs because tf v1.4 data does not support sparse tensors
+        use_test_split = tf.placeholder_with_default(True, (), 'choose_eval_split')
+        eval_inputs, eval_initializer = tf.cond(
+            use_test_split,
+            true_fn=lambda: graph_manager.get_inputs(mode='test', verbose=False, **standard_configuration),
+            false_fn=lambda: graph_manager.get_inputs(mode='val', verbose=False, **standard_configuration),
+            name='eval_inputs')
+        with tf.device('/gpu:%d' % 0):
+            with tf.name_scope('dev%d' % 0):
+                eval_outputs = eval_pass(eval_inputs, standard_configuration, verbose=False)
+                
 
     ########################################################################## Run Session
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))    
     try:
         print('\nLaunch session:')
-        graph_manager.generate_log_dir(vanilla_configuration)
-        summary_writer = SummaryWriterCache.get(vanilla_configuration["log_dir"])
-        print('    Log directory', os.path.abspath(vanilla_configuration["log_dir"]))
+        graph_manager.generate_log_dir(standard_configuration)
+        summary_writer = SummaryWriterCache.get(standard_configuration["log_dir"])
+        print('    Log directory', os.path.abspath(standard_configuration["log_dir"]))
+        validation_results_path = os.path.join(standard_configuration["log_dir"], 'val_output.txt')
         
-        with graph_manager.get_monitored_training_session(**vanilla_configuration) as sess:
+        with graph_manager.get_monitored_training_session(**standard_configuration) as sess:
             global_step_ = 0   
             start_time = time.time()
             
             print('\nStart training:')
-            while not sess.should_stop(): 
-                        
+            while not sess.should_stop():                         
                 # Train
                 global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
                 
                 # Evaluate
-                if (vanilla_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
-                    and global_step_  % vanilla_configuration["save_evaluation_steps"] == 0):
-                    sess.run(clear_metrics_op)
-                    num_epochs = vanilla_configuration["test_num_iters_per_epoch"]
-                    for epoch in range(num_epochs):
-                        if epoch == num_epochs - 1: 
-                            _, accuracy_, eval_summary = sess.run([update_metrics_op, accuracy, eval_summary_op])
-                        else:
-                            sess.run(update_metrics_op) 
-                    # Write summary
-                    summary_writer.add_summary(eval_summary, global_step_)
-                    summary_writer.flush()
-                    print('   > Eval at step %d: map@0.5 = %.3f' % (global_step_, accuracy_)) 
+                if (standard_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
+                    and global_step_  % standard_configuration["save_evaluation_steps"] == 0):
+                    feed_dict = {use_test_split: False}
+                    with open(validation_results_path, 'w') as f:
+                        f.write('Validation results at step %d\n' % global_step_)
+                    sess.run(eval_initializer, feed_dict=feed_dict)
+                    try:
+                        while 1:
+                            out_ = sess.run([eval_inputs['im_id'], 
+                                             eval_inputs['num_boxes'],
+                                             eval_inputs['bounding_boxes'],                                             
+                                             eval_outputs['bounding_boxes'],
+                                             eval_outputs['detection_scores']], feed_dict=feed_dict)          
+                            graph_manager.append_individuals_detection_output(validation_results_path, *out_)
+                    except tf.errors.OutOfRangeError:
+                        pass
+                    # Compute PASCAL VOC map metrics
+                    print('TODO')
+                    raise SystemExit
                     
                 # Display
                 if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
                     viz.display_loss(None, global_step_, full_loss_, start_time, 
-                                     vanilla_configuration["train_num_samples_per_iter"], 
-                                     vanilla_configuration["train_num_samples"])
+                                     standard_configuration["train_num_samples_per_iter"], 
+                                     standard_configuration["train_num_samples"])
                 
     except KeyboardInterrupt:
         print('\nInterrupted at step %d' % global_step_)
