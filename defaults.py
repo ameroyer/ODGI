@@ -13,7 +13,6 @@ defaults_dict = {
     "gpu_mem_frac": 1.0,                                   # memory usage per gpu
     "group_classification_loss_weight": 1.,
     "image_size": 256,                                     # Image size
-    "last_test_batch_size": 0,                             # 
     "learning_rate": 1e-3,
     "log_globalstep_steps": 100,
     "lr_decay_rate": 0.995,                                # If using Momentum optimizer
@@ -24,8 +23,8 @@ defaults_dict = {
     "noobj_confidence_loss_weight": 1.0,
     "normalizer_decay": 0.9,                               # Batch norm decay
     "num_boxes": 1,                                        # Number of boxes per cell to predict
+    "num_epochs": 100,                                     # Number of training epochs
     "num_gpus": 1,                                         # Number of gpus to use
-    "num_steps": -1,                                       
     "num_summaries": 3,                                    # Number of summaries to display
     "num_threads": 8,                                      # Number of parallel readers for the input queues
     "offsets_loss_weight": 1.0,
@@ -48,7 +47,6 @@ defaults_dict = {
     "subset": -1,                                          # If > 0, select a subset of the dataset
     "summary_confidence_thresholds": [0.5],                # Plot output boxes cut at the given thresholds  
     "target_conf_fn": "iou",                               # Function for determining the confidence scores ground-truth 
-    "test_batch_size": 32,                                  # validation batch size
     "test_num_crops": 5,                                    # Maximum number of crops per image to predict (val)
     "test_patch_confidence_threshold": 0.25,                 # Only keep boxes above this threshold for patch extraction
     "test_patch_strong_confidence_threshold": 0.75,         # boxes considered 'single' and above this threshold -> no patch
