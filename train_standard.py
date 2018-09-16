@@ -40,7 +40,7 @@ if data == 'vedai':
     configuration['setting'] = 'vedai'
     configuration['exp_name'] = 'vedai'
     configuration['save_summaries_steps'] = 100    # Save tensorboard summaries
-    configuration['save_evaluation_steps'] = 1#250   # Run evaluation on the validation set
+    configuration['save_evaluation_steps'] = 500   # Run evaluation on the validation set
     configuration['num_epochs'] = 1000 if args.num_epochs is None else args.num_epochs
 elif data == 'stanford':
     configuration['setting'] = 'sdd'
@@ -160,7 +160,8 @@ with tf.Graph().as_default() as graph:
             start_time = time.time()
             
             print('\nStart training:')
-            while not sess.should_stop():                         
+            # Until end of iterator
+            while 1:                       
                 # Train
                 global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
                 
@@ -181,19 +182,24 @@ with tf.Graph().as_default() as graph:
                                              eval_outputs['detection_scores']], 
                                             feed_dict=feed_dict)
                             eval_utils.append_individuals_detection_output(
-                                validation_results_path, *out_, verbose=args.verbose and (it == 0), **standard_configuration)
+                                validation_results_path, *out_, **standard_configuration)
                             it += 1
+                            print('\r Eval step %d' % it, end='')
                     except tf.errors.OutOfRangeError:
                         pass
-                    # Compute PASCAL VOC map metrics
-                    print('TODO')
-                    raise SystemExit
+                    # Compute and display map
+                    val_aps, val_aps_thresholds = eval_utils.detect_eval(validation_results_path, **standard_configuration)
+                    print('\rValidation eval at step %d:' % global_step_, ' - '.join(
+                        'map@%.2f = %.5f' % (thresh, sum(x[t] for x in val_aps.values()) / len(val_aps))
+                        for t, thresh in enumerate(val_aps_thresholds)))
                     
                 # Display
                 if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
                     viz.display_loss(None, global_step_, full_loss_, start_time, 
                                      standard_configuration["train_num_samples_per_iter"], 
                                      standard_configuration["train_num_samples"])
-                
-    except KeyboardInterrupt:
+    except tf.errors.OutOfRangeError: # End of training
+        pass              
+
+    except KeyboardInterrupt:          # Keyboard interrupted
         print('\nInterrupted at step %d' % global_step_)
