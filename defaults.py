@@ -37,7 +37,7 @@ defaults_dict = {
     "restore_scope": None,                                 # If a checkpoint path is given, restore from the given scope
     "restore_to_replace": '',                              # string to replace in variable names to restore
     "retrieval_confidence_threshold": 0.,                  # Only keep boxes above this threshold for evaluation
-    "retrieval_intersection_threshold": [0.25, 0.5, 0.75], # Evaluate at these retrieval threshold
+    "retrieval_iou_threshold": [0.5, 0.75],                # Evaluate at these retrieval threshold
     "retrieval_nms_threshold": 0.5,                        # IoU threshold for the Non-maximum suppression during evaluation
     "retrieval_top_n": 1024,                               # Look-up at most these number of top predictions for evaluation
     "save_checkpoint_secs": 3600,                          # Save checkpoints at the given frequency (in seconds)
