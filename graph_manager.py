@@ -379,18 +379,18 @@ def get_stage2_inputs(inputs,
     assert image_size > 0
     assert mode in ['train', 'val', 'test']
     assert len(crop_boxes.get_shape()) == 3
-    original_batch_size, full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
+    max_batch_size, full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
         'batch_size', 'full_image_size', 'patch_intersection_ratio_threshold'], verbose=verbose)
     
     ## Train: Accumulate crops into queue
     if mode == 'train':
         (shuffle_buffer, num_threads) = get_defaults(kwargs, ['shuffle_buffer', 'num_threads'], verbose=verbose)    
         use_queue = True
-        batch_size = original_batch_size
+        batch_size = max_batch_size
     ## Eval: Pass the output directly to the next stage, sequential execution
     else:    
         num_crops = get_defaults(kwargs, ['test_num_crops'], verbose=verbose)[0]
-        batch_size = original_batch_size * num_crops
+        batch_size = max_batch_size * num_crops
         use_queue = False
         shuffle_buffer = 1
         num_threads = 1
@@ -403,7 +403,7 @@ def get_stage2_inputs(inputs,
     return tf_inputs.get_next_stage_inputs(inputs, 
                                            crop_boxes,
                                            batch_size,
-                                           original_batch_size=original_batch_size,
+                                           max_batch_size=max_batch_size,
                                            image_folder=image_folder,
                                            image_format=image_format,
                                            image_size=image_size,
