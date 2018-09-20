@@ -64,14 +64,9 @@ configuration['num_classes'] = len(configuration['data_classes'])
 ## GPUs
 configuration['num_gpus'] = args.num_gpus               
 configuration['gpu_mem_frac'] = max(0., min(1., args.gpu_mem_frac))
-
-## Inputs Pipeline
-configuration['batch_size'] = args.batch_size
-configuration['test_batch_size'] = args.batch_size
-configuration['shuffle_buffer'] = 2000
-configuration['subset'] = -1
     
 ## Training
+configuration['batch_size'] = args.batch_size
 configuration['learning_rate'] = args.learning_rate
 configuration['centers_localization_loss_weight'] = 1.
 configuration['scales_localization_loss_weight']  = 1.
@@ -79,9 +74,6 @@ configuration['confidence_loss_weight']  = 5.
 configuration['noobj_confidence_loss_weight']  = 1.
 configuration['offsets_loss_weight']  = 1.
 
-## Evaluation
-configuration['save_checkpoint_secs'] = 3600
-configuration['retrieval_intersection_threshold'] = [0.25, 0.5, 0.75]
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
 
 ## Network configuration
@@ -164,6 +156,12 @@ with tf.Graph().as_default() as graph:
             while 1:                       
                 # Train
                 global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
+                    
+                # Display
+                if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
+                    viz.display_loss(None, global_step_, full_loss_, start_time, 
+                                     standard_configuration["train_num_samples_per_iter"], 
+                                     standard_configuration["train_num_samples"])
                 
                 # Evaluate
                 if (standard_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
@@ -192,12 +190,6 @@ with tf.Graph().as_default() as graph:
                     print('\rValidation eval at step %d:' % global_step_, ' - '.join(
                         'map@%.2f = %.5f' % (thresh, sum(x[t] for x in val_aps.values()) / len(val_aps))
                         for t, thresh in enumerate(val_aps_thresholds)))
-                    
-                # Display
-                if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
-                    viz.display_loss(None, global_step_, full_loss_, start_time, 
-                                     standard_configuration["train_num_samples_per_iter"], 
-                                     standard_configuration["train_num_samples"])
     except tf.errors.OutOfRangeError: # End of training
         pass              
 
