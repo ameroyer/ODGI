@@ -7,3 +7,4 @@ test_num_samples	2619
 data_classes	Biker,Bus,Car,Cart,Pedestrian,Skater
 feature_keys	im_id,num_boxes,bounding_boxes,classes
 image_folder	/nfs/scistore12/chlgrp/aroyer/Datasets/sdd_images
+image_format	sdd
