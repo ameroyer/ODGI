@@ -33,22 +33,37 @@ def forward_pass(inputs,
             activations, outputs, reuse=reuse, verbose=verbose, **configuration)
             
             
-def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False):
+def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, verbose=1):
     """ Compute outputs of the net and add losses to the graph.
+    
+    Args:
+        inputs: Dictionnary of inputs
+        configuration: Configuration dictionnary
+        intermediate_stage: If True, filter the obtain boxes given the configuration group to get the 
+            image regions coordinates to extract at the next stage
+        is_chief: Whether the current training device is chief (verbosity and summaries)
+        verbose: verbosity level
+        
+    Returns:
+        Dictionnary of outputs
     """
     outputs = {}
-    base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=is_chief)[0]
-    if is_chief: print(' > %s:' % base_name)
+    dev_verbose = verbose * is_chief
+    base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=dev_verbose)[0]
+    if dev_verbose == 2:
+        print(' \033[31m> %s\033[0m' % base_name)
+    elif dev_verbose == 1:
+        print(' > %s' % base_name)
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
         forward_pass(inputs, outputs, configuration, scope_name=base_name, 
-                     is_training=True, reuse=not is_chief, verbose=is_chief) 
+                     is_training=True, reuse=not is_chief, verbose=dev_verbose) 
         
     # Compute crops to feed to the next stage
     if intermediate_stage:
         with tf.name_scope('extract_patches'):
-            tf_inputs.extract_groups(inputs, outputs, mode='train', verbose=is_chief, **configuration)  
+            tf_inputs.extract_groups(inputs, outputs, mode='train', verbose=dev_verbose, **configuration)  
         
     # Add losses
     with tf.name_scope('%s/loss' % base_name):
@@ -59,13 +74,17 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False):
         graph_manager.add_losses_to_graph(
             loss_fn, inputs, outputs, configuration, is_chief=is_chief, verbose=is_chief)
         
-    if is_chief:
+    # Display found losses
+    if dev_verbose == 1:
         print('\n'.join("    *%s*: shape=%s, dtype=%s" % (
+            key, value.get_shape().as_list(), value.dtype) for key, value in outputs.items()))
+    elif dev_verbose == 2:
+        print('\n'.join("    \x1b[32m*%s*\x1b[0m: shape=%s, dtype=%s" % (
             key, value.get_shape().as_list(), value.dtype) for key, value in outputs.items()))
     return outputs
 
 
-def feed_pass(inputs, outputs, configuration, mode='train', is_chief=False, verbose=False):
+def feed_pass(inputs, outputs, configuration, mode='train', is_chief=True, verbose=False):
     """
         Args:
             inputs: inputs dictionnary
@@ -75,42 +94,34 @@ def feed_pass(inputs, outputs, configuration, mode='train', is_chief=False, verb
         Returns:
             Dictionnary of inputs for the next stage
     """
-    if is_chief: print(' > create stage 2 inputs:')
+    dev_verbose = verbose * is_chief
+    if dev_verbose: print(' > create stage 2 inputs:')
     return graph_manager.get_stage2_inputs(
-        inputs, outputs['crop_boxes'], mode=mode, verbose=verbose, **configuration)
+        inputs, outputs['crop_boxes'], mode=mode, verbose=dev_verbose, **configuration)
         
     
-def eval_pass_intermediate_stage(inputs, configuration, metrics_to_norms, clear_metrics_op, 
-                                 update_metrics_op, device=0, is_chief=False):
+def eval_pass_intermediate_stage(inputs, configuration, verbose=False):
     """ Evaluation pass for intermediate stages."""
     outputs = {}
-    base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=is_chief)[0]
-    if is_chief: print(' > %s:' % base_name)
+    base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
+    if verbose == 2:
+        print(' \033[31m> %s\033[0m' % base_name)
+    elif verbose == 1:
+        print(' > %s' % base_name)
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
         forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
-                     reuse=True, verbose=is_chief) 
+                     reuse=True, verbose=verbose) 
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):
-        tf_inputs.extract_groups(inputs, outputs, mode='test', verbose=is_chief, **configuration)        
-        
-    with tf.name_scope('%s/eval' % base_name):
-        # Add number of samples counter
-        graph_manager.add_metrics_to_graph(
-            eval_utils.get_samples_running_counters, inputs, outputs, metrics_to_norms, clear_metrics_op, 
-            update_metrics_op, configuration, device=device, verbose=is_chief) 
-        # Add metrics
-        graph_manager.add_metrics_to_graph(
-            eval_utils.get_odgi_eval, inputs, outputs, metrics_to_norms, clear_metrics_op, 
-            update_metrics_op, configuration, device=device, verbose=is_chief)     
+        tf_inputs.extract_groups(inputs, outputs, mode='test', verbose=verbose, **configuration)  
         
     return outputs    
 
 
-def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, metrics_to_norms, 
-                          clear_metrics_op, update_metrics_op, device=0, is_chief=False):
+def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, verbose=False):
     """ Evaluation for the full pipeline.
         Args:
             stage2_inputs: inputs dictionnary for stage2
@@ -126,14 +137,17 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
             Dictionnary of outputs, merge by image
             Dictionnary of unscaled ouputs (for summary purposes)
     """
-    base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=is_chief)[0]
-    if is_chief: print(' > %s:' % base_name)
     outputs = {}
+    base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
+    if verbose == 2:
+        print(' \033[31m> %s\033[0m' % base_name)
+    elif verbose == 1:
+        print(' > %s' % base_name)
     
     # Feed forward
     with tf.name_scope('net'):
         forward_pass(stage2_inputs, outputs, configuration, scope_name=base_name,
-                     is_training=False, reuse=True, verbose=is_chief) 
+                     is_training=False, reuse=True, verbose=verbose) 
             
     # Reshape outputs from stage2 to stage1
     # for summary
@@ -142,7 +156,8 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
         crop_boxes = stage1_outputs["crop_boxes"]  
         num_crops = crop_boxes.get_shape()[1].value
         num_boxes = outputs['bounding_boxes'].get_shape()[-2].value
-        batch_size = graph_manager.get_defaults(configuration, ['test_batch_size'], verbose=is_chief)[0]
+        batch_size = graph_manager.get_defaults(configuration, ['batch_size'], verbose=verbose)[0]
+        # TODO(batch size?)
         # outputs:  (stage1_batch * num_crops, num_cell, num_cell, num_boxes, ...)
         # to: (stage1_batch, num_cell, num_cell, num_boxes * num_crops, ...)
         for key, value in outputs.items():
@@ -175,9 +190,4 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
         outputs['detection_scores'] = tf.concat([outputs['detection_scores'],
                                                 stage1_outputs['added_detection_scores']], axis=1)
         
-    # Evaluate `output` versus the initial (stage 1) inputs
-    with tf.name_scope('eval'):
-        graph_manager.add_metrics_to_graph(
-            eval_utils.get_standard_eval, stage1_inputs, outputs, metrics_to_norms, clear_metrics_op, 
-            update_metrics_op, configuration, device=device, verbose=is_chief)
     return outputs, unscaled_outputs

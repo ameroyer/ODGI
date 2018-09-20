@@ -209,14 +209,14 @@ def get_tf_dataset(tfrecords_file,
         if with_groups:
             obj_i_mask = tf.transpose(obj_i_mask, (0, 1, 3, 2)) # (num_cells, num_cells, num_bbs, 1)
             mins = mins + 1. - obj_i_mask 
-            mins = tf.reduce_min(mins, axis=2, keep_dims=True) # (num_cells, num_cells, 1, 2)
+            mins = tf.reduce_min(mins, axis=2, keepdims=True) # (num_cells, num_cells, 1, 2)
             maxs = maxs * obj_i_mask
-            maxs = tf.reduce_max(maxs, axis=2, keep_dims=True)
+            maxs = tf.reduce_max(maxs, axis=2, keepdims=True)
             group_bounding_boxes_per_cell = tf.concat([mins, maxs], axis=-1)
             group_bounding_boxes_per_cell = tf.clip_by_value(group_bounding_boxes_per_cell, 0., 1.)
             output["group_bounding_boxes_per_cell"] = group_bounding_boxes_per_cell
             
-            num_bbs_per_cell = tf.reduce_sum(obj_i_mask, axis=2, keep_dims=True)
+            num_bbs_per_cell = tf.reduce_sum(obj_i_mask, axis=2, keepdims=True)
             num_group_boxes = tf.reduce_sum(tf.to_int32(num_bbs_per_cell > 0))
             output["num_group_boxes"] = num_group_boxes
             
@@ -236,7 +236,7 @@ def get_tf_dataset(tfrecords_file,
             if with_groups:
                 percell_class_labels = tf.expand_dims(tf.expand_dims(class_labels, axis=0), axis=0)
                 percell_class_labels = obj_i_mask * tf.to_float(percell_class_labels)
-                percell_class_labels = tf.reduce_sum(percell_class_labels, axis=2, keep_dims=True)
+                percell_class_labels = tf.reduce_sum(percell_class_labels, axis=2, keepdims=True)
                 group_class_labels = tf.argmax(percell_class_labels, axis=-1)
                 group_class_labels = tf.one_hot(group_class_labels, num_classes,
                                                 axis=-1, on_value=1, off_value=0, dtype=tf.int32)
@@ -362,31 +362,43 @@ def extract_groups(inputs,
             predicted_offsets = tf_utils.flatten_percell_output(outputs["offsets"])
             predicted_boxes = tf_utils.rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon)
     
-    ## Extract n best patches with Non-Maximum Suppression
+    ## Extract n best patches
     if num_outputs > 0:    
-        # nms_boxes: (batch, num_crops, 4)
-        # nms_boxes_confidences: (batch, num_crops)
-        batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
-        with tf.name_scope('nms'):
-            nms_boxes = []
-            nms_boxes_confidences = []
-            for i in range(batch_size):
-                # TODO(aroyer): cond i < batch_size
-                boxes, scores = tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
-                                                      predicted_scores[i, :],
-                                                      num_outputs, 
-                                                      iou_threshold=nms_threshold)
-                nms_boxes.append(boxes)
-                nms_boxes_confidences.append(scores)
-            nms_boxes = tf.stack(nms_boxes, axis=0) 
-            nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
-            nms_boxes_confidences = tf.stack(nms_boxes_confidences, axis=0) 
-            nms_boxes_confidences = tf.reshape(nms_boxes_confidences, (-1, num_outputs))
-            
-        # Return
-        outputs['crop_boxes'] = nms_boxes
-        outputs['crop_boxes_confidences'] = nms_boxes_confidences
-        return nms_boxes, nms_boxes_confidences
+        # Non-Maximum Suppression
+        if nms_threshold < 1.0:
+            # nms_boxes: (batch, num_crops, 4)
+            # nms_boxes_confidences: (batch, num_crops)
+            batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
+            with tf.name_scope('nms'):
+                nms_boxes = []
+                nms_boxes_confidences = []
+                for i in range(batch_size):
+                    # TODO(aroyer): cond i < batch_size
+                    boxes, scores = tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
+                                                          predicted_scores[i, :],
+                                                          num_outputs, 
+                                                          iou_threshold=nms_threshold)
+                    nms_boxes.append(boxes)
+                    nms_boxes_confidences.append(scores)
+                nms_boxes = tf.stack(nms_boxes, axis=0) 
+                nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
+                nms_boxes_confidences = tf.stack(nms_boxes_confidences, axis=0) 
+                nms_boxes_confidences = tf.reshape(nms_boxes_confidences, (-1, num_outputs))
+            outputs['crop_boxes'] = nms_boxes
+            outputs['crop_boxes_confidences'] = nms_boxes_confidences
+        # No NMS
+        else:
+            top_scores, top_indices = tf.nn.top_k(predicted_scores, k=num_outputs)
+            batch_indices = tf.range(tf.shape(predicted_scores)[0])
+            batch_indices = tf.tile(tf.expand_dims(batch_indices, axis=0), (1, num_outputs))
+            gather_indices = tf.stack([batch_indices, top_indices], axis=-1)
+            top_boxes = tf.gather_nd(predicted_boxes, gather_indices)
+            outputs['crop_boxes'] = top_boxes
+            outputs['crop_boxes_confidences'] = top_scores
+    # No filtering 
+    else:
+        outputs['crop_boxes'] = predicted_boxes
+        outputs['crop_boxes_confidences'] = predicted_scores
 
 
 def tile_and_reshape(t, num_crops):
@@ -407,11 +419,12 @@ def tile_and_reshape(t, num_crops):
 
 def get_next_stage_inputs(inputs, 
                           crop_boxes,
+                          batch_size,
+                          image_size=256,
+                          original_batch_size=None,
+                          full_image_size=1024,
                           image_folder=None,
                           image_format=None,
-                          batch_size=32,
-                          image_size=256,
-                          full_image_size=1024,
                           grid_offsets=None,
                           intersection_ratio_threshold=0.25,
                           epsilon=1e-8,
@@ -427,7 +440,6 @@ def get_next_stage_inputs(inputs,
         crop_boxes, a (batch_size, num_crops, 4) tensor of crops
         image_folder: Image directory, used for reloading the full resolution images if needed
         batch_size: Batch size for the output of this pipeline
-        num_classes: Number of classes in the dataset
         image_size: Size of the images patches in the new dataset
         full_image_size: Size of the images to load before applying the croppings
         grid_offsets: A (num_cells, num_cells) array
@@ -455,19 +467,16 @@ def get_next_stage_inputs(inputs,
     with tf.name_scope('extract_image_patches'):
         # Re-load full res image (flip if necessary)
         if image_folder is not None and full_image_size > 0:
-            print('   > Upscale patch from %dx%d ground-truth' % (full_image_size, full_image_size))
             full_images = []            
-            original_batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
             for i in range(original_batch_size):
-                image = tf.cond(i < original_batch_size,
-                                true_fn=lambda: load_image(inputs['im_id'][i], num_classes, full_image_size, image_folder),
+                image = tf.cond(i < tf.shape(inputs['im_id'])[0],
+                                true_fn=lambda: load_image(inputs['im_id'][i], full_image_size, image_folder, image_format),
                                 false_fn=lambda: tf.zeros((full_image_size, full_image_size, 3)))
                 full_images.append(image)
             full_images = tf.stack(full_images, axis=0)     
             full_images = tf.where(inputs["is_flipped"] > 0., tf.reverse(full_images, [2]), full_images)
         # Otherwise extract patches from the image directlu
         else:
-            print('   > Extract patch directly from input image')
             full_images = inputs['image']
         # Extract patches and resize
         # crop_boxes_indices: (batch * num_crops,)
@@ -522,7 +531,7 @@ def get_next_stage_inputs(inputs,
             obj_i_mask = tf.expand_dims(tf.to_float(inters > 0.) , axis=-2)
             new_inputs['obj_i_mask_bbs'] = obj_i_mask
         
-    # Enqueue thje new inputs during training, or pass the output directly to the next stage at test time
+    # Enqueue the new inputs during training, or pass the output directly to the next stage at test time
     if use_queue:
         filter_valid = tf.logical_and(crop_boxes[..., 2] > crop_boxes[..., 0], crop_boxes[..., 3] > crop_boxes[..., 1] )
         filter_valid = tf.reshape(filter_valid, (-1,))

@@ -17,6 +17,29 @@ def flatten_percell_output(t):
     return tf.stack([tf.layers.flatten(x) for x in tf.unstack(t, axis=-1)], axis=-1)
 
 
+def nms_with_pad(boxes, scores, num_outputs, iou_threshold=0.5, predicted_groups=None, predicted_offsets=None):
+    """Returns boxes filtered by Non maximum suppresion and with the batch dimension padded to `num_outputs`.
+    
+    Args:
+        boxes: A (num_boxes, 4) Tensor of bounding boxes
+        scores: A (num_boxes,) Tensor of confidences
+        num_outputs: the suppression procedure will output at most `num_outputs` boxes
+        iou_threshold: IoU threshold for the overlapping criterion
+        
+    Return:
+        A (num_outputs, 4) Tensor of bounding boxes, padded if necessary and (num_outputs) Tensor of 
+    """
+    selected = tf.image.non_max_suppression(boxes, scores, num_outputs, iou_threshold=iou_threshold)
+    new_boxes = tf.gather(boxes, selected, axis=0)
+    new_scores = tf.gather(scores, selected, axis=0)
+    # selected: (num_outputs, 4)
+    new_boxes = tf.pad(new_boxes - np.array([1., 1., 0., 0.], dtype=np.float32),
+                      ((0, num_outputs - tf.shape(new_boxes)[0]), (0, 0))
+                     ) + np.array([1., 1., 0., 0.], dtype=np.float32)
+    new_scores = tf.pad(new_scores, ((0, num_outputs - tf.shape(new_scores)[0]),)) 
+    return new_boxes, new_scores
+
+
 def rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon=1e-8):  
     """Rescale boxes to a square with the given offsets
     
@@ -34,7 +57,7 @@ def rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon=1e-8):
     pred_scales = tf.stack([pred_bbs[2] - pred_bbs[0], pred_bbs[3] - pred_bbs[1]], axis=-1)
     # Rescale predictions
     target_scales = pred_scales / (predicted_offsets + epsilon)
-    target_scales = tf.minimum(1., tf.reduce_max(target_scales, axis=-1, keep_dims=True))  # always extract square
+    target_scales = tf.minimum(1., tf.reduce_max(target_scales, axis=-1, keepdims=True))  # always extract square
     # Final boxes
     predicted_boxes = tf.concat([pred_centers - target_scales / 2, 
                                  pred_centers + target_scales / 2], axis=-1)

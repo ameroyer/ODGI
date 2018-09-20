@@ -30,7 +30,7 @@ def get_defaults(kwargs, defaults, verbose=0):
             v = defaults_dict[key]
             if verbose: print('    with default `%s` = %s' % (key, v))
         else:
-            raise IndexError('\033[31mError\033[30: No default value found for parameter %s\033[0m' % key)
+            raise IndexError('\033[31mError\033[0m: No default value found for parameter \033[31m%s\033[0m' % key)
         output.append(v)
     return output
 
@@ -69,8 +69,7 @@ def finalize_configuration(configuration, verbose=2):
     
     ## Pre-compute number of steps per epoch for loss display
     for split in ['train', 'test']:
-        configuration['%s_num_samples' % split] = (configuration['subset'] if configuration['subset'] > 0 
-                                                   else configuration['%s_num_samples' % split])
+        configuration['%s_num_samples' % split] = configuration['%s_num_samples' % split]
         configuration['%s_num_samples_per_iter' % split] = configuration['batch_size']
         if split == 'train':
             configuration['%s_num_samples_per_iter' % split] *= configuration['num_gpus']
@@ -362,7 +361,6 @@ def get_stage2_inputs(inputs,
         inputs, a dictionnary of inputs
         crop_boxes, a (batch_size * num_boxes, 4) tensor of crops
         mode: one of `train`, `val` or `test`. Defaults to `train`.
-        num_classes: Number of classes, used to infer the dataset and proper loading function
         image_folder: path to the image folder. Can contain a format %s that will be replace by `mode`
         image_format: used to infer the dataset and loading format
         image_size: Image sizes
@@ -381,17 +379,18 @@ def get_stage2_inputs(inputs,
     assert image_size > 0
     assert mode in ['train', 'val', 'test']
     assert len(crop_boxes.get_shape()) == 3
-    batch_size, full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
+    original_batch_size, full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
         'batch_size', 'full_image_size', 'patch_intersection_ratio_threshold'], verbose=verbose)
     
     ## Train: Accumulate crops into queue
     if mode == 'train':
         (shuffle_buffer, num_threads) = get_defaults(kwargs, ['shuffle_buffer', 'num_threads'], verbose=verbose)    
         use_queue = True
+        batch_size = original_batch_size
     ## Eval: Pass the output directly to the next stage, sequential execution
     else:    
         num_crops = get_defaults(kwargs, ['test_num_crops'], verbose=verbose)[0]
-        batch_size *= num_crops
+        batch_size = original_batch_size * num_crops
         use_queue = False
         shuffle_buffer = 1
         num_threads = 1
@@ -403,10 +402,10 @@ def get_stage2_inputs(inputs,
     
     return tf_inputs.get_next_stage_inputs(inputs, 
                                            crop_boxes,
+                                           batch_size,
+                                           original_batch_size=original_batch_size,
                                            image_folder=image_folder,
                                            image_format=image_format,
-                                           batch_size=batch_size,
-                                           num_classes=num_classes,
                                            image_size=image_size,
                                            full_image_size=full_image_size,
                                            grid_offsets=grid_offsets,
