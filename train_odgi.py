@@ -190,23 +190,23 @@ with tf.Graph().as_default() as graph:
             print('\nStart training:')
             while 1:                  
                 # Test    
-                #feed_dict = {use_test_split: False}            
-                #sess.run(eval_initializer, feed_dict=feed_dict)
-                #try:
-                #    it = 0
-                #    while 1:
-                #        out_ = sess.run([eval_inputs['im_id'], 
-                #                         eval_inputs['num_boxes'],
-                #                         eval_inputs['bounding_boxes'],                                             
-                ##                         eval_s2_outputs['bounding_boxes'],
-                ##                         eval_s2_outputs['detection_scores']], 
-                #                        feed_dict=feed_dict)
-                #        eval_utils.append_individuals_detection_output(
-                #            validation_results_path, *out_, **multistage_configuration)
-                #        it += 1
-                #        print('\r Eval step %d' % it, end='')
-                ##except tf.errors.OutOfRangeError:
-                #    pass
+                feed_dict = {use_test_split: False}            
+                sess.run(eval_initializer, feed_dict=feed_dict)
+                try:
+                    it = 0
+                    while 1:
+                        out_ = sess.run([eval_inputs['im_id'], 
+                                         eval_inputs['num_boxes'],
+                                         eval_inputs['bounding_boxes'],                                             
+                                         eval_s2_outputs['bounding_boxes'],
+                                         eval_s2_outputs['detection_scores']], 
+                                        feed_dict=feed_dict)
+                        eval_utils.append_individuals_detection_output(
+                            validation_results_path, *out_, **multistage_configuration)
+                        it += 1
+                        print('\r Eval step %d' % it, end='')
+                except tf.errors.OutOfRangeError:
+                    pass
                 # Train
                 global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
                     
