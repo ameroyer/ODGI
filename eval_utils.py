@@ -78,7 +78,7 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
     return output
     
     
-def max_iou(box, boxes):
+def max_iou(box, boxes, epsilon=1e-12):
     """ Maximum iou between box and all the boxes in `boxes`
     
     Args:    
@@ -98,7 +98,7 @@ def max_iou(box, boxes):
               np.maximum(boxes[..., 2] - boxes[..., 0], 0) * np.maximum(boxes[..., 3] - boxes[..., 1], 0) - 
               intersections)
     # iou: (batch, num_boxes)
-    iou = np.where(unions == 0, 0., intersections / unions)
+    iou = intersections / (unions + epsilon)
     if len(boxes.shape) == 2:
         i = np.argmax(iou)
         return i, iou[i]
