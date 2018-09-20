@@ -50,7 +50,7 @@ def load_metadata(filename):
             key, values = line.split('\t', 1)
             if key in ['data_classes', 'feature_keys']:
                 metadata[key] = values.split(',')
-            elif key.endswith('tfrecords') or key == 'image_folder':
+            elif key.endswith('tfrecords') or key in ['image_format', 'image_folder']:
                 metadata[key] = values
             else:
                 metadata[key] = int(values)
@@ -94,8 +94,7 @@ def finalize_grid_offsets(configuration):
     Args:
         configuration dictionnary   
     """
-    network, top_retrieval_n, num_boxes, image_size = get_defaults(
-        configuration, ['network', 'retrieval_top_n', 'num_boxes', 'image_size'])
+    network, image_size = get_defaults(configuration, ['network', 'image_size'])
     if network == 'tiny-yolov2':        
         configuration['num_cells'] = get_num_cells(image_size, 5)
     elif network == 'yolov2':        
@@ -253,20 +252,20 @@ def get_monitored_training_session(with_ready_op=False,
 ############################################################ Inputs tf.data.Dataset  
 def get_inputs(mode='train',
                shard_index=0,
-               num_classes=None,
                feature_keys=None,
                image_folder='',
+               image_format=None,
                image_size=-1,
                grid_offsets=None,
                verbose=0,
                **kwargs):
-    """ Returns a dataset iterator from the given configuration.
+    """ Returns a dataset iterator on the initial input.
     
     Args:
         mode: one of `train` or `test`. Defaults to `train`.
-        num_classes: Number of classes, used to infer the dataset and loading format
         feature_keys: List of feature keys present in the TFrecords
         image_folder: path to the image folder. Can contain a format %s that will be replace by `mode`
+        image_format: used to infer the dataset and loading format
         image_size: Image size
         grid_offsets: Precomputed grid offsets
         verbose: verbosity
@@ -291,8 +290,9 @@ def get_inputs(mode='train',
     assert image_size > 0
     assert feature_keys is not None  
     assert mode in ['train', 'val', 'test']
-    (num_threads, prefetch_capacity, subset, batch_size, with_groups, with_classes) = get_defaults(kwargs, [
-        'num_threads', 'prefetch_capacity', 'subset', 'batch_size', 'with_groups', 'with_classification'], verbose=verbose)
+    (num_threads, prefetch_capacity, batch_size, with_groups, with_classes) = get_defaults(kwargs, [
+        'num_threads', 'prefetch_capacity', 'batch_size', 'with_groups', 'with_classification'], verbose=verbose)
+    num_classes = get_defaults(kwargs, ['num_classes'], verbose=verbose)[0] if with_classes else None
     
     ## Set args
     if mode == 'train':
@@ -327,17 +327,17 @@ def get_inputs(mode='train',
     return tf_inputs.get_tf_dataset(
         tfrecords_path,    
         feature_keys,
+        image_format,
         max_num_bbs,
-        num_classes,
         with_groups=with_groups,
         with_classes=with_classes,
+        num_classes=num_classes,
         batch_size=batch_size,
         num_epochs=num_epochs,
         image_size=image_size,
         image_folder=image_folder,
         data_augmentation_threshold=data_augmentation_threshold,
         grid_offsets=grid_offsets,
-        subset=subset,
         num_shards=num_shards,
         shard_index=shard_index,
         num_threads=num_threads,
@@ -350,20 +350,21 @@ def get_inputs(mode='train',
 def get_stage2_inputs(inputs,
                       crop_boxes,
                       mode='train',
-                      num_classes=None,
                       image_folder='',
+                      image_format=None,
                       image_size=-1,
                       grid_offsets=None,
                       verbose=False,
                       **kwargs):
-    """ Returns the input pipeline with the given global configuration.
+    """ Extract patches to create .
     
     Args:
         inputs, a dictionnary of inputs
         crop_boxes, a (batch_size * num_boxes, 4) tensor of crops
-        mode: one of `train` or `test`. Defaults to `train`.
-        num_classes: Number of classes, used to infer the dataset
+        mode: one of `train`, `val` or `test`. Defaults to `train`.
+        num_classes: Number of classes, used to infer the dataset and proper loading function
         image_folder: path to the image folder. Can contain a format %s that will be replace by `mode`
+        image_format: used to infer the dataset and loading format
         image_size: Image sizes
         grid_offsets: Grid offsets
         verbose: verbosity
@@ -378,21 +379,19 @@ def get_stage2_inputs(inputs,
         A list with `num_gpus` element, each being a dictionary of inputs.
     """
     assert image_size > 0
-    assert mode in ['train', 'test']
-    assert num_classes in [6, 9, 15]
+    assert mode in ['train', 'val', 'test']
     assert len(crop_boxes.get_shape()) == 3
-    full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
-        'full_image_size', 'patch_intersection_ratio_threshold'], verbose=verbose)
+    batch_size, full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
+        'batch_size', 'full_image_size', 'patch_intersection_ratio_threshold'], verbose=verbose)
     
     ## Train: Accumulate crops into queue
     if mode == 'train':
-        (batch_size, shuffle_buffer, num_threads) = get_defaults(
-            kwargs, ['batch_size', 'shuffle_buffer', 'num_threads'], verbose=verbose)    
+        (shuffle_buffer, num_threads) = get_defaults(kwargs, ['shuffle_buffer', 'num_threads'], verbose=verbose)    
         use_queue = True
-    ## Val: Pass the output directly
+    ## Eval: Pass the output directly to the next stage, sequential execution
     else:    
-        test_batch_size, num_crops = get_defaults(kwargs, ['test_batch_size', 'test_num_crops'], verbose=verbose)
-        batch_size = num_crops * test_batch_size
+        num_crops = get_defaults(kwargs, ['test_num_crops'], verbose=verbose)[0]
+        batch_size *= num_crops
         use_queue = False
         shuffle_buffer = 1
         num_threads = 1
@@ -405,6 +404,7 @@ def get_stage2_inputs(inputs,
     return tf_inputs.get_next_stage_inputs(inputs, 
                                            crop_boxes,
                                            image_folder=image_folder,
+                                           image_format=image_format,
                                            batch_size=batch_size,
                                            num_classes=num_classes,
                                            image_size=image_size,
@@ -422,7 +422,7 @@ def add_losses_to_graph(loss_fn, inputs, outputs, configuration, is_chief=False,
     """Add losses to graph collections.
     
     Args:
-        loss_fn: Loss function. Should have signature f: (dict, dict, is_chief, **kwargs)
+        loss_fn: Loss function. Should have signature f: (dict, dict, is_chief, **kwargs) -> tuple of losses and names
         inputs: inputs dictionary
         outputs: outputs dictionary
         configuration: configuration dictionary

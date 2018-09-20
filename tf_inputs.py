@@ -5,29 +5,29 @@ import tfrecords_utils
 import viz
 
 
-def load_image(im_id, num_classes, image_size, image_folder):
+def load_image(im_id, image_size, image_folder, image_format):
     """Resolve the correct image path from the given arguments.
     
     Args:
         im_id: image id saved in the tfrecords
-        num_classes: number of classes, used to resolve the dataset
         image_size: integer specifying the square size to resize the image to
         image_folder: image folder path
+        image_format: Used to resolve the correct image path and format
     
     Returns:
         The loaded image as a 3D Tensor
     """
-    if num_classes == 9:     # VEDAI
+    if image_format == 'vedai':     # VEDAI
         filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=8) + '_co.png'
         type = 'png'
-    elif num_classes == 6:   # STANFORD
+    elif image_format == 'sdd':     # STANFORD DRONE DATASET
         filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=8) + '.jpeg'
         type = 'jpg'
-    elif num_classes == 15:  # DOTA
+    elif image_format == 'dota':    # DOTA
         filename = image_folder  +  '/' + tf.as_string(im_id, fill='0', width=7) + '.jpg'
         type = 'jpg'
     else:
-        raise NotImplementedError("Unrecognized dataset (num_classes = %d)" % num_classes)
+        raise NotImplementedError("Unrecognized image format `%s`" % image_format)
 
     # Parse image
     image = tf.read_file(filename)
@@ -44,13 +44,14 @@ def load_image(im_id, num_classes, image_size, image_folder):
     return image
 
 
-def parse_basic_feature(parsed_features, num_classes, image_folder, image_size=448):
+def parse_basic_feature(parsed_features, image_folder, image_format, image_size=448):
     """"Parse TFRecords features.
     
     Args:
         parsed_features: Parsed TFRecords features.
         num_classes: Number of classes in the dataset. Used to infer the dataset.
         image_folder: Image directory.
+        image_format: Used to resolve the correct image path and format.
         image_size: Resize to the given image size. Defaults to 448.
         
     Returns:
@@ -60,7 +61,7 @@ def parse_basic_feature(parsed_features, num_classes, image_folder, image_size=4
         bounding_boxes, Bounding boxes for this image, shape (max_num_bbs, 4)
     """
     im_id = tf.cast(parsed_features['im_id'], tf.int32)  
-    image = load_image(im_id, num_classes, image_size, image_folder)        
+    image = load_image(im_id, image_size, image_folder, image_format)        
     num_boxes = tf.cast(parsed_features['num_boxes'], tf.int32)
     bounding_boxes = parsed_features["bounding_boxes"]
     return {'im_id': im_id, 'image': image, 'num_boxes': num_boxes, 'bounding_boxes': bounding_boxes}           
@@ -115,9 +116,10 @@ def apply_data_augmentation(in_, num_samples, data_augmentation_threshold):
 
 def get_tf_dataset(tfrecords_file,
                    record_keys,
+                   image_format,
                    max_num_bbs,
-                   num_classes,
                    with_classes=False,
+                   num_classes=None,
                    with_groups=True,
                    grid_offsets=None,
                    batch_size=1,
@@ -128,7 +130,6 @@ def get_tf_dataset(tfrecords_file,
                    num_shards=1,
                    shard_index=0,
                    num_threads=4,
-                   subset=-1,
                    shuffle_buffer=1,
                    prefetch_capacity=1,
                    make_initializable_iterator=False,
@@ -139,7 +140,7 @@ def get_tf_dataset(tfrecords_file,
       tfrecords_file: Path to the TFRecords file containing the data.
       record_keys: Feature keys present in the TFrecords. Loaded from the metadata file
       max_num_bbs: Maximum number of bounding boxes in the dataset. Used for reshaping the `bounding_boxes` records.   
-      num_classes: Number of classes in the dataset. Used to infer the correct dataset and loading format.
+      num_classes: Number of classes in the dataset. Only used if with-classes is True
       with_classes: wheter to use class information
       with_groups: whether to pre-compute grouped instances ground-truth
       grid_offsets: Precomputed grid offsets 
@@ -161,7 +162,7 @@ def get_tf_dataset(tfrecords_file,
       A tf.Data.dataset iterator (and its initializer if initializable_iterator)
     """
     # Asserts
-    assert num_classes in [6, 9, 15]
+    assert not (with_classes and num_classes is None)
     assert len(record_keys)
     assert batch_size > 0
     assert image_size > 0
@@ -190,7 +191,7 @@ def get_tf_dataset(tfrecords_file,
     def parsing_function(example_proto):
         # Basic features
         parsed_features = tf.parse_single_example(example_proto, features)
-        output = parse_basic_feature(parsed_features, num_classes, image_folder, image_size)
+        output = parse_basic_feature(parsed_features, image_folder, image_format, image_size=image_size)
         bounding_boxes = output['bounding_boxes']
         
         # Empty/active cells mask
@@ -226,7 +227,7 @@ def get_tf_dataset(tfrecords_file,
         output["is_flipped"] = tf.constant(0.)
             
         # Optional : add classes
-        if with_classes:
+        if with_classes:            
             class_labels = tf.one_hot(parsed_features['classes'], num_classes, 
                                       axis=-1, on_value=1, off_value=0, dtype=tf.int32)
             output['class_labels'] = class_labels
@@ -248,8 +249,6 @@ def get_tf_dataset(tfrecords_file,
     with tf.name_scope('load_dataset'):
         # Parse data
         dataset = tf.data.TFRecordDataset(tfrecords_file)
-        if subset > 0: 
-            dataset = dataset.take(subset)
         # Shard
         if num_shards > 1:
             dataset = dataset.shard(num_shards, shard_index)       
@@ -271,7 +270,6 @@ def get_tf_dataset(tfrecords_file,
             iterator = dataset.make_one_shot_iterator()    
             iterator_init = None
         in_ = iterator.get_next()
-        in_['batch_size'] = batch_size
         
     ## Data augmentation
     with tf.name_scope('data_augmentation'):
@@ -281,10 +279,10 @@ def get_tf_dataset(tfrecords_file,
     ## Verbose log
     if verbose == 2:
         print('\n'.join("    \033[32m%s\033[0m: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
-                        for key, value in in_.items() if key != 'batch_size'))
+                        for key, value in in_.items()))
     elif verbose == 1:
         print('\n'.join("    *%s*: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
-                        for key, value in in_.items() if key != 'batch_size'))
+                        for key, value in in_.items()))
     return in_, iterator_init
 
 
@@ -311,9 +309,14 @@ def extract_groups(inputs,
     #Returns:
         Extracted crops and their confidence scores
     """
-    assert mode in ['train', 'test']
-    (confidence_threshold, nms_threshold, num_outputs) = graph_manager.get_defaults(
-        kwargs, ['%s_patch_confidence_threshold' % mode, 'patch_nms_threshold', '%s_num_crops' % mode], verbose=verbose)
+    if mode == 'train':
+        (confidence_threshold, nms_threshold, num_outputs) = graph_manager.get_defaults(
+            kwargs, ['train_patch_confidence_threshold', 'train_patch_nms_threshold', 'train_num_crops'], verbose=verbose)
+    elif mode in ['val', 'test']:
+        (confidence_threshold, nms_threshold, num_outputs) = graph_manager.get_defaults(
+            kwargs, ['test_patch_confidence_threshold', 'test_patch_nms_threshold', 'test_num_crops'], verbose=verbose)
+    else:
+        raise ValueError('Unknown mode', mode)
     if verbose:        
         print('  > extracting %d crops' % num_outputs)
         
@@ -324,8 +327,9 @@ def extract_groups(inputs,
         predicted_scores = tf_utils.flatten_percell_output(outputs["confidence_scores"])
         predicted_boxes = tf_utils.flatten_percell_output(outputs["bounding_boxes"])
         
-    # At test time we only extract crops if groups or low confidence individuals
+    ## Filter
     with tf.name_scope('filter_groups'):
+        # At test time, we keep out individual confidences with high confidence
         if mode == 'test' and 'group_classification_logits' in outputs:
             strong_confidence_threshold = graph_manager.get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
@@ -343,42 +347,46 @@ def extract_groups(inputs,
             predicted_scores *= should_be_refined
             predicted_boxes *= should_be_refined
         
-    ## Filter out low confidences
-    # predicted_score: (batch, num_boxes)
-    predicted_scores = tf.squeeze(predicted_scores, axis=-1)
-    with tf.name_scope('filter_confidence'):
-        filtered = tf.to_float(predicted_scores > confidence_threshold)
-        predicted_scores *= filtered
-        predicted_boxes *= tf.expand_dims(filtered, axis=-1)
+        # Additionallly, we filter out boxes with confidence below the threshold
+        if confidence_threshold > 0.:
+            # predicted_score: (batch, num_boxes)
+            predicted_scores = tf.squeeze(predicted_scores, axis=-1)
+            with tf.name_scope('filter_confidence'):
+                filtered = tf.to_float(predicted_scores > confidence_threshold)
+                predicted_scores *= filtered
+                predicted_boxes *= tf.expand_dims(filtered, axis=-1)
         
-    ## Rescale boxes with the learned offsets
+    ## Rescale remaining  boxes with the learned offsets
     with tf.name_scope('offsets_rescale_boxes'):
         if 'offsets' in outputs:
             predicted_offsets = tf_utils.flatten_percell_output(outputs["offsets"])
             predicted_boxes = tf_utils.rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon)
     
-    ## Non-maximum suppression
-    # nms_boxes: (batch, num_crops, 4)
-    # nms_boxes_confidences: (batch, num_crops)
-    with tf.name_scope('nms'):
-        nms_boxes = []
-        nms_boxes_confidences = []
-        for i in range(inputs['batch_size']):
-            boxes, scores = tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
-                                                  predicted_scores[i, :],
-                                                  num_outputs, 
-                                                  iou_threshold=nms_threshold)
-            nms_boxes.append(boxes)
-            nms_boxes_confidences.append(scores)
-        nms_boxes = tf.stack(nms_boxes, axis=0) 
-        nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
-        nms_boxes_confidences = tf.stack(nms_boxes_confidences, axis=0) 
-        nms_boxes_confidences = tf.reshape(nms_boxes_confidences, (-1, num_outputs))
-        
-    ## Return
-    outputs['crop_boxes'] = nms_boxes
-    outputs['crop_boxes_confidences'] = nms_boxes_confidences
-    return nms_boxes, nms_boxes_confidences
+    ## Extract n best patches with Non-Maximum Suppression
+    if num_outputs > 0:    
+        # nms_boxes: (batch, num_crops, 4)
+        # nms_boxes_confidences: (batch, num_crops)
+        batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
+        with tf.name_scope('nms'):
+            nms_boxes = []
+            nms_boxes_confidences = []
+            for i in range(batch_size):
+                # TODO(aroyer): cond i < batch_size
+                boxes, scores = tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
+                                                      predicted_scores[i, :],
+                                                      num_outputs, 
+                                                      iou_threshold=nms_threshold)
+                nms_boxes.append(boxes)
+                nms_boxes_confidences.append(scores)
+            nms_boxes = tf.stack(nms_boxes, axis=0) 
+            nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
+            nms_boxes_confidences = tf.stack(nms_boxes_confidences, axis=0) 
+            nms_boxes_confidences = tf.reshape(nms_boxes_confidences, (-1, num_outputs))
+            
+        # Return
+        outputs['crop_boxes'] = nms_boxes
+        outputs['crop_boxes_confidences'] = nms_boxes_confidences
+        return nms_boxes, nms_boxes_confidences
 
 
 def tile_and_reshape(t, num_crops):
@@ -400,8 +408,8 @@ def tile_and_reshape(t, num_crops):
 def get_next_stage_inputs(inputs, 
                           crop_boxes,
                           image_folder=None,
+                          image_format=None,
                           batch_size=32,
-                          num_classes=80,
                           image_size=256,
                           full_image_size=1024,
                           grid_offsets=None,
@@ -417,7 +425,7 @@ def get_next_stage_inputs(inputs,
     Args:
         inputs, a dictionnary of inputs
         crop_boxes, a (batch_size, num_crops, 4) tensor of crops
-        image_folder: Image directory, used for reloading the full resolution images
+        image_folder: Image directory, used for reloading the full resolution images if needed
         batch_size: Batch size for the output of this pipeline
         num_classes: Number of classes in the dataset
         image_size: Size of the images patches in the new dataset
@@ -448,14 +456,16 @@ def get_next_stage_inputs(inputs,
         # Re-load full res image (flip if necessary)
         if image_folder is not None and full_image_size > 0:
             print('   > Upscale patch from %dx%d ground-truth' % (full_image_size, full_image_size))
-            full_images = []
-            for i in range(inputs['batch_size']):
-                image = tf.cond(inputs['im_id'][i] >= 0,
+            full_images = []            
+            original_batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
+            for i in range(original_batch_size):
+                image = tf.cond(i < original_batch_size,
                                 true_fn=lambda: load_image(inputs['im_id'][i], num_classes, full_image_size, image_folder),
                                 false_fn=lambda: tf.zeros((full_image_size, full_image_size, 3)))
                 full_images.append(image)
             full_images = tf.stack(full_images, axis=0)     
             full_images = tf.where(inputs["is_flipped"] > 0., tf.reverse(full_images, [2]), full_images)
+        # Otherwise extract patches from the image directlu
         else:
             print('   > Extract patch directly from input image')
             full_images = inputs['image']
