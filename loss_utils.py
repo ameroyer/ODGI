@@ -67,7 +67,7 @@ def get_standard_loss(inputs,
     ## Create obj mask mapping ground-truth to predictors
     # obj_ij_mask: (batch, num_cells, num_cells, num_preds, num_gt, 1)
     with tf.name_scope('assign_predictors'):        
-        best_reward = tf.reduce_max(assignment_rewards, axis=-2, keep_dims=True)
+        best_reward = tf.reduce_max(assignment_rewards, axis=-2, keepdims=True)
         obj_ij_mask = tf.to_float(tf.greater_equal(assignment_rewards, best_reward))
         obj_ij_mask *= obj_i_mask
         obj_ij_mask = tf.expand_dims(obj_ij_mask, axis=-1) 
@@ -107,7 +107,7 @@ def get_standard_loss(inputs,
         # Predictors in empty cells
         with tf.name_scope('empty'):
             # noobj_mask: (batch, num_cells, num_cells, 1, 1)
-            noobj_mask = 1. - tf.minimum(1., tf.reduce_sum(obj_i_mask, axis=-1, keep_dims=True))
+            noobj_mask = 1. - tf.minimum(1., tf.reduce_sum(obj_i_mask, axis=-1, keepdims=True))
             confidence_loss_noobj = tf.losses.compute_weighted_loss(
                 outputs["confidence_scores"]**2,
                 weights=noobj_confidence_loss_weight * noobj_mask,
@@ -186,7 +186,7 @@ def get_odgi_loss(inputs,
     
     # obj_i_mask: (batch, num_cells, num_cells, 1, num_gt), indicates presence of a box in a cell
     obj_i_mask = inputs['obj_i_mask_bbs']
-    non_empty_cell_mask = tf.minimum(1., tf.reduce_sum(obj_i_mask, axis=-1, keep_dims=True))    
+    non_empty_cell_mask = tf.minimum(1., tf.reduce_sum(obj_i_mask, axis=-1, keepdims=True))    
     
     ## Split coordinates
     # pred_bbs: 4 * (batch, num_cells, num_cells, 1, 1)
