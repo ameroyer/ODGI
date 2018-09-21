@@ -61,6 +61,7 @@ with tf.Graph().as_default() as graph:
     ############################### Train
     with tf.name_scope('train'):
         print('\nGraph:')     
+        add_summaries = multistage_configuration['save_summaries_steps'] is not None
         for i in range(configuration['num_gpus']): 
             is_chief = (i == 0)
             with tf.device('/gpu:%d' % i):
@@ -73,7 +74,7 @@ with tf.Graph().as_default() as graph:
                                                 mode='train', is_chief=is_chief, verbose=args.verbose)
                     train_s2_outputs = train_pass(train_s2_inputs, stage2_configuration,
                                                   intermediate_stage=False, is_chief=is_chief, verbose=args.verbose) 
-                    if is_chief and args.summaries:
+                    if is_chief and add_summaries:
                         print(' > summaries:')
                         graph_manager.add_summaries(train_inputs, train_s1_outputs, mode='train', 
                                                     family="train_stage1", **stage1_configuration)
@@ -82,7 +83,7 @@ with tf.Graph().as_default() as graph:
 
         # Training Objective
         with tf.name_scope('losses'):
-            losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'])            
+            losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'], add_summaries=add_summaries)            
             full_loss = tf.add_n([x[0] for x in losses])
 
         # Train op    
@@ -93,7 +94,7 @@ with tf.Graph().as_default() as graph:
         print('\nLosses:')
         print('\n'.join(["    *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
                        for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
-        if args.summaries:
+        if add_summaries:
             with tf.name_scope('config_summary'):
                 viz.add_text_summaries(stage1_configuration, family="stage1") 
                 viz.add_text_summaries(stage2_configuration, family="stage2") 
@@ -112,12 +113,7 @@ with tf.Graph().as_default() as graph:
                 eval_s2_inputs = feed_pass(eval_inputs, eval_s1_outputs, stage2_configuration,
                                            mode='test', verbose=False)
                 eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False) 
-                if is_chief and args.summaries:
-                    print(' > summaries:')
-                    
-                    fck = tf.get_collection('evaluation')
-                    fck = tf.summary.merge(fck)
+                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False)
                 
 
     ########################################################################## Run Session
@@ -158,12 +154,11 @@ with tf.Graph().as_default() as graph:
                                              eval_inputs['bounding_boxes'],                                             
                                              eval_s2_outputs['bounding_boxes'],
                                              eval_s2_outputs['detection_scores'],
-                                             fck], 
+                                             eval_s1_outputs['bounding_boxes'],
+                                             eval_s1_outputs['detection_scores'],
+                                             eval_s1_outputs['kept_out_filter']], 
                                             feed_dict=feed_dict)
-                            if it == 0:
-                                summary_writer.add_summary(out_[-1])
-                                summary_writer.flush()
-                            out_ = out_[:-1]
+                            # Parse bounding boxes
                             eval_utils.append_individuals_detection_output(
                                 validation_results_path, *out_, **multistage_configuration)
                             it += 1
