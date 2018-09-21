@@ -60,7 +60,6 @@ defaults_dict = {
     "retrieval_iou_threshold": [0.5, 0.75],                # Evaluate at these retrieval threshold
     "retrieval_nms_threshold": 0.5,                        # IoU threshold for the Non-maximum suppression during evaluation
     "save_checkpoint_secs": 3600,                          # Save checkpoints at the given frequency (in seconds)
-    "save_evaluation_steps": 1000,
     # Load pretrained model
     "restore_replace_to": '',                              # string to replace to in variable names to restore
     "restore_scope": None,                                 # If a checkpoint path is given, restore from the given scope
@@ -80,7 +79,7 @@ def build_base_parser(parser):
     parser.add_argument('--num_epochs', type=int, help='Number of training epochs')
     parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
     parser.add_argument('--save_evaluation_steps', type=int, help='Print the loss at every given step')
-    parser.add_argument('--summaries', action='store_true', help='Save Tensorboard summaries while training')
+    parser.add_argument('--save_summaries_steps', type=int, help='Save summaries tensorboards at every given step')
     parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
   
     
@@ -115,19 +114,19 @@ def build_base_config_from_args(args):
     if args.data == 'vedai':
         configuration['setting'] = 'vedai'
         configuration['exp_name'] = 'vedai'
-        configuration['save_summaries_steps'] = 100
+        configuration['save_summaries_steps'] = args.save_summaries_steps
         configuration['save_evaluation_steps'] = 250 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 1000 if args.num_epochs is None else args.num_epochs
     elif args.data == 'stanford':
         configuration['setting'] = 'sdd'
         configuration['exp_name'] = 'sdd'
-        configuration['save_summaries_steps'] = 200 
+        configuration['save_summaries_steps'] = args.save_summaries_steps 
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 120 if args.num_epochs is None else args.num_epochs
     elif args.data == 'dota':
         configuration['setting'] = 'dota'
         configuration['exp_name'] = 'dota'
-        configuration['save_summaries_steps'] = 500
+        configuration['save_summaries_steps'] = args.save_summaries_steps
         configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
 
