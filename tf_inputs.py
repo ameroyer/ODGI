@@ -363,26 +363,32 @@ def extract_groups(inputs,
             predicted_boxes = tf_utils.rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon)
     
     ## Extract n best patches
+    # crop_boxes: (batch, num_crops, 4)
+    # crop_boxes_confidences: (batch, num_crops)
     if num_outputs > 0:    
         # Non-Maximum Suppression
         if nms_threshold < 1.0:
-            # nms_boxes: (batch, num_crops, 4)
-            # nms_boxes_confidences: (batch, num_crops)
             batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
+            current_batch = tf.shape(inputs['im_id'])[0]
             with tf.name_scope('nms'):
                 nms_boxes = []
                 nms_boxes_confidences = []
                 for i in range(batch_size):
-                    # TODO(aroyer): cond i < batch_size
-                    boxes, scores = tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
-                                                          predicted_scores[i, :],
-                                                          num_outputs, 
-                                                          iou_threshold=nms_threshold)
+                    boxes, scores = tf.cond(
+                        i < current_batch, # last batch can be smaller  
+                        true_fn=lambda:tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
+                                                             predicted_scores[i, :],
+                                                             num_outputs, 
+                                                             iou_threshold=nms_threshold),
+                        false_fn=lambda: (tf.zeros((num_outputs, 4)), tf.zeros((num_outputs,))) 
+                    )
                     nms_boxes.append(boxes)
                     nms_boxes_confidences.append(scores)
                 nms_boxes = tf.stack(nms_boxes, axis=0) 
+                nms_boxes = tf.slice(nms_boxes, (0, 0, 0), (current_batch, -1, -1))
                 nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
                 nms_boxes_confidences = tf.stack(nms_boxes_confidences, axis=0) 
+                nms_boxes_confidences = tf.slice(nms_boxes_confidences, (0, 0), (current_batch, -1))
                 nms_boxes_confidences = tf.reshape(nms_boxes_confidences, (-1, num_outputs))
             outputs['crop_boxes'] = nms_boxes
             outputs['crop_boxes_confidences'] = nms_boxes_confidences
@@ -419,9 +425,9 @@ def tile_and_reshape(t, num_crops):
 
 def get_next_stage_inputs(inputs, 
                           crop_boxes,
-                          batch_size,
+                          batch_size=None,
                           image_size=256,
-                          max_batch_size=None,
+                          previous_batch_size=None,
                           full_image_size=1024,
                           image_folder=None,
                           image_format=None,
@@ -449,7 +455,6 @@ def get_next_stage_inputs(inputs,
         capacity: Output queue capacity
         verbose: verbosity        
     """
-    assert batch_size > 0   
     assert 0. <= intersection_ratio_threshold < 1.
     num_crops = crop_boxes.get_shape()[1].value   
     new_inputs = {}
@@ -469,7 +474,7 @@ def get_next_stage_inputs(inputs,
         if image_folder is not None and full_image_size > 0:
             full_images = []
             current_batch = tf.shape(inputs['im_id'])[0]
-            for i in range(max_batch_size): 
+            for i in range(previous_batch_size): 
                 image = tf.cond(i < current_batch, # last batch can be smaller                                
                                 true_fn=lambda: load_image(inputs['im_id'][i], full_image_size, image_folder, image_format),
                                 false_fn=lambda: tf.zeros((full_image_size, full_image_size, 3)))
@@ -536,6 +541,7 @@ def get_next_stage_inputs(inputs,
         
     # Enqueue the new inputs during training, or pass the output directly to the next stage at test time
     if use_queue:
+        assert batch_size is not None
         filter_valid = tf.logical_and(crop_boxes[..., 2] > crop_boxes[..., 0], crop_boxes[..., 3] > crop_boxes[..., 1] )
         filter_valid = tf.reshape(filter_valid, (-1,))
         out_ = tf.train.maybe_batch(

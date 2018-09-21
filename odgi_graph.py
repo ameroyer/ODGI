@@ -150,28 +150,28 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
                      is_training=False, reuse=True, verbose=verbose) 
             
     # Reshape outputs from stage2 to stage1
+    crop_boxes = stage1_outputs["crop_boxes"]  
+    num_crops = crop_boxes.get_shape()[1].value
+    num_boxes = outputs['bounding_boxes'].get_shape()[-2].value
     # for summary
-    unscaled_outputs = {key: outputs[key] for key in ['bounding_boxes', 'detection_scores']} 
     with tf.name_scope('reshape_outputs'):
-        crop_boxes = stage1_outputs["crop_boxes"]  
-        num_crops = crop_boxes.get_shape()[1].value
-        num_boxes = outputs['bounding_boxes'].get_shape()[-2].value
-        batch_size = graph_manager.get_defaults(configuration, ['batch_size'], verbose=verbose)[0]
-        # TODO(batch size?)
+        #batch_size = graph_manager.get_defaults(configuration, ['batch_size'], verbose=verbose)[0]
         # outputs:  (stage1_batch * num_crops, num_cell, num_cell, num_boxes, ...)
         # to: (stage1_batch, num_cell, num_cell, num_boxes * num_crops, ...)
         for key, value in outputs.items():
             shape = tf.shape(value)
-            batches = tf.split(value, batch_size, axis=0)
-            batches = [tf.concat(tf.unstack(b, num=num_crops, axis=0), axis=2) for b in batches]
-            outputs[key] = tf.stack(batches, axis=0)
+            batches = tf.split(value, num_crops, axis=0)
+            batches = tf.concat(batches, axis=3)
+            outputs[key] = batches
+            #batches = [tf.concat(tf.unstack(b, num=num_crops, axis=0), axis=2) for b in batches]
+            #outputs[key] = tf.stack(batches, axis=0)
     
     # Rescale bounding boxes from stage2 to stage1
     with tf.name_scope('rescale_bounding_boxes'):
         # crop_boxes: (stage1_batch, 1, 1, num_crops * num_boxes, 4)
-        crop_boxes = tf.reshape(crop_boxes, (batch_size, num_crops, 1, 4))
+        crop_boxes = tf.expand_dims(crop_boxes, axis=-2)
         crop_boxes = tf.tile(crop_boxes, (1, 1, num_boxes, 1))
-        crop_boxes = tf.reshape(crop_boxes, (batch_size, 1, 1, num_crops * num_boxes, 4))
+        crop_boxes = tf.reshape(crop_boxes, (-1, 1, 1, num_crops * num_boxes, 4))
         crop_mins, crop_maxs = tf.split(crop_boxes, 2, axis=-1)
         # bounding_boxes: (stage1_batch, num_cells, num_cells, num_crops * num_boxes, 4)
         bounding_boxes = outputs['bounding_boxes']
@@ -190,4 +190,4 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
         outputs['detection_scores'] = tf.concat([outputs['detection_scores'],
                                                 stage1_outputs['added_detection_scores']], axis=1)
         
-    return outputs, unscaled_outputs
+    return outputs

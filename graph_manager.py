@@ -33,29 +33,7 @@ def get_defaults(kwargs, defaults, verbose=0):
             raise IndexError('\033[31mError\033[0m: No default value found for parameter \033[31m%s\033[0m' % key)
         output.append(v)
     return output
-
-    
-def load_metadata(filename):
-    """Load and parse the metadata file for a given dataset.
-    
-    Args: 
-        filename: path to the metadata file
-        
-    Returns:
-        A dictionnary of the metadata values
-    """ 
-    metadata = {}
-    with open(filename, 'r') as f:    
-        for line in f.read().splitlines():
-            key, values = line.split('\t', 1)
-            if key in ['data_classes', 'feature_keys']:
-                metadata[key] = values.split(',')
-            elif key.endswith('tfrecords') or key in ['image_format', 'image_folder']:
-                metadata[key] = values
-            else:
-                metadata[key] = int(values)
-        return metadata
-    
+   
 
 def finalize_configuration(configuration, verbose=2):
     """ Finalize and print the given configuration object.
@@ -376,21 +354,23 @@ def get_stage2_inputs(inputs,
     Returns:
         A list with `num_gpus` element, each being a dictionary of inputs.
     """
+    assert 'batch_size' in kwargs
+    assert 'previous_batch_size' in kwargs
     assert image_size > 0
     assert mode in ['train', 'val', 'test']
     assert len(crop_boxes.get_shape()) == 3
-    max_batch_size, full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
-        'batch_size', 'full_image_size', 'patch_intersection_ratio_threshold'], verbose=verbose)
+    full_image_size, intersection_ratio_threshold = get_defaults(kwargs, [
+        'full_image_size', 'patch_intersection_ratio_threshold'], verbose=verbose)
+    previous_batch_size = kwargs['previous_batch_size']
+    batch_size = kwargs['batch_size']
     
     ## Train: Accumulate crops into queue
     if mode == 'train':
-        (shuffle_buffer, num_threads) = get_defaults(kwargs, ['shuffle_buffer', 'num_threads'], verbose=verbose)    
-        use_queue = True
-        batch_size = max_batch_size
+        (shuffle_buffer, num_threads) = get_defaults(kwargs, ['shuffle_buffer', 'num_threads'], verbose=verbose) 
+        use_queue = (batch_size is not None)
     ## Eval: Pass the output directly to the next stage, sequential execution
     else:    
         num_crops = get_defaults(kwargs, ['test_num_crops'], verbose=verbose)[0]
-        batch_size = max_batch_size * num_crops
         use_queue = False
         shuffle_buffer = 1
         num_threads = 1
@@ -402,8 +382,8 @@ def get_stage2_inputs(inputs,
     
     return tf_inputs.get_next_stage_inputs(inputs, 
                                            crop_boxes,
-                                           batch_size,
-                                           max_batch_size=max_batch_size,
+                                           batch_size=batch_size,
+                                           previous_batch_size=previous_batch_size,
                                            image_folder=image_folder,
                                            image_format=image_format,
                                            image_size=image_size,
