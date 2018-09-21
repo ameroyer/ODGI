@@ -118,6 +118,10 @@ def eval_pass_intermediate_stage(inputs, configuration, verbose=False):
     with tf.name_scope('extract_patches'):
         tf_inputs.extract_groups(inputs, outputs, mode='test', verbose=verbose, **configuration)  
         
+    ### TEST
+    graph_manager.add_summaries(inputs, outputs, mode='test', family="eval_stage1", **configuration)
+    ### TEST
+        
     return outputs    
 
 
@@ -153,18 +157,26 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
     crop_boxes = stage1_outputs["crop_boxes"]  
     num_crops = crop_boxes.get_shape()[1].value
     num_boxes = outputs['bounding_boxes'].get_shape()[-2].value
+    num_cells = outputs['bounding_boxes'].get_shape()[-2].value
     # for summary
     with tf.name_scope('reshape_outputs'):
         #batch_size = graph_manager.get_defaults(configuration, ['batch_size'], verbose=verbose)[0]
         # outputs:  (stage1_batch * num_crops, num_cell, num_cell, num_boxes, ...)
         # to: (stage1_batch, num_cell, num_cell, num_boxes * num_crops, ...)
-        for key, value in outputs.items():
+        for key, value in outputs.items():            
             shape = tf.shape(value)
-            batches = tf.split(value, num_crops, axis=0)
-            batches = tf.concat(batches, axis=3)
-            outputs[key] = batches
+            batch_shape = tf.stack([-1, num_crops])            
+            new_shape = tf.concat([batch_shape, shape[1:]], axis=0)
+            batches = tf.reshape(value, new_shape)
+            #batches = tf.reshape((-1, num_crops, n))
+            #batches = tf.split(value, num_crops, axis=0)
+            #batches = tf.concat(batches, axis=3)
+            #outputs[key] = batches
+            #outputs[key] = batches[-1]
+            #print(key, outputs[key])
+            batches = tf.concat(tf.unstack(batches, num=num_crops, axis=1), axis=3)
             #batches = [tf.concat(tf.unstack(b, num=num_crops, axis=0), axis=2) for b in batches]
-            #outputs[key] = tf.stack(batches, axis=0)
+            outputs[key] = tf.stack(batches, axis=0)
     
     # Rescale bounding boxes from stage2 to stage1
     with tf.name_scope('rescale_bounding_boxes'):
@@ -181,7 +193,7 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
         outputs['bounding_boxes'] = bounding_boxes
             
     ## Add the additional bounding boxes outputs propagated from earlier stages
-    if 'added_bounding_boxes' in stage1_outputs:
+    if False:#'added_bounding_boxes' in stage1_outputs:
         assert 'added_detection_scores' in stage1_outputs
         outputs['bounding_boxes'] = tf_utils.flatten_percell_output(outputs['bounding_boxes'])
         outputs['bounding_boxes'] = tf.concat([outputs['bounding_boxes'],
@@ -189,5 +201,8 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
         outputs['detection_scores'] = tf_utils.flatten_percell_output(outputs['detection_scores'])
         outputs['detection_scores'] = tf.concat([outputs['detection_scores'],
                                                 stage1_outputs['added_detection_scores']], axis=1)
+        
+    graph_manager.add_summaries(stage1_inputs, outputs, mode='test', verbose=0,
+                                family="eval_final", **configuration)
         
     return outputs

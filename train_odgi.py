@@ -112,7 +112,12 @@ with tf.Graph().as_default() as graph:
                 eval_s2_inputs = feed_pass(eval_inputs, eval_s1_outputs, stage2_configuration,
                                            mode='test', verbose=False)
                 eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False)
+                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False) 
+                if is_chief and args.summaries:
+                    print(' > summaries:')
+                    
+                    fck = tf.get_collection('evaluation')
+                    fck = tf.summary.merge(fck)
                 
 
     ########################################################################## Run Session
@@ -141,7 +146,6 @@ with tf.Graph().as_default() as graph:
                 # Evaluate
                 if (multistage_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
                     and global_step_  % multistage_configuration["save_evaluation_steps"] == 0):
-                    print(global_step_, multistage_configuration["save_evaluation_steps"])
                     feed_dict = {use_test_split: False}
                     with open(validation_results_path, 'w') as f:
                         f.write('Validation results at step %d\n' % global_step_)
@@ -153,8 +157,13 @@ with tf.Graph().as_default() as graph:
                                              eval_inputs['num_boxes'],
                                              eval_inputs['bounding_boxes'],                                             
                                              eval_s2_outputs['bounding_boxes'],
-                                             eval_s2_outputs['detection_scores']], 
+                                             eval_s2_outputs['detection_scores'],
+                                             fck], 
                                             feed_dict=feed_dict)
+                            if it == 0:
+                                summary_writer.add_summary(out_[-1])
+                                summary_writer.flush()
+                            out_ = out_[:-1]
                             eval_utils.append_individuals_detection_output(
                                 validation_results_path, *out_, **multistage_configuration)
                             it += 1

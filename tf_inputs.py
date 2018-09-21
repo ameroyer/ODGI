@@ -330,7 +330,7 @@ def extract_groups(inputs,
     ## Filter
     with tf.name_scope('filter_groups'):
         # At test time, we keep out individual confidences with high confidence
-        if mode == 'test' and 'group_classification_logits' in outputs:
+        if mode in ['test', 'val'] and 'group_classification_logits' in outputs:
             strong_confidence_threshold = graph_manager.get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
             # is_group: (batch, num_boxes, 1)
@@ -347,7 +347,7 @@ def extract_groups(inputs,
             predicted_scores *= should_be_refined
             predicted_boxes *= should_be_refined
         
-        # Additionallly, we filter out boxes with confidence below the threshold
+        # Additionally, we filter out boxes with confidence below the threshold
         if confidence_threshold > 0.:
             # predicted_score: (batch, num_boxes)
             predicted_scores = tf.squeeze(predicted_scores, axis=-1)

@@ -142,7 +142,7 @@ def add_image_summaries(inputs,
             
     # Boxes
     with tf.name_scope('3_outputs_boxes'):    
-        tiled_confs = tf.reduce_max(outputs['detection_scores'], axis=-1, keep_dims=True)            
+        tiled_confs = tf.reduce_max(outputs['detection_scores'], axis=-1, keepdims=True)            
         for ct in confidence_thresholds:
             bbs = tf.to_float(tiled_confs > ct) * outputs['bounding_boxes']
             image = draw_bounding_boxes(inputs['image'], bbs)          
@@ -159,7 +159,7 @@ def add_image_summaries(inputs,
     with tf.name_scope('5_group_flags'):
         if 'group_classification_logits' in outputs:    
             confusions = inputs['group_flags'] - tf.nn.sigmoid(outputs['group_classification_logits'])
-            confusions *= tf.minimum(1., tf.reduce_sum(inputs['obj_i_mask_bbs'], axis=-1, keep_dims=True))
+            confusions *= tf.minimum(1., tf.reduce_sum(inputs['obj_i_mask_bbs'], axis=-1, keepdims=True))
             confusions = tf.squeeze(confusions, axis=-1)
             tf.summary.image('confusion_matrix', get_heatmap(confusions, [3, 3], min_cov=-1., max_cov=1.), 
                              max_outputs=num_summaries, collections=[collection], family=family)

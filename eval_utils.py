@@ -35,9 +35,9 @@ def append_individuals_detection_output(file_path,
                 output = non_max_suppression(
                     pred_boxes_flat, pred_c_flat[:, c], iou_threshold=iou_threshold, score_threshold=score_threshold)
                 f.write('%s-pred-%d\t%d\t%s\n' % (im_id, c, pred_boxes_flat.shape[0], '\t'.join(
-                    '%.5f,%.5f,%.5f,%.5f,%.3f,%d' % tuple(x) for x in output)))          
+                    '%.10f,%.10f,%.10f,%.10f,%.3f,%d' % tuple(x) for x in output)))          
                 
-
+                
 def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
     """Non maximum suppression
     
@@ -51,14 +51,15 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
         A (num_boxes, 6) array containing boxes (coordinates, confidence and nms filtering boolean) sorted 
         by decreasing confidence score
     """
-    indices = np.argsort(- scores, axis=None, kind='mergesort')    
+    indices = np.argsort(- scores, axis=None, kind='mergesort')
     output = np.zeros((boxes.shape[0], 6))
     nms_boxes = None 
-    for it, index in enumerate(indices):
-        # coordinate and scores
+    it = 0
+    for index in indices:
+        # coordinates
         box = boxes[index]
+        # scores
         score = scores[index]
-        # score thresholding
         flag = (score >= score_threshold) 
         # NMS thresholding
         if flag:
@@ -74,9 +75,9 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
         output[it, :4] = box
         output[it, 4] = score
         output[it, 5] = flag
+        it += 1
     # end
     return output
-    
     
 def max_iou(box, boxes, epsilon=1e-12):
     """ Maximum iou between box and all the boxes in `boxes`

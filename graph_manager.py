@@ -185,7 +185,7 @@ def get_monitored_training_session(with_ready_op=False,
         hooks.append(tf.train.SummarySaverHook(
             save_steps=1e6, output_dir=log_dir, summary_op=tf.summary.merge_all(key='config')))
     except ValueError:
-        print('    \033[31mWarning:\033[0m No summaries found in collection "config"')
+        print('    \033[31mWarning:\033[0m No summaries found in collection "config"') 
     
     # Model restore    
     if model_path is  None:
