@@ -1,3 +1,4 @@
+##### Default option
 defaults_dict = {
     # Base 
     "batch_size": 16,                                     
@@ -66,3 +67,83 @@ defaults_dict = {
     "restore_to_replace": '',                              # string to replace in variable names to restore
     "summary_confidence_thresholds": [0.5],                # Plot output boxes cut at the given thresholds  
 }
+
+def build_base_parser(parser):
+    """Add common arguments to the base parser"""
+    parser.add_argument('data', type=str, help='Dataset. One of "vedai", "stanford" or "dota"')
+    parser.add_argument('--network', type=str, default="tiny-yolov2", help='Architecture. One of "tiny-yolov2" or "yolov2"')
+    parser.add_argument('--size', default=1024, type=int, help='Size of input images')
+    parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs workers to use')
+    parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
+    parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
+    parser.add_argument('--learning_rate', type=float, default=1e-3, help='Learning rate')
+    parser.add_argument('--num_epochs', type=int, help='Number of training epochs')
+    parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
+    parser.add_argument('--save_evaluation_steps', type=int, help='Print the loss at every given step')
+    parser.add_argument('--summaries', action='store_true', help='Save Tensorboard summaries while training')
+    parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
+  
+    
+def load_metadata(filename):
+    """Load and parse the metadata file for a given dataset.
+    
+    Args: 
+        filename: path to the metadata file
+        
+    Returns:
+        A dictionnary of the metadata values
+    """ 
+    metadata = {}
+    with open(filename, 'r') as f:    
+        for line in f.read().splitlines():
+            key, values = line.split('\t', 1)
+            if key in ['data_classes', 'feature_keys']:
+                metadata[key] = values.split(',')
+            elif key.endswith('tfrecords') or key in ['image_format', 'image_folder']:
+                metadata[key] = values
+            else:
+                metadata[key] = int(values)
+        return metadata
+    
+    
+def build_base_config_from_args(args):
+    """Build the base configuration from the command line argument"""
+    
+    ## Set dataset
+    configuration = {}
+    configuration['network'] = args.network
+    if args.data == 'vedai':
+        configuration['setting'] = 'vedai'
+        configuration['exp_name'] = 'vedai'
+        configuration['save_summaries_steps'] = 100
+        configuration['save_evaluation_steps'] = 250 if args.save_evaluation_steps is None else args.save_evaluation_steps
+        configuration['num_epochs'] = 1000 if args.num_epochs is None else args.num_epochs
+    elif args.data == 'stanford':
+        configuration['setting'] = 'sdd'
+        configuration['exp_name'] = 'sdd'
+        configuration['save_summaries_steps'] = 200 
+        configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
+        configuration['num_epochs'] = 120 if args.num_epochs is None else args.num_epochs
+    elif args.data == 'dota':
+        configuration['setting'] = 'dota'
+        configuration['exp_name'] = 'dota'
+        configuration['save_summaries_steps'] = 500
+        configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
+        configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
+
+    ## Metadata
+    tfrecords_path = 'Data/metadata_%s.txt'
+    metadata = load_metadata(tfrecords_path % configuration['setting'])
+    configuration.update(metadata)
+    configuration['num_classes'] = len(configuration['data_classes'])
+
+    ## GPUs
+    configuration['num_gpus'] = args.num_gpus                                 
+    configuration['gpu_mem_frac'] = max(0., min(1., args.gpu_mem_frac))
+
+    ## Training
+    configuration['batch_size'] = args.batch_size
+    configuration['learning_rate'] = args.learning_rate
+    
+    ## Return
+    return configuration

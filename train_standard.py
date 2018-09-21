@@ -8,75 +8,23 @@ import tensorflow as tf
 print("Tensorflow version", tf.__version__)
 from tensorflow.python.training.summary_io import SummaryWriterCache
 
+import defaults
 import eval_utils
 import graph_manager
 import viz
 from standard_graph import *
 
 
-########################################################################## Command line parser
+########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Standard Object Detection.')
-parser.add_argument('data', type=str, help='Dataset to use. One of "vedai", "stanford" or "dota"')
-parser.add_argument('--network', type=str, default="tiny-yolov2", help='network. One of "tiny-yolov2" or "yolov2"')
-parser.add_argument('--size', default=1024, type=int, help='size of input images')
-parser.add_argument('--num_epochs', type=int, help='Number of training epochs')
-parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs workers to use')
-parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
-parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
-parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
-parser.add_argument('--learning_rate', type=float, default=1e-3, help='Learning rate')
-parser.add_argument('--summaries', action='store_true', help='Save Tensorboard summaries while training')
-parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
+defaults.build_base_parser(parser)
 args = parser.parse_args()
+configuration = defaults.build_base_config_from_args(args)
+graph_manager.finalize_configuration(configuration, verbose=args.verbose)
 print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 
 
-########################################################################## Main Config
-## Configuration
-configuration = {}
-configuration['network'] = args.network
-data = args.data
-if data == 'vedai':
-    configuration['setting'] = 'vedai'
-    configuration['exp_name'] = 'vedai'
-    configuration['save_summaries_steps'] = 100    # Save tensorboard summaries
-    configuration['save_evaluation_steps'] = 500   # Run evaluation on the validation set
-    configuration['num_epochs'] = 1000 if args.num_epochs is None else args.num_epochs
-elif data == 'stanford':
-    configuration['setting'] = 'sdd'
-    configuration['exp_name'] = 'sdd'
-    configuration['save_summaries_steps'] = 200
-    configuration['save_evaluation_steps'] = 500
-    configuration['num_epochs'] = 120 if args.num_epochs is None else args.num_epochs
-elif data == 'dota':
-    configuration['setting'] = 'dota'
-    configuration['exp_name'] = 'dota'
-    configuration['save_summaries_steps'] = 500
-    configuration['save_evaluation_steps'] = 1000
-    configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
-    
-## Add dataset specific configuration stored in metadata
-tfrecords_path = 'Data/metadata_%s.txt'
-metadata = graph_manager.load_metadata(tfrecords_path % configuration['setting'])
-configuration.update(metadata)
-configuration['num_classes'] = len(configuration['data_classes'])
-
-## GPUs
-configuration['num_gpus'] = args.num_gpus               
-configuration['gpu_mem_frac'] = max(0., min(1., args.gpu_mem_frac))
-    
-## Training
-configuration['batch_size'] = args.batch_size
-configuration['learning_rate'] = args.learning_rate
-configuration['centers_localization_loss_weight'] = 1.
-configuration['scales_localization_loss_weight']  = 1.
-configuration['confidence_loss_weight']  = 5.
-configuration['noobj_confidence_loss_weight']  = 1.
-configuration['offsets_loss_weight']  = 1.
-
-graph_manager.finalize_configuration(configuration, verbose=args.verbose)
-
-## Network configuration
+########################################################################## Network Config
 standard_configuration = configuration.copy()
 standard_configuration['base_name'] =  args.network
 standard_configuration['image_size'] = args.size
@@ -163,7 +111,7 @@ with tf.Graph().as_default() as graph:
                                      standard_configuration["train_num_samples_per_iter"], 
                                      standard_configuration["train_num_samples"])
                 
-                # Evaluate
+                # Evaluate (validation)
                 if (standard_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
                     and global_step_  % standard_configuration["save_evaluation_steps"] == 0):
                     feed_dict = {use_test_split: False}
