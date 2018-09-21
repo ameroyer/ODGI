@@ -4,13 +4,16 @@ import tf_utils
 import graph_manager
 from collections import defaultdict
 
-#################################################### Write Output of the feed forward pass
+#################################################### Write Output of the feed forward pass    
 def append_individuals_detection_output(file_path,
                                         image_ids, 
                                         num_gt_boxes, 
                                         gt_boxes, 
                                         pred_boxes,
                                         pred_confidences,
+                                        s1_boxes=None,
+                                        s1_confidences=None,
+                                        s1_kept_out_filter=None,
                                         **kwargs):
     """Write outputs of the evaluation pass to a file.
     
@@ -21,23 +24,40 @@ def append_individuals_detection_output(file_path,
     del kwargs
     
     with open(file_path, 'a') as f:
-        for im_id, num_gt, gt, pred, pred_c in zip(image_ids, num_gt_boxes, gt_boxes, pred_boxes, pred_confidences):
-            
+        batch_size = image_ids.shape[0]
+        num_classes = pred_confidences.shape[-1]
+        for i in range(batch_size):            
             # first line (id, number of ground-truth, ground-truth boxes)
+            im_id = image_ids[i]
+            num_gt = num_gt_boxes[i]
             f.write('%s-gt\t%d\t%s\n' % (im_id, num_gt, '\t'.join(
-                ','.join('%.5f' % x for x in b) for b in gt[:num_gt])))
+                ','.join('%.5f' % x for x in b) for b in gt_boxes[i, :num_gt])))
             
-            # following lines (id, class, number of boxes, predicted boxes with scores and nms filter boolean)
-            num_classes = pred_c.shape[-1]
-            pred_c_flat = np.reshape(pred_c, (-1, num_classes))
-            pred_boxes_flat = np.reshape(pred, (-1, 4))
+            
+            # following lines (id, class, number of boxes, predicted boxes with scores and nms filter boolean)            
+            pred_c_flat = np.reshape(pred_confidences[i], (-1, num_classes))
+            pred_boxes_flat = np.reshape(pred_boxes[i], (-1, 4))
+            
+            # Collect kept-out boxes from the previous stage
+            if not (s1_boxes is None or s1_confidences is None or s1_kept_out_filter is None):
+                assert num_classes == 1 #TODO(aroyer) group clasess
+                index = np.where(s1_kept_out_filter[i])
+                kept_out_boxes = np.reshape(s1_boxes[i], (-1, 4))
+                kept_out_boxes = kept_out_boxes[index]
+                pred_boxes_flat = np.concatenate([pred_boxes_flat, kept_out_boxes], axis=0)
+                kept_out_scores = np.reshape(s1_confidences[i], (-1, 1))
+                kept_out_scores = kept_out_scores[index]
+                pred_c_flat = np.concatenate([pred_c_flat, kept_out_scores], axis=0)
+                
             for c in range(num_classes):
                 output = non_max_suppression(
                     pred_boxes_flat, pred_c_flat[:, c], iou_threshold=iou_threshold, score_threshold=score_threshold)
                 f.write('%s-pred-%d\t%d\t%s\n' % (im_id, c, pred_boxes_flat.shape[0], '\t'.join(
-                    '%.10f,%.10f,%.10f,%.10f,%.3f,%d' % tuple(x) for x in output)))          
+                    '%.6f,%.6f,%.6f,%.6f,%.3f,%d' % tuple(x) for x in output)))          
                 
-                
+def is_valid(box):
+    return (box[..., 2] > box[..., 0]) and (box[..., 3] > box[..., 1])
+    
 def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
     """Non maximum suppression
     
@@ -58,6 +78,8 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
     for index in indices:
         # coordinates
         box = boxes[index]
+        if not is_valid(box):
+            continue
         # scores
         score = scores[index]
         flag = (score >= score_threshold) 
@@ -77,7 +99,7 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5, score_threshold=0.):
         output[it, 5] = flag
         it += 1
     # end
-    return output
+    return output[:it]
     
 def max_iou(box, boxes, epsilon=1e-12):
     """ Maximum iou between box and all the boxes in `boxes`
