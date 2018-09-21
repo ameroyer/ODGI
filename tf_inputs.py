@@ -339,10 +339,7 @@ def extract_groups(inputs,
             # should_be_refined: (batch, num_boxes, 1) : groups and not strongly confident individuals
             is_not_strongly_confident = tf.to_float(predicted_scores <= strong_confidence_threshold)
             should_be_refined = tf.minimum(1., is_group + is_not_strongly_confident)
-            # Add confident single boxes as additional output of (batch, num_boxes, 4) and (batch, num_boxes, 1) shape
-            outputs['added_detection_scores'] = (1. - should_be_refined) * tf_utils.flatten_percell_output(
-                outputs["detection_scores"])
-            outputs['added_bounding_boxes'] = (1. - should_be_refined) * predicted_boxes
+            outputs['kept_out_filter'] = tf.squeeze(1. - should_be_refined, axis=-1)
             # Filter them out from potential crops
             predicted_scores *= should_be_refined
             predicted_boxes *= should_be_refined
