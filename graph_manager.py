@@ -163,8 +163,8 @@ def get_monitored_training_session(with_ready_op=False,
     """
     # Kwargs
     assert  log_dir is not None
-    gpu_mem_frac, max_to_keep, save_checkpoint_secs, log_globalstep_steps = get_defaults(
-        kwargs, ['gpu_mem_frac', 'max_to_keep', 'save_checkpoint_secs', 'log_globalstep_steps'], verbose=verbose)
+    gpu_mem_frac, max_to_keep, save_checkpoint_steps = get_defaults(
+        kwargs, ['gpu_mem_frac', 'max_to_keep', 'save_checkpoint_steps'], verbose=verbose)
     
     # GPU config
     config = tf.ConfigProto(
@@ -186,44 +186,24 @@ def get_monitored_training_session(with_ready_op=False,
             save_steps=1e6, output_dir=log_dir, summary_op=tf.summary.merge_all(key='config')))
     except ValueError:
         print('    \033[31mWarning:\033[0m No summaries found in collection "config"') 
-    
-    # Model restore    
-    if model_path is  None:
-        def init_fn(scaffold, sess):
-            del scaffold, sess
-            return
-    else:
-        print('    \033[34mRestoring:\033[0m', 'from', model_path)
-        restore_scope, restore_replace_to, restore_to_replace,  = get_defaults(
-        kwargs, ['restore_scope', 'restore_replace_to', 'restore_to_replace'], verbose=verbose)        
-        variables_to_restore = tf.model_variables(scope=restore_scope)
-        variables_to_restore = {re.sub(restore_to_replace, restore_replace_to, v.op.name): v
-                                for v in variables_to_restore}
-        print('    \033[34mRestoring:\033[0m', ', '.join(sorted(list(variables_to_restore.keys()))))
-        saver = tf.train.Saver(variables_to_restore, name='restore_saver')
         
-        def init_fn(scaffold,sess):
-            del scaffold
-            saver.restore(sess, model_path)
+    # Model saving hooks    
+    if save_checkpoint_steps is not None:
+        print('    saving checkpoint in \033[36m%s\033[0m' % log_dir)
+        saver = tf.train.Saver(max_to_keep=max_to_keep)
+        hooks.append(tf.train.CheckpointSaverHook(log_dir, saver=saver, save_steps=save_checkpoint_steps))
             
     # Scaffold      
     init_iterator_op = tf.get_collection('iterator_init')
     local_init_op = tf.group(tf.local_variables_initializer(), *init_iterator_op)
     scaffold = tf.train.Scaffold(
-        init_fn=init_fn, 
         local_init_op=local_init_op,
         ready_op=None if with_ready_op else tf.constant([]),
-        ready_for_local_init_op=None if with_ready_op else tf.constant([]),
-        saver=tf.train.Saver(max_to_keep=max_to_keep))
+        ready_for_local_init_op=None if with_ready_op else tf.constant([]))
     
     # Session object
-    return tf.train.MonitoredTrainingSession(
-            checkpoint_dir=log_dir,
-            config=config,
-            scaffold=scaffold,
-            hooks=hooks,
-            save_checkpoint_secs=save_checkpoint_secs,
-            log_step_count_steps=log_globalstep_steps)
+    session_creator = tf.train.ChiefSessionCreator(scaffold=scaffold, checkpoint_dir=log_dir, config=config)
+    return tf.train.MonitoredSession(session_creator=session_creator, hooks=hooks)
 
 
 ############################################################ Inputs tf.data.Dataset  

@@ -53,18 +53,13 @@ defaults_dict = {
     "test_patch_strong_confidence_threshold": 0.75,        # boxes considered 'single' and above this threshold -> no patch
     # Evaluation and Outputs
     "base_log_dir": "./log",                               # Base log directory
-    "log_globalstep_steps": 100,
     "max_to_keep": 1,                                      # maximum number of checkpoints to keep
-    "num_summaries": 3,                                    # Number of image to display in summaries
     "retrieval_confidence_threshold": 0.,                  # Only keep boxes above this threshold for evaluation
     "retrieval_iou_threshold": [0.5, 0.75],                # Evaluate at these retrieval threshold
     "retrieval_nms_threshold": 0.5,                        # IoU threshold for the Non-maximum suppression during evaluation
-    "save_checkpoint_secs": 3600,                          # Save checkpoints at the given frequency (in seconds)
-    # Load pretrained model
-    "restore_replace_to": '',                              # string to replace to in variable names to restore
-    "restore_scope": None,                                 # If a checkpoint path is given, restore from the given scope
-    "restore_to_replace": '',                              # string to replace in variable names to restore
+    "save_checkpoint_steps": 2000,                          # Save checkpoints at the given frequency (in seconds)
     "summary_confidence_thresholds": [0.5],                # Plot output boxes cut at the given thresholds  
+    "num_summaries": 3,                                    # Number of image to display in summaries
 }
 
 def build_base_parser(parser):
