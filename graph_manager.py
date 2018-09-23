@@ -260,11 +260,7 @@ def get_inputs(mode='train',
         shuffle_buffer, data_augmentation_threshold, num_epochs, num_shards = get_defaults(
             kwargs, ['shuffle_buffer', 'data_augmentation_threshold', 'num_epochs', 'num_gpus'], verbose=verbose)
         make_initializable_iterator = False
-    else:    
-        # TODO: create val split
-        if mode == 'val':
-            mode = 'test'
-        # placeholders so we can switch between validation or test set for the evaluation pass
+    else:  
         assert '%s_tfrecords' % mode in kwargs
         tfrecords_path = kwargs['%s_tfrecords' % mode]
         assert '%s_max_num_bbs' % mode in kwargs

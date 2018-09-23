@@ -14,7 +14,7 @@ import graph_manager
 import viz
 from odgi_graph import *
 
-
+tee = viz.Tee()    
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 defaults.build_base_parser(parser)
@@ -115,64 +115,72 @@ with tf.Graph().as_default() as graph:
                 eval_s2_outputs = eval_pass_final_stage(
                     eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False)
                 
-
-    ########################################################################## Run Session
-    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
-    try:
-        print('\nLaunch session:')
-        graph_manager.generate_log_dir(multistage_configuration)
-        summary_writer = SummaryWriterCache.get(multistage_configuration["log_dir"])
-        print('    Log directory', os.path.abspath(multistage_configuration["log_dir"]))
-        validation_results_path = os.path.join(multistage_configuration["log_dir"], 'val_output.txt')
-        
-        with graph_manager.get_monitored_training_session(**multistage_configuration) as sess:    
-            global_step_ = 0
-            start_time = time.time()
             
-            print('\nStart training:')
+########################################################################## Evaluation script
+    def run_eval(sess, mode, global_step_, results_path):
+        assert mode in ['val', 'test']
+        feed_dict = {use_test_split: mode == 'test'}
+        with open(results_path, 'w') as f:
+            f.write('%s results at step %d\n' % (mode, global_step_))
+        sess.run(eval_initializer, feed_dict=feed_dict)
+        try:
+            it = 0
             while 1:
-                # Train
-                global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
+                out_ = sess.run([eval_inputs['im_id'], 
+                                 eval_inputs['num_boxes'],
+                                 eval_inputs['bounding_boxes'],                                             
+                                 eval_s2_outputs['bounding_boxes'],
+                                 eval_s2_outputs['detection_scores'],
+                                 eval_s1_outputs['bounding_boxes'],
+                                 eval_s1_outputs['detection_scores'],
+                                 eval_s1_outputs['kept_out_filter']], 
+                                feed_dict=feed_dict)
+                eval_utils.append_individuals_detection_output(results_path, *out_, **multistage_configuration)
+                it += 1
+                print('\r Eval step %d' % it, end='')
+        except tf.errors.OutOfRangeError:
+            pass
+        eval_aps, eval_aps_thresholds = eval_utils.detect_eval(results_path, **multistage_configuration)
+        print('\r%s eval at step %d:' % (mode, global_step_), ' - '.join(
+            'map@%.2f = %.5f' % (thresh, sum(x[t] for x in eval_aps.values()) / len(eval_aps))
+                for t, thresh in enumerate(eval_aps_thresholds)))
+        
+
+########################################################################## Start Session
+    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
+    print('\nLaunch session:')
+    graph_manager.generate_log_dir(multistage_configuration)
+    summary_writer = SummaryWriterCache.get(multistage_configuration["log_dir"])
+    print('    Log directory', os.path.abspath(multistage_configuration["log_dir"]))
+    validation_results_path = os.path.join(multistage_configuration["log_dir"], 'val_output.txt')
+    test_results_path = os.path.join(multistage_configuration["log_dir"], 'test_output.txt')
+    global_step_ = 0
+    viz.save_tee(multistage_configuration["log_dir"], tee)
+    try:        
+        with graph_manager.get_monitored_training_session(**multistage_configuration) as sess:              
+            print('\nStart training:')  
+            start_time = time.time()
+            try:
+                while 1:
+                    # Train
+                    global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
                     
-                if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
-                    viz.display_loss(None, global_step_, full_loss_, start_time,
-                                     multistage_configuration["train_num_samples_per_iter"],
-                                     multistage_configuration["train_num_samples"])
+                    if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
+                        viz.display_loss(None, global_step_, full_loss_, start_time,
+                                         multistage_configuration["train_num_samples_per_iter"],
+                                         multistage_configuration["train_num_samples"])
                                     
-                # Evaluate
-                if (multistage_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
-                    and global_step_  % multistage_configuration["save_evaluation_steps"] == 0):
-                    feed_dict = {use_test_split: False}
-                    with open(validation_results_path, 'w') as f:
-                        f.write('Validation results at step %d\n' % global_step_)
-                    sess.run(eval_initializer, feed_dict=feed_dict)
-                    try:
-                        it = 0
-                        while 1:
-                            out_ = sess.run([eval_inputs['im_id'], 
-                                             eval_inputs['num_boxes'],
-                                             eval_inputs['bounding_boxes'],                                             
-                                             eval_s2_outputs['bounding_boxes'],
-                                             eval_s2_outputs['detection_scores'],
-                                             eval_s1_outputs['bounding_boxes'],
-                                             eval_s1_outputs['detection_scores'],
-                                             eval_s1_outputs['kept_out_filter']], 
-                                            feed_dict=feed_dict)
-                            # Parse bounding boxes
-                            eval_utils.append_individuals_detection_output(
-                                validation_results_path, *out_, **multistage_configuration)
-                            it += 1
-                            print('\r Eval step %d' % it, end='')
-                    except tf.errors.OutOfRangeError:
-                        pass
-                    # Compute and display map
-                    val_aps, val_aps_thresholds = eval_utils.detect_eval(validation_results_path, **multistage_configuration)
-                    print('\rValidation eval at step %d:' % global_step_, ' - '.join(
-                        'map@%.2f = %.5f' % (thresh, sum(x[t] for x in val_aps.values()) / len(val_aps))
-                        for t, thresh in enumerate(val_aps_thresholds)))
+                    # Evaluate on validation
+                    if (multistage_configuration["save_evaluation_steps"] is not None and (global_step_ > 1)
+                        and global_step_  % multistage_configuration["save_evaluation_steps"] == 0):
+                        run_eval(sess, 'val', global_step_, validation_results_path)
+                        viz.save_tee(multistage_configuration["log_dir"], tee)
                     
-    except tf.errors.OutOfRangeError: # End of training
-        pass              
+            except tf.errors.OutOfRangeError: # End of training
+                pass              
+            # Evaluate on the test set 
+            run_eval(sess, 'test', global_step_, test_results_path)
+            viz.save_tee(multistage_configuration["log_dir"], tee)
 
     except KeyboardInterrupt:          # Keyboard interrupted
         print('\nInterrupted at step %d' % global_step_)
