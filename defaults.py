@@ -13,7 +13,7 @@ defaults_dict = {
     # Data
     "data_augmentation_threshold": 0.5,                    # Data augmentation (flip lr) ratio
     "image_size": 512,                                     # Input Image Size
-    "full_image_size": 1024,                               # image size to load for extracting the crops
+    "full_image_size": -1,                                 # image size to load for extracting the crops
     "shuffle_buffer": 2000,                                # Shuffle buffer size in the main dataset object
     "num_threads": 8,                                      # Number of parallel readers for the input queues
     "prefetch_capacity": 1,                                # prefetch capacity for the main dataset object
@@ -42,7 +42,7 @@ defaults_dict = {
     "group_classification_loss_weight": 1.,
     "offsets_loss_weight": 1.0,
     # Patch Extraction (train time)
-    "train_num_crops": 5,                                 # Maximum number of crops per image to predict (train)
+    "train_num_crops": 10,                                 # Maximum number of crops per image to predict (train)
     "train_patch_confidence_threshold": 0.0,               # Only keep boxes above this threshold for patch extraction
     "train_patch_nms_threshold": 1.0,                      # IoU threshold for non-maximum suppression during patch extraction
     "patch_intersection_ratio_threshold": 0.33,            # Only keep gt box in the pach if at least this ratio is visible
