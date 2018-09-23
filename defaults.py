@@ -127,6 +127,8 @@ def build_base_config_from_args(args):
         configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'dota'
+    else:
+        raise ValueError("unknown data", args.data)
 
     ## Metadata
     tfrecords_path = 'Data/metadata_%s.txt'
