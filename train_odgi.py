@@ -21,6 +21,7 @@ defaults.build_base_parser(parser)
 parser.add_argument('--full_image_size', default=-1, type=int, help= 'Size of the images to extract patches.')
 parser.add_argument('--stage2_batch_size', type=int, help= 'Fixed batch size.')
 parser.add_argument('--stage2_image_size', type=int, help= 'Image size.')
+parser.add_argument('--same_network', action='store_true', help= 'Whether to use the same network for stage 1 and 2.')
 args = parser.parse_args()
 configuration = defaults.build_base_config_from_args(args)
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
@@ -45,7 +46,7 @@ stage1_configuration['with_offsets'] = True
 graph_manager.finalize_grid_offsets(stage1_configuration)
 
 # stage 2
-stage2_configuration['batch_size'] = args.stage2_batch_size
+stage2_configuration['batch_size'] = args.stage2_batch_size 
 stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
 stage2_configuration['num_boxes'] = 1
 stage2_configuration['base_name'] = 'stage2'
@@ -54,6 +55,8 @@ graph_manager.finalize_grid_offsets(stage2_configuration)
 
 multistage_configuration['exp_name'] += '/%s_odgi_%d_%d' % (
     stage1_configuration['network'], stage1_configuration['image_size'], stage2_configuration['image_size'])
+if args.same_network:
+    multistage_configuration['exp_name'] += '_same'
     
 
 ########################################################################## Graph
@@ -69,10 +72,12 @@ with tf.Graph().as_default() as graph:
                     train_inputs, _ = graph_manager.get_inputs(
                         mode='train', shard_index=i, verbose=args.verbose * int(is_chief), **stage1_configuration)
                     train_s1_outputs = train_pass(train_inputs, stage1_configuration, 
+                                                  use_same_activations_scope=args.same_network, reuse_activations=False,
                                                   intermediate_stage=True, is_chief=is_chief, verbose=args.verbose)
                     train_s2_inputs = feed_pass(train_inputs, train_s1_outputs, stage2_configuration,
                                                 mode='train', is_chief=is_chief, verbose=args.verbose)
                     train_s2_outputs = train_pass(train_s2_inputs, stage2_configuration,
+                                                  use_same_activations_scope=args.same_network, reuse_activations=args.same_network,
                                                   intermediate_stage=False, is_chief=is_chief, verbose=args.verbose) 
                     if is_chief and add_summaries:
                         print(' > summaries:')
@@ -83,7 +88,10 @@ with tf.Graph().as_default() as graph:
 
         # Training Objective
         with tf.name_scope('losses'):
-            losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'], add_summaries=add_summaries)            
+            if not args.same_network:
+                losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'], add_summaries=add_summaries)  
+            else:
+                losses = graph_manager.get_total_loss(add_summaries=add_summaries)  
             full_loss = tf.add_n([x[0] for x in losses])
 
         # Train op    
@@ -109,11 +117,13 @@ with tf.Graph().as_default() as graph:
             name='eval_inputs')
         with tf.device('/gpu:%d' % 0):
             with tf.name_scope('dev%d' % 0):
-                eval_s1_outputs = eval_pass_intermediate_stage(eval_inputs, stage1_configuration, verbose=False) 
+                eval_s1_outputs = eval_pass_intermediate_stage(eval_inputs, stage1_configuration, verbose=False,
+                                                               use_same_activations_scope=args.same_network) 
                 eval_s2_inputs = feed_pass(eval_inputs, eval_s1_outputs, stage2_configuration,
                                            mode='test', verbose=False)
                 eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False)
+                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, 
+                    verbose=False, use_same_activations_scope=args.same_network)
                 
             
 ########################################################################## Evaluation script
