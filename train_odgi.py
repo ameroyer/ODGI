@@ -124,7 +124,6 @@ with tf.Graph().as_default() as graph:
             f.write('%s results at step %d\n' % (mode, global_step_))
         sess.run(eval_initializer, feed_dict=feed_dict)
         try:
-            it = 0
             while 1:
                 out_ = sess.run([eval_inputs['im_id'], 
                                  eval_inputs['num_boxes'],
@@ -136,8 +135,6 @@ with tf.Graph().as_default() as graph:
                                  eval_s1_outputs['kept_out_filter']], 
                                 feed_dict=feed_dict)
                 eval_utils.append_individuals_detection_output(results_path, *out_, **multistage_configuration)
-                it += 1
-                print('\r Eval step %d' % it, end='')
         except tf.errors.OutOfRangeError:
             pass
         eval_aps, eval_aps_thresholds = eval_utils.detect_eval(results_path, **multistage_configuration)
