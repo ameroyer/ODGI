@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 defaults.build_base_parser(parser)
 parser.add_argument('--full_image_size', default=-1, type=int, help= 'Size of the images to extract patches.')
 parser.add_argument('--stage2_batch_size', type=int, help= 'Fixed batch size.')
-parser.add_argument('--stage2_momentum', type=float, default=0.9, help='Beta1 parameter for ADAM in stage 2')
+parser.add_argument('--stage2_image_size', type=int, help= 'Image size.')
 args = parser.parse_args()
 configuration = defaults.build_base_config_from_args(args)
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
@@ -34,7 +34,7 @@ stage2_configuration = multistage_configuration.copy()
 
 # Inputs sizes
 stage1_configuration['image_size'] = args.size
-stage2_configuration['image_size'] = stage1_configuration['image_size'] // 2
+stage2_configuration['image_size'] = stage1_configuration['image_size'] // 2 if args.stage2_image_size is None else args.stage2_image_size
 
 # stage 1
 stage1_configuration['num_boxes'] = 1
