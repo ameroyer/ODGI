@@ -1,4 +1,7 @@
 import io
+import os
+import shutil
+import sys
 import time
 from defaults import defaults_dict
 
@@ -6,6 +9,26 @@ import numpy as np
 import tensorflow as tf
 import tf_utils
 
+class Tee(object):
+    def __init__(self):
+        self.str = io.StringIO()
+        self.stdout = sys.stdout
+        self.files = [self.stdout, self.str]
+        sys.stdout = self
+    def __del__(self):
+        sys.stdout = self.stdout
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush() # If you want the output to be visible immediately
+    def flush(self) :
+        for f in self.files:
+            f.flush()
+            
+def save_tee(log_dir, tee):
+    with open(os.path.join(log_dir, 'log.txt'), 'w') as fd:
+        tee.str.seek(0)
+        shutil.copyfileobj(tee.str, fd)
 
 def draw_bounding_boxes(image, bbs):
     """Draw bounding boxes on the current image in Tensorflow.
