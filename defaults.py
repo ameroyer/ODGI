@@ -72,7 +72,7 @@ def build_base_parser(parser):
     parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
     parser.add_argument('--learning_rate', type=float, default=1e-3, help='Learning rate')
     parser.add_argument('--num_epochs', type=int, help='Number of training epochs')
-    parser.add_argument('--display_loss_very_n_steps', type=int, default=200, help='Print the loss at every given step')
+    parser.add_argument('--display_loss_very_n_steps', type=int, default=250, help='Print the loss at every given step')
     parser.add_argument('--save_evaluation_steps', type=int, help='Print the loss at every given step')
     parser.add_argument('--save_summaries_steps', type=int, help='Save summaries tensorboards at every given step')
     parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
@@ -106,24 +106,27 @@ def build_base_config_from_args(args):
     ## Set dataset
     configuration = {}
     configuration['network'] = args.network
-    if args.data == 'vedai':
-        configuration['setting'] = 'vedai'
-        configuration['exp_name'] = 'vedai'
+    if args.data.startswith('vedai'):
+        configuration['setting'] = args.data
+        configuration['exp_name'] = args.data
         configuration['save_summaries_steps'] = args.save_summaries_steps
-        configuration['save_evaluation_steps'] = 250 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = 1000 if args.num_epochs is None else args.num_epochs
+        configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
+        configuration['num_epochs'] = 500 if args.num_epochs is None else args.num_epochs
+        configuration['image_format'] = 'vedai'
     elif args.data == 'stanford':
         configuration['setting'] = 'sdd'
         configuration['exp_name'] = 'sdd'
         configuration['save_summaries_steps'] = args.save_summaries_steps 
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 120 if args.num_epochs is None else args.num_epochs
+        configuration['image_format'] = 'sdd'
     elif args.data == 'dota':
         configuration['setting'] = 'dota'
         configuration['exp_name'] = 'dota'
         configuration['save_summaries_steps'] = args.save_summaries_steps
         configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
+        configuration['image_format'] = 'dota'
 
     ## Metadata
     tfrecords_path = 'Data/metadata_%s.txt'
