@@ -93,7 +93,7 @@ def load_metadata(filename):
             key, values = line.split('\t', 1)
             if key in ['data_classes', 'feature_keys']:
                 metadata[key] = values.split(',')
-            elif key.endswith('tfrecords') or key in ['image_format', 'image_folder']:
+            elif key.endswith('tfrecords') or key == 'image_folder':
                 metadata[key] = values
             else:
                 metadata[key] = int(values)
