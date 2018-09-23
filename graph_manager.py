@@ -487,17 +487,18 @@ def get_train_op(full_losses,
         raise NotImplementedError(optimizer_type)
     
     # Train op for each stage
-    train_ops = [get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True) 
-                 for full_loss, var_list in full_losses]
-    
-    # Collect update_ops for batch norm
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
     print('   ', len(update_ops), 'update operations found')
+    with tf.control_dependencies(update_ops):
+        train_ops = [get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True) 
+                     for full_loss, var_list in full_losses]
+    
+    # Collect update_ops for batch norm
     
     # Return
     global_step_op = tf.assign_add(global_step, 1)
-    final_op = tf.group(global_step_op, *train_ops, *update_ops) 
-    return global_step, final_op
+    train_op = tf.group(*train_ops) 
+    return global_step_op, train_op
 
 
 ############################################################ Train Summaries
