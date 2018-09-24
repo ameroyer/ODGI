@@ -20,7 +20,7 @@ tee = viz.Tee()
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
-parser.add_argument('--device', type=str, default='gpu', help='GPU or CPU')
+parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
 args = parser.parse_args()
@@ -47,10 +47,6 @@ else:
 tfrecords_path = 'Data/metadata_%s.txt'
 metadata = defaults.load_metadata(tfrecords_path % configuration['setting'])
 configuration.update(metadata)
-configuration['num_classes'] = len(configuration['data_classes'])
-configuration['shuffle_buffer'] = 1
-configuration["num_threads"] = 1                                      # Number of parallel readers for the input queues
-configuration["prefetch_capacity"] = 0
 
 # Architecture
 aux = os.path.split(os.path.dirname(os.path.normpath(args.log_dir)))[1]
@@ -58,12 +54,13 @@ aux = aux.split('_')
 configuration['network'] = aux[0]
 configuration['gpu_mem_frac'] = args.gpu_mem_frac
 configuration['same_network'] = False
-
 mode = aux[1]
+imsize = int(aux[2])
 
 with tf.Graph().as_default() as graph:
     ########################### ODGI
     if mode == 'odgi':
+        assert len(aux) in [4, 5]
         stage1_configuration = configuration.copy()
         stage2_configuration = configuration.copy()
 
@@ -72,7 +69,6 @@ with tf.Graph().as_default() as graph:
         stage2_configuration['batch_size'] = None 
 
         # Image sizes
-        assert len(aux) in [4, 5]
         stage1_configuration['image_size'] = int(aux[2])
         stage2_configuration['image_size'] = int(aux[3])
         if len(aux) == 5:
@@ -88,7 +84,6 @@ with tf.Graph().as_default() as graph:
         stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
         stage2_configuration['base_name'] = 'stage2'
         graph_manager.finalize_grid_offsets(stage2_configuration)
-        imsize = stage1_configuration['image_size']
 
         # Graph
         image = tf.placeholder(tf.uint8, [imsize, imsize, 3]) 
@@ -112,6 +107,7 @@ with tf.Graph().as_default() as graph:
                     
     ########################### Standard
     elif mode == 'standard':
+        assert len(aux) == 3
         standard_configuration = configuration.copy()
         standard_configuration['batch_size'] = 1
         standard_configuration['base_name'] = configuration['network']
@@ -136,14 +132,13 @@ with tf.Graph().as_default() as graph:
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
     print('\nLaunch session:')
 
-    #results_path = os.path.join(args.log_dir, 'timed_test_output.txt')
-    gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=args.verbose)[0]    
-    config = tf.ConfigProto(
-        gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
-    #init_iterator_op = tf.get_collection('iterator_init')
-    #local_init_op = tf.group(tf.local_variables_initializer(), *init_iterator_op)
-    #scaffold = tf.train.Scaffold(local_init_op=local_init_op)
-    session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
+    if args.device == 'gpu':
+        gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=args.verbose)[0]    
+        config = tf.ConfigProto(
+            gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
+        session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
+    else:
+        session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir)
 
     num_samples = 0
     loading_time = 0.
