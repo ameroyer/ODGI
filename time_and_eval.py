@@ -3,7 +3,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import argparse
 import time
-from scipy.misc import imread, imresize
+try:
+    from scipy.misc import imread, imresize
+    def load_and_resize(image_path, imsize):
+        return imresize(imread(image_path, mode='RGB'), (imsize, imsize))
+except ImportError:
+    from PIL import Image  
+    import numpy as np
+    def load_and_resize(image_path, imsize):
+        img = Image.open(image_path)
+        img = img.resize((imsize, imsize), Image.ANTIALIAS)
+        return np.array(img)
 
 import tensorflow as tf
 print("Tensorflow version", tf.__version__)
