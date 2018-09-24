@@ -105,7 +105,7 @@ def feed_pass(inputs, outputs, configuration, mode='train', is_chief=True, verbo
         inputs, outputs['crop_boxes'], mode=mode, verbose=dev_verbose, **configuration)
         
     
-def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_scope=False, verbose=False):
+def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_scope=False, reuse=True, verbose=False):
     """ Evaluation pass for intermediate stages."""
     outputs = {}
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
@@ -117,7 +117,7 @@ def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_sco
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
         forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
-                     use_same_activations_scope=use_same_activations_scope, reuse=True, verbose=verbose) 
+                     use_same_activations_scope=use_same_activations_scope, reuse=reuse, verbose=verbose) 
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):
@@ -126,7 +126,8 @@ def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_sco
     return outputs    
 
 
-def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, use_same_activations_scope=False, verbose=False):
+def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, 
+                          use_same_activations_scope=False, reuse=True, verbose=False):
     """ Evaluation for the full pipeline.
         Args:
             stage2_inputs: inputs dictionnary for stage2
@@ -152,7 +153,7 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
     # Feed forward
     with tf.name_scope('net'):
         forward_pass(stage2_inputs, outputs, configuration, scope_name=base_name, is_training=False,
-                     use_same_activations_scope=use_same_activations_scope, reuse=True, verbose=verbose) 
+                     use_same_activations_scope=use_same_activations_scope, reuse=reuse, verbose=verbose) 
             
     # Reshape outputs from stage2 to stage1
     crop_boxes = stage1_outputs["crop_boxes"]  
