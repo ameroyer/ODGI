@@ -160,7 +160,7 @@ with tf.Graph().as_default() as graph:
             for image_path in images:
                 # load
                 start_time = time.time()
-                read_img = imresize(imread(image_path, mode='RGB'), (imsize, imsize))
+                read_img = load_and_resize(image_path, imsize)
                 feed_dict = {image: read_img}    
                 # run
                 load_time = time.time()  
