@@ -83,7 +83,7 @@ def train_pass(inputs, configuration, is_chief=False, verbose=1):
     return outputs
         
     
-def eval_pass(inputs, configuration, verbose=1):
+def eval_pass(inputs, configuration, reuse=True, verbose=1):
     """Forward pass in test mode with Non Maximum suppression    
     
     Args:
@@ -104,7 +104,7 @@ def eval_pass(inputs, configuration, verbose=1):
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
         forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
-                     reuse=True, verbose=verbose)
+                     reuse=reuse, verbose=verbose)
         
     # Output the results
     return outputs    

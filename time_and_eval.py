@@ -12,7 +12,8 @@ import defaults
 import eval_utils
 import graph_manager
 import viz
-from odgi_graph import *
+import odgi_graph
+import standard_graph
 
 tee = viz.Tee()    
 ########################################################################## Base Config
@@ -38,7 +39,7 @@ elif data == 'sdd':
     configuration['setting'] = 'dota'
     configuration['image_format'] = 'dota'
 else:
-    raise ValueError("unknown data", args.data)
+    raise ValueError("unknown data", data)
     
 # Metadata
 tfrecords_path = 'Data/metadata_%s.txt'
@@ -54,55 +55,84 @@ configuration['gpu_mem_frac'] = args.gpu_mem_frac
 configuration['same_network'] = False
 
 mode = aux[1]
-assert mode == 'odgi'
-assert len(aux) in [4, 5]
-stage1_configuration = configuration.copy()
-stage2_configuration = configuration.copy()
-stage1_configuration['image_size'] = int(aux[2])
-stage2_configuration['image_size'] = int(aux[3])
-if len(aux) == 5:
-    assert aux[-1] == 'same'
-    configuration['same_network'] = True
 
-    
-########################################################################## Other Config
-# Read images one by one for timing purposes
-stage1_configuration['batch_size'] = 1
-stage2_configuration['batch_size'] = None 
-
-# Configuration
-stage1_configuration['num_boxes'] = 1
-stage1_configuration['base_name'] = 'stage1'
-stage1_configuration['with_groups'] = True
-stage1_configuration['with_group_flags'] = True
-stage1_configuration['with_offsets'] = True
-graph_manager.finalize_grid_offsets(stage1_configuration)
-stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
-stage2_configuration['num_boxes'] = 1
-stage2_configuration['base_name'] = 'stage2'
-graph_manager.finalize_grid_offsets(stage2_configuration)
-    
-
-########################################################################## Graph
 with tf.Graph().as_default() as graph:
-    with tf.name_scope('eval'):  
-        eval_inputs, eval_initializer =  graph_manager.get_inputs(mode='test', verbose=False, **stage1_configuration)
-        with tf.device('/gpu:%d' % 0):
-            with tf.name_scope('dev%d' % 0):
-                eval_s1_outputs = eval_pass_intermediate_stage(
-                    eval_inputs, stage1_configuration, use_same_activations_scope=configuration['same_network'],
-                    reuse=False, verbose=False) 
-                eval_s2_inputs = feed_pass(
-                    eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
-                eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, 
-                    use_same_activations_scope=configuration['same_network'], reuse=False, verbose=False)
-                        
+    ########################### ODGI
+    if mode == 'odgi':
+        stage1_configuration = configuration.copy()
+        stage2_configuration = configuration.copy()
 
-########################################################################## Start Session
+        # Read images one by one for timing purposes
+        stage1_configuration['batch_size'] = 1
+        stage2_configuration['batch_size'] = None 
+
+        # Image sizes
+        assert len(aux) in [4, 5]
+        stage1_configuration['image_size'] = int(aux[2])
+        stage2_configuration['image_size'] = int(aux[3])
+        if len(aux) == 5:
+            assert aux[-1] == 'same'
+            configuration['same_network'] = True
+
+        # Group flags
+        stage1_configuration['base_name'] = 'stage1'
+        stage1_configuration['with_groups'] = True
+        stage1_configuration['with_group_flags'] = True
+        stage1_configuration['with_offsets'] = True
+        graph_manager.finalize_grid_offsets(stage1_configuration)
+        stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
+        stage2_configuration['base_name'] = 'stage2'
+        graph_manager.finalize_grid_offsets(stage2_configuration)
+
+        # Graph
+        with tf.name_scope('eval'):  
+            eval_inputs, eval_initializer =  graph_manager.get_inputs(mode='test', verbose=False, **stage1_configuration)
+            with tf.device('/gpu:%d' % 0):
+                with tf.name_scope('dev%d' % 0):
+                    eval_s1_outputs = odgi_graph.eval_pass_intermediate_stage(
+                        eval_inputs, stage1_configuration, use_same_activations_scope=configuration['same_network'],
+                        reuse=False, verbose=False) 
+                    eval_s2_inputs = odgi_graph.feed_pass(
+                        eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
+                    eval_s2_outputs = odgi_graph.eval_pass_final_stage(
+                        eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, 
+                        use_same_activations_scope=configuration['same_network'], reuse=False, verbose=False)                    
+                    outputs = [eval_inputs['im_id'], 
+                              eval_inputs['num_boxes'],
+                              eval_inputs['bounding_boxes'],                       
+                              eval_s2_outputs['bounding_boxes'],
+                              eval_s2_outputs['detection_scores'],
+                              eval_s1_outputs['bounding_boxes'],
+                              eval_s1_outputs['detection_scores'],
+                              eval_s1_outputs['kept_out_filter']]
+                    
+    ########################### Standard
+    elif mode == 'standard':
+        standard_configuration = configuration.copy()
+        standard_configuration['batch_size'] = 1
+        standard_configuration['base_name'] = configuration['network']
+        standard_configuration['image_size'] = int(aux[2])
+        graph_manager.finalize_grid_offsets(standard_configuration)
+                    
+        with tf.name_scope('eval'):     
+            eval_inputs, eval_initializer = graph_manager.get_inputs(mode='test', verbose=False, **standard_configuration)
+            with tf.device('/gpu:%d' % 0):
+                with tf.name_scope('dev%d' % 0):
+                    eval_outputs = standard_graph.eval_pass(eval_inputs, standard_configuration, reuse=False, verbose=False)
+                    outputs = [eval_inputs['im_id'], 
+                               eval_inputs['num_boxes'],
+                               eval_inputs['bounding_boxes'],                                             
+                               eval_outputs['bounding_boxes'],
+                               eval_outputs['detection_scores']]
+
+    else:
+        raise ValueError('Unkown mode', mode)
+                               
+
+    ########################################################################## Start Session
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
     print('\nLaunch session:')
-    
+
     results_path = os.path.join(args.log_dir, 'timed_test_output.txt')
     gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=args.verbose)[0]    
     config = tf.ConfigProto(
@@ -111,7 +141,7 @@ with tf.Graph().as_default() as graph:
     local_init_op = tf.group(tf.local_variables_initializer(), *init_iterator_op)
     scaffold = tf.train.Scaffold(local_init_op=local_init_op)
     session_creator = tf.train.ChiefSessionCreator(scaffold=scaffold, checkpoint_dir=args.log_dir, config=config)
-       
+
     num_samples = 0
     run_time = 0.
     run_with_write_time = 0.
@@ -123,14 +153,7 @@ with tf.Graph().as_default() as graph:
             while 1:
                 num_samples += 1
                 start_time = time.time()
-                out_ = sess.run([eval_inputs['im_id'], 
-                                 eval_inputs['num_boxes'],
-                                 eval_inputs['bounding_boxes'],                                             
-                                 eval_s2_outputs['bounding_boxes'],
-                                 eval_s2_outputs['detection_scores'],
-                                 eval_s1_outputs['bounding_boxes'],
-                                 eval_s1_outputs['detection_scores'],
-                                 eval_s1_outputs['kept_out_filter']])
+                out_ = sess.run(outputs)
                 end_time = time.time()
                 eval_utils.append_individuals_detection_output(results_path, *out_, **configuration)
                 end_write_time = time.time()
@@ -139,6 +162,7 @@ with tf.Graph().as_default() as graph:
                 print('\r Step %d' % num_samples, end='') 
         except tf.errors.OutOfRangeError:
             pass
+        print()
         print('Evaluated %d samples' % num_samples)
         # Timing 
         run_time /= num_samples
@@ -146,7 +170,7 @@ with tf.Graph().as_default() as graph:
         print('Timings:')
         print('   Avg. Feed forward:', run_time)
         print('   Avg. Feed forward with write:', run_with_write_time)
-        
+
         print()
         print('Evaluation:')
         eval_aps, eval_aps_thresholds = eval_utils.detect_eval(results_path, **configuration)
