@@ -130,6 +130,8 @@ def generate_log_dir(configuration, verbose=1):
         configuration["log_dir"] = os.path.join(base_log_dir, exp_name, datetime.now().strftime("%m-%d_%H-%M"))
     else:
         configuration["log_dir"] = configuration["fixed_log_dir"]
+    if not os.path.exists(configuration["log_dir"]):
+        os.makedirs(configuration["log_dir"])
         
     
 def get_monitored_training_session(with_ready_op=False,
