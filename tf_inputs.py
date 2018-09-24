@@ -260,7 +260,8 @@ def get_tf_dataset(tfrecords_file,
             dataset = dataset.repeat(num_epochs)
         # Batch
         dataset = dataset.batch(batch_size)
-        if prefetch_capacity > 0: dataset = dataset.prefetch(prefetch_capacity)
+        if prefetch_capacity > 0: 
+            dataset = dataset.prefetch(prefetch_capacity)
         # Iterator
         if make_initializable_iterator:
             iterator = dataset.make_initializable_iterator()
@@ -346,12 +347,11 @@ def extract_groups(inputs,
         
         # Additionally, we filter out boxes with confidence below the threshold
         if confidence_threshold > 0.:
-            # predicted_score: (batch, num_boxes)
-            predicted_scores = tf.squeeze(predicted_scores, axis=-1)
+            # predicted_score: (batch, num_boxes, 1)
             with tf.name_scope('filter_confidence'):
                 filtered = tf.to_float(predicted_scores > confidence_threshold)
                 predicted_scores *= filtered
-                predicted_boxes *= tf.expand_dims(filtered, axis=-1)
+                predicted_boxes *= filtered
         
     ## Rescale remaining  boxes with the learned offsets
     with tf.name_scope('offsets_rescale_boxes'):
@@ -362,11 +362,12 @@ def extract_groups(inputs,
     ## Extract n best patches
     # crop_boxes: (batch, num_crops, 4)
     # crop_boxes_confidences: (batch, num_crops)
+    predicted_scores = tf.squeeze(predicted_scores, axis=-1)
     if num_outputs > 0:    
         # Non-Maximum Suppression
         if nms_threshold < 1.0:
             batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
-            current_batch = tf.shape(inputs['im_id'])[0]
+            current_batch = tf.shape(inputs['image'])[0]
             with tf.name_scope('nms'):
                 nms_boxes = []
                 nms_boxes_confidences = []
@@ -391,7 +392,7 @@ def extract_groups(inputs,
             outputs['crop_boxes_confidences'] = nms_boxes_confidences
         # No NMS
         else:
-            top_scores, top_indices = tf.nn.top_k(predicted_scores[:, :, 0], k=num_outputs)
+            top_scores, top_indices = tf.nn.top_k(predicted_scores, k=num_outputs)
             batch_indices = tf.range(tf.shape(predicted_scores)[0])
             batch_indices = tf.tile(tf.expand_dims(batch_indices, axis=-1), (1, num_outputs))
             gather_indices = tf.stack([batch_indices, top_indices], axis=-1)
@@ -457,8 +458,9 @@ def get_next_stage_inputs(inputs,
     new_inputs = {}
     
     # new_im_id: (batch_size * num_crops,)
-    with tf.name_scope('im_ids'):
-        new_inputs['im_id'] = tile_and_reshape(inputs['im_id'], num_crops)        
+    if 'im_id' in inputs:
+        with tf.name_scope('im_ids'):
+            new_inputs['im_id'] = tile_and_reshape(inputs['im_id'], num_crops)        
         
     # classes: (batch_size * num_crops, num_classes)
     if 'class_labels' in inputs:
@@ -495,46 +497,49 @@ def get_next_stage_inputs(inputs,
         
     # new_bounding_boxes: (num_patches, max_num_bbs, 4)
     # rescale bounding boxes coordinates to the cropped image
-    with tf.name_scope('shift_bbs'):
-        # bounding_boxes: (batch, num_crops, max_num_bbs, 4)
-        # crop_boxes: (batch, num_crops, 1, 4)
-        bounding_boxes = inputs['bounding_boxes']
-        max_num_bbs = bounding_boxes.get_shape()[1].value
-        bounding_boxes = tf.expand_dims(bounding_boxes, axis=1)
-        bounding_boxes = tf.tile(bounding_boxes, (1, num_crops, 1, 1))
-        crop_boxes = tf.expand_dims(crop_boxes, axis=2)
-        # Filter out cut bbs
-        ratios = tf_utils.get_intersection_ratio(tf.split(bounding_boxes, 4, axis=-1), tf.split(crop_boxes, 4, axis=-1))
-        condition = tf.tile(ratios > intersection_ratio_threshold, (1, 1, 1, 4))
-        bounding_boxes *= tf.to_float(condition)
-        # Rescale coordinates to the cropped image
-        crop_mins, crop_maxs = tf.split(crop_boxes, 2, axis=-1)
-        bounding_boxes -= tf.tile(crop_mins, (1, 1, 1, 2))
-        bounding_boxes /= tf.maximum(epsilon, tf.tile(crop_maxs - crop_mins, (1, 1, 1, 2)))
-        bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1.)
-        bounding_boxes = tf.reshape(bounding_boxes, (-1, max_num_bbs, 4))
-        new_inputs['bounding_boxes'] = bounding_boxes
+    if 'bounding_boxes' in inputs:
+        with tf.name_scope('shift_bbs'):
+            # bounding_boxes: (batch, num_crops, max_num_bbs, 4)
+            # crop_boxes: (batch, num_crops, 1, 4)
+            bounding_boxes = inputs['bounding_boxes']
+            max_num_bbs = bounding_boxes.get_shape()[1].value
+            bounding_boxes = tf.expand_dims(bounding_boxes, axis=1)
+            bounding_boxes = tf.tile(bounding_boxes, (1, num_crops, 1, 1))
+            crop_boxes = tf.expand_dims(crop_boxes, axis=2)
+            # Filter out cut bbs
+            ratios = tf_utils.get_intersection_ratio(tf.split(bounding_boxes, 4, axis=-1), tf.split(crop_boxes, 4, axis=-1))
+            condition = tf.tile(ratios > intersection_ratio_threshold, (1, 1, 1, 4))
+            bounding_boxes *= tf.to_float(condition)
+            # Rescale coordinates to the cropped image
+            crop_mins, crop_maxs = tf.split(crop_boxes, 2, axis=-1)
+            bounding_boxes -= tf.tile(crop_mins, (1, 1, 1, 2))
+            bounding_boxes /= tf.maximum(epsilon, tf.tile(crop_maxs - crop_mins, (1, 1, 1, 2)))
+            bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1.)
+            bounding_boxes = tf.reshape(bounding_boxes, (-1, max_num_bbs, 4))
+            new_inputs['bounding_boxes'] = bounding_boxes
 
     # number of valid boxes: (num_patches,)
-    with tf.name_scope('num_boxes'):
-        valid_boxes = ((bounding_boxes[..., 2] > bounding_boxes[..., 0]) & 
-                       (bounding_boxes[..., 3] > bounding_boxes[..., 1]))
-        num_boxes =  tf.to_float(valid_boxes)
-        new_inputs['num_boxes'] = tf.to_int32(tf.reduce_sum(num_boxes, axis=-1) )
+    if 'num_boxes' in inputs:
+        with tf.name_scope('num_boxes'):
+            valid_boxes = ((bounding_boxes[..., 2] > bounding_boxes[..., 0]) & 
+                           (bounding_boxes[..., 3] > bounding_boxes[..., 1]))
+            num_boxes =  tf.to_float(valid_boxes)
+            new_inputs['num_boxes'] = tf.to_int32(tf.reduce_sum(num_boxes, axis=-1) )
         
     # Compute the box presence in cell mask
     # obj_i_mask_bbs: (num_patches, num_cells, num_cells, 1, num_gt)
-    with tf.name_scope('grid_offsets'):
-        if grid_offsets is not None:            
-            num_cells = grid_offsets.shape[:2]
-            grid_offsets_mins = grid_offsets / num_cells
-            grid_offsets_maxs = (grid_offsets + 1.) / num_cells      
-            bounding_boxes = tf.reshape(bounding_boxes, (-1, 1, 1, max_num_bbs, 4))
-            mins, maxs = tf.split(bounding_boxes, 2, axis=-1)
-            inters = tf.maximum(0., tf.minimum(maxs, grid_offsets_maxs) - tf.maximum(mins, grid_offsets_mins))
-            inters = tf.reduce_prod(inters, axis=-1)
-            obj_i_mask = tf.expand_dims(tf.to_float(inters > 0.) , axis=-2)
-            new_inputs['obj_i_mask_bbs'] = obj_i_mask
+    if 'obj_i_mask_bbs' in inputs:
+        with tf.name_scope('grid_offsets'):
+            if grid_offsets is not None:            
+                num_cells = grid_offsets.shape[:2]
+                grid_offsets_mins = grid_offsets / num_cells
+                grid_offsets_maxs = (grid_offsets + 1.) / num_cells      
+                bounding_boxes = tf.reshape(bounding_boxes, (-1, 1, 1, max_num_bbs, 4))
+                mins, maxs = tf.split(bounding_boxes, 2, axis=-1)
+                inters = tf.maximum(0., tf.minimum(maxs, grid_offsets_maxs) - tf.maximum(mins, grid_offsets_mins))
+                inters = tf.reduce_prod(inters, axis=-1)
+                obj_i_mask = tf.expand_dims(tf.to_float(inters > 0.) , axis=-2)
+                new_inputs['obj_i_mask_bbs'] = obj_i_mask
         
     # Enqueue the new inputs during training, or pass the output directly to the next stage at test time
     if use_queue:
