@@ -1,12 +1,11 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-
 import argparse
+import pickle
 import time
 
 import tensorflow as tf
 print("Tensorflow version", tf.__version__)
-from tensorflow.python.training.summary_io import SummaryWriterCache
 
 import defaults
 import eval_utils
@@ -23,9 +22,9 @@ parser.add_argument('--stage2_batch_size', type=int, help= 'Fixed batch size.')
 parser.add_argument('--stage2_image_size', type=int, help= 'Image size.')
 parser.add_argument('--same_network', action='store_true', help= 'Whether to use the same network for stage 1 and 2.')
 args = parser.parse_args()
+print('ODGI - %s, Input size %d\n' % (args.data, args.size)) 
 configuration = defaults.build_base_config_from_args(args)
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
-print('ODGI - %s, Input size %d\n' % (args.data, args.size)) 
 
 ########################################################################## ODGI Config
 multistage_configuration = configuration.copy()
@@ -38,21 +37,17 @@ stage1_configuration['image_size'] = args.size
 stage2_configuration['image_size'] = stage1_configuration['image_size'] // 2 if args.stage2_image_size is None else args.stage2_image_size
 
 # stage 1
-stage1_configuration['num_boxes'] = 1
 stage1_configuration['base_name'] = 'stage1'
 stage1_configuration['with_groups'] = True
 stage1_configuration['with_group_flags'] = True
 stage1_configuration['with_offsets'] = True
 graph_manager.finalize_grid_offsets(stage1_configuration)
-
 # stage 2
+stage2_configuration['base_name'] = 'stage2'
 stage2_configuration['batch_size'] = args.stage2_batch_size 
 stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
-stage2_configuration['num_boxes'] = 1
-stage2_configuration['base_name'] = 'stage2'
-#stage2_configuration['beta1'] = args.stage2_momentum
 graph_manager.finalize_grid_offsets(stage2_configuration)
-
+# exp name
 multistage_configuration['exp_name'] += '/%s_odgi_%d_%d' % (
     stage1_configuration['network'], stage1_configuration['image_size'], stage2_configuration['image_size'])
 if args.same_network:
@@ -153,16 +148,21 @@ with tf.Graph().as_default() as graph:
                 for t, thresh in enumerate(eval_aps_thresholds)))
         
 
-########################################################################## Start Session
+########################################################################## Logs
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
-    print('\nLaunch session:')
     graph_manager.generate_log_dir(multistage_configuration)
-    summary_writer = SummaryWriterCache.get(multistage_configuration["log_dir"])
     print('    Log directory', os.path.abspath(multistage_configuration["log_dir"]))
+    viz.save_tee(multistage_configuration["log_dir"], tee)
     validation_results_path = os.path.join(multistage_configuration["log_dir"], 'val_output.txt')
     test_results_path = os.path.join(multistage_configuration["log_dir"], 'test_output.txt')
+    with open(os.path.join(multistage_configuration["log_dir"], 'stage1_config.pkl'), 'wb') as f:
+        pickle.dump(stage1_configuration, f)
+    with open(os.path.join(multistage_configuration["log_dir"], 'stage2_config.pkl'), 'wb') as f:
+        pickle.dump(stage2_configuration, f)
+        
+########################################################################## Start Session
+    print('\nLaunch session:')
     global_step_ = 0
-    viz.save_tee(multistage_configuration["log_dir"], tee)
     try:        
         with graph_manager.get_monitored_training_session(**multistage_configuration) as sess:              
             print('\nStart training:')  

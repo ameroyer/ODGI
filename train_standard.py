@@ -1,12 +1,11 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 import argparse
+import pickle
 import time
 
 import tensorflow as tf
 print("Tensorflow version", tf.__version__)
-from tensorflow.python.training.summary_io import SummaryWriterCache
 
 import defaults
 import eval_utils
@@ -19,15 +18,14 @@ tee = viz.Tee()
 parser = argparse.ArgumentParser(description='Standard Object Detection.')
 defaults.build_base_parser(parser)
 args = parser.parse_args()
+print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 configuration = defaults.build_base_config_from_args(args)
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
-print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 
 ########################################################################## Network Config
 standard_configuration = configuration.copy()
 standard_configuration['base_name'] =  args.network
 standard_configuration['image_size'] = args.size
-standard_configuration['num_boxes'] = 1
 standard_configuration['exp_name'] += '/%s_standard_%d' % (standard_configuration['network'], 
                                                            standard_configuration['image_size'])
 graph_manager.finalize_grid_offsets(standard_configuration)
@@ -110,16 +108,19 @@ with tf.Graph().as_default() as graph:
                 for t, thresh in enumerate(eval_aps_thresholds)))
                 
 
-    ########################################################################## Run Session
+########################################################################## Logs
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))    
-    print('\nLaunch session:')
     graph_manager.generate_log_dir(standard_configuration)
-    summary_writer = SummaryWriterCache.get(standard_configuration["log_dir"])
     print('    Log directory', os.path.abspath(standard_configuration["log_dir"]))
+    viz.save_tee(standard_configuration["log_dir"], tee)
     validation_results_path = os.path.join(standard_configuration["log_dir"], 'val_output.txt')
     test_results_path = os.path.join(standard_configuration["log_dir"], 'test_output.txt')
+    with open(os.path.join(standard_configuration["log_dir"], 'config.pkl'), 'wb') as f:
+        pickle.dump(standard_configuration, f)
+        
+########################################################################## Start Session
+    print('\nLaunch session:')
     global_step_ = 0
-    viz.save_tee(standard_configuration["log_dir"], tee)
     try:        
         with graph_manager.get_monitored_training_session(**standard_configuration) as sess:             
             print('\nStart training:')
