@@ -1,19 +1,19 @@
 #!/bin/bash
-SIZE=256 
+SIZE=512
 STAGE2_IMAGE_SIZE=64          
 NETWORK='tiny-yolov2'
 
 NUM_GPUS=2
 BATCH_SIZE=16       
 NUM_EPOCHS=600
-LEARNING_RATE=2e-4
+LEARNING_RATE=1e-3
 sbatch <<EOT
 #!/bin/bash
 #SBATCH -N 1                            # number of nodes (usually 1)
 #SBATCH -n 4                            # number of cores
 #SBATCH --mail-user=aroyer@ist.ac.at    # send mail to user
 #SBATCH --mail-type=FAIL,END            # if a job fails or ends
-#SBATCH --mem 32G                       # memory pool for all cores
+#SBATCH --mem 16G                       # memory pool for all cores
 #SBATCH --time 1-00:00                  # max runtime (D-HH:MM)
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:2                    # how many GPUs to reserve

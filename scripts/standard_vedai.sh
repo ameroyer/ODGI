@@ -5,7 +5,7 @@ NETWORK='tiny-yolov2'
 NUM_GPUS=2
 BATCH_SIZE=16       
 NUM_EPOCHS=600
-LEARNING_RATE=2e-4
+LEARNING_RATE=1e-3
 sbatch <<EOT
 #!/bin/bash
 #SBATCH -N 1                            # number of nodes (usually 1)
@@ -25,24 +25,53 @@ module load cudnn
 module load tensorflow/python3/1.10.0
 cd ${HOME}/Jupyter/ODGI                   # working directory
 
+echo '============================================================== FOLD 01'
 python3 -u train_standard.py 'vedai_fold01' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
+echo
+echo
 
-python3 -u train_standard.py 'vedai_fold02' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
+echo '============================================================== FOLD 02'
+python3 -u train_standard.py 'vedai_fold02' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE 
+echo
+echo
 
+echo '============================================================== FOLD 03' 
 python3 -u train_standard.py 'vedai_fold03' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE  
+echo
+echo
 
+echo '============================================================== FOLD 04'
 python3 -u train_standard.py 'vedai_fold04' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
+echo
+echo
 
+echo '============================================================== FOLD 05'
 python3 -u train_standard.py 'vedai_fold05' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
+echo
+echo
 
+echo '============================================================== FOLD 06'
 python3 -u train_standard.py 'vedai_fold06' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
+echo
+echo
 
+echo '============================================================== FOLD 07'
 python3 -u train_standard.py 'vedai_fold07' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
+echo
+echo
 
+echo '============================================================== FOLD 08'
 python3 -u train_standard.py 'vedai_fold08' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE 
+echo
+echo
 
+echo '============================================================== FOLD 09'
 python3 -u train_standard.py 'vedai_fold09' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE  
+echo
+echo
 
+echo '============================================================== FOLD 010'
 python3 -u train_standard.py 'vedai_fold10' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE    
+echo
 exit 0
 EOT
