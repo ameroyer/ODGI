@@ -99,13 +99,11 @@ def load_metadata(filename):
                 metadata[key] = int(values)
         return metadata
     
-    
+        
 def build_base_config_from_args(args):
-    """Build the base configuration from the command line argument"""
-    
+    """Build the base configuration from the command line argument"""    
     ## Set dataset
     configuration = {}
-    configuration['network'] = args.network
     if args.data.startswith('vedai'):
         configuration['setting'] = args.data
         configuration['exp_name'] = args.data
@@ -129,15 +127,18 @@ def build_base_config_from_args(args):
         configuration['image_format'] = 'dota'
     else:
         raise ValueError("unknown data", args.data)
-
+    
     ## Metadata
     tfrecords_path = 'Data/metadata_%s.txt'
     metadata = load_metadata(tfrecords_path % configuration['setting'])
     configuration.update(metadata)
     configuration['num_classes'] = len(configuration['data_classes'])
+        
+    ## Network 
+    configuration['network'] = args.network
 
     ## GPUs
-    configuration['num_gpus'] = args.num_gpus                                 
+    configuration['num_gpus'] = args.num_gpus
     configuration['gpu_mem_frac'] = max(0., min(1., args.gpu_mem_frac))
 
     ## Training
