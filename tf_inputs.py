@@ -80,7 +80,7 @@ def apply_data_augmentation(in_, num_samples, data_augmentation_threshold):
         Dataset with left/right data augmentation applied
     """
     condition_shape = tf.shape(in_['image'])[:1]
-    condition = (tf.random_uniform(condition_shape) > data_augmentation_threshold)
+    condition = (tf.random_uniform(condition_shape) >= data_augmentation_threshold)
         
     # Flip image
     in_['image'] = tf.where(condition, in_['image'], tf.reverse(in_['image'], [2]))
