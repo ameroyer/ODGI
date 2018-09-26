@@ -1,12 +1,11 @@
 #!/bin/bash
-#SBATCH --array=2,3,4
+#SBATCH --array=1-10
 #SBATCH -o ./dummy_logs/slurm-%j.out 
-SIZE=256        
+SIZE=1024        
 NETWORK='tiny-yolov2'
 
 NUM_GPUS=2
-#BATCH_SIZE=16 
-BATCH_SIZE=12  # Uncomment for SIZE = 1024 to avoid OOM     
+BATCH_SIZE=12     
 NUM_EPOCHS=600
 LEARNING_RATE=1e-3
 printf -v FOLD "%02d" $SLURM_ARRAY_TASK_ID
