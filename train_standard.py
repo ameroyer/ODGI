@@ -1,5 +1,5 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import argparse
 import pickle
 import time
@@ -53,13 +53,17 @@ with tf.Graph().as_default() as graph:
                             train_inputs, train_outputs, mode='train', **standard_configuration)
 
         # Training Objective
+        print('\nLosses:')
         with tf.name_scope('losses'):
             losses = graph_manager.get_total_loss(verbose=args.verbose, add_summaries=add_summaries)
-            full_loss = tf.add_n([x[0] for x in losses])            
+            assert len(losses) == 1
+            full_loss = losses[0][0]           
 
         # Train op    
         with tf.name_scope('train_op'):   
             global_step, train_op = graph_manager.get_train_op(losses, verbose=args.verbose, **standard_configuration)
+            assert len(train_op) == 1
+            train_op = train_op[0]
         
         # Additional info
         print('\nLosses:')

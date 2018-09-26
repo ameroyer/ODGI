@@ -221,8 +221,13 @@ def display_loss(loss_widget,
                             )  
     else:
         epoch = (global_step_ * iter_size) // num_samples + 1
-        print('  > Step %d (epoch %d): loss = %.5f' % (global_step_, epoch, full_loss_))
-    assert not np.isnan(full_loss_), 'loss has NaN values'
+        if isinstance(full_loss_, (list,)):
+            l = ', '.join('loss %d = %.5f' % (i + 1, x) for i, x in enumerate(full_loss_)) 
+            assert not np.isnan(np.sum(full_loss_)), 'loss has NaN values'
+        else:
+            l = 'loss = %.5f' % full_loss_
+            assert not np.isnan(full_loss_), 'loss has NaN values'
+        print('  > Step %d (epoch %d): %s' % (global_step_, epoch, l))
     
     
 def display_eval(loss_widget, 

@@ -417,8 +417,9 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbos
     for split in splits:
         ## Collect losses from  `*_loss' collections
         full_loss = 0.
-        for key in [x for x in tf.get_default_graph().get_all_collection_keys() if 
-                    x.endswith('_loss') and x.startswith(split)]:
+        loss_collections = [x for x in tf.get_default_graph().get_all_collection_keys() if 
+                            x.endswith('_loss') and x.startswith(split)]
+        for key in loss_collections:
             collected = tf.get_collection(key)
             loss = tf.add_n(collected) / float(len(collected))
             full_loss += loss
@@ -438,7 +439,14 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbos
         if add_summaries:
             tf.summary.scalar('%stotal_loss' % split, full_loss, collections=[collection]) 
             
-        losses.append((full_loss, tf.trainable_variables(scope=split)))
+        train_vars = tf.trainable_variables(scope=split)
+        losses.append((full_loss, train_vars))
+        if verbose == 2:
+            print('\n    Scope %s' % split)
+            print('\n'.join(["        *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
+                             for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
+            print('       ', ', '.join(list(map(lambda x: x.name, train_vars))))
+            
     # Return
     return losses
 
@@ -463,16 +471,16 @@ def get_train_op(full_losses,
         global step tensor
         train operation
     """
-    optimizer, learning_rate = get_defaults(kwargs, ['optimizer', 'learning_rate'], verbose=verbose)
-    global_step = tf.train.get_or_create_global_step()    
     if verbose == 1:
         print(' > Build train operation')
     elif verbose == 2:
         print(' \033[31m> Build train operation\033[0m')
-    if verbose:
-        print('    Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
         
     # Optimizer    
+    global_step = tf.train.get_or_create_global_step()    
+    optimizer, learning_rate = get_defaults(kwargs, ['optimizer', 'learning_rate'], verbose=verbose)
+    if verbose:
+        print('    Using optimizer %s with learning rate %.2e' % (optimizer, learning_rate))
     if optimizer == 'MOMENTUM':
         learning_rate_decay_steps, learning_rate_decay_rate = get_defaults(
             kwargs, ['lr_decay_steps', 'lr_decay_rate', 'momentum'], verbose=verbose)
@@ -499,8 +507,7 @@ def get_train_op(full_losses,
     
     # Return
     global_step_op = tf.assign_add(global_step, 1)
-    train_op = tf.group(*train_ops) 
-    return global_step_op, train_op
+    return global_step_op, train_ops
 
 
 ############################################################ Train Summaries

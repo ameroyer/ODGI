@@ -1,5 +1,5 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Uncomment to hide tensorflow logs
 import argparse
 import pickle
 import time
@@ -20,7 +20,7 @@ defaults.build_base_parser(parser)
 parser.add_argument('--full_image_size', default=-1, type=int, help= 'Size of the images to extract patches.')
 parser.add_argument('--stage2_batch_size', type=int, help= 'Fixed batch size.')
 parser.add_argument('--stage2_image_size', type=int, help= 'Image size.')
-parser.add_argument('--same_network', action='store_true', help= 'Whether to use the same network for stage 1 and 2.')
+parser.add_argument('--delayed_stage2_start', default=0, type=int, help= 'If given start training stage 2 after the given number of epochs.')
 args = parser.parse_args()
 print('ODGI - %s, Input size %d\n' % (args.data, args.size)) 
 configuration = defaults.build_base_config_from_args(args)
@@ -50,8 +50,6 @@ graph_manager.finalize_grid_offsets(stage2_configuration)
 # exp name
 multistage_configuration['exp_name'] += '/%s_odgi_%d_%d' % (
     stage1_configuration['network'], stage1_configuration['image_size'], stage2_configuration['image_size'])
-if args.same_network:
-    multistage_configuration['exp_name'] += '_same'
     
 
 ########################################################################## Graph
@@ -66,14 +64,12 @@ with tf.Graph().as_default() as graph:
                 with tf.name_scope('dev%d' % i):
                     train_inputs, _ = graph_manager.get_inputs(
                         mode='train', shard_index=i, verbose=args.verbose * int(is_chief), **stage1_configuration)
-                    train_s1_outputs = train_pass(train_inputs, stage1_configuration, 
-                                                  use_same_activations_scope=args.same_network, reuse_activations=False,
-                                                  intermediate_stage=True, is_chief=is_chief, verbose=args.verbose)
+                    train_s1_outputs = train_pass(train_inputs, stage1_configuration, is_chief=is_chief, 
+                                                  intermediate_stage=True, verbose=args.verbose)
                     train_s2_inputs = feed_pass(train_inputs, train_s1_outputs, stage2_configuration,
                                                 mode='train', is_chief=is_chief, verbose=args.verbose)
-                    train_s2_outputs = train_pass(train_s2_inputs, stage2_configuration,
-                                                  use_same_activations_scope=args.same_network, reuse_activations=args.same_network,
-                                                  intermediate_stage=False, is_chief=is_chief, verbose=args.verbose) 
+                    train_s2_outputs = train_pass(train_s2_inputs, stage2_configuration, is_chief=is_chief,
+                                                  intermediate_stage=False, verbose=args.verbose) 
                     if is_chief and add_summaries:
                         print(' > summaries:')
                         graph_manager.add_summaries(train_inputs, train_s1_outputs, mode='train', 
@@ -82,21 +78,22 @@ with tf.Graph().as_default() as graph:
                                                     family="train_stage2", **stage2_configuration)
 
         # Training Objective
+        print('\nLosses:')
         with tf.name_scope('losses'):
-            if not args.same_network:
-                losses = graph_manager.get_total_loss(splits=['stage1', 'stage2'], add_summaries=add_summaries)  
-            else:
-                losses = graph_manager.get_total_loss(add_summaries=add_summaries)  
-            full_loss = tf.add_n([x[0] for x in losses])
+            losses = graph_manager.get_total_loss(
+                splits=[stage1_configuration['base_name'], stage2_configuration['base_name']], 
+                add_summaries=add_summaries, verbose=args.verbose)
+            assert len(losses) == 2
+            full_loss = [x[0] for x in losses]
 
         # Train op    
         with tf.name_scope('train_op'):   
-            global_step, train_op = graph_manager.get_train_op(losses, verbose=args.verbose, **multistage_configuration)
+            global_step, train_ops = graph_manager.get_train_op(losses, verbose=args.verbose, **multistage_configuration)
+            assert len(train_ops) == 2
+            train_stage1_op = train_ops[0]
+            train_stage2_op = train_ops[1]
         
-        # Additional info
-        print('\nLosses:')
-        print('\n'.join(["    *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
-                       for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
+        # Config
         if add_summaries:
             with tf.name_scope('config_summary'):
                 viz.add_text_summaries(stage1_configuration, family="stage1") 
@@ -112,13 +109,11 @@ with tf.Graph().as_default() as graph:
             name='eval_inputs')
         with tf.device('/gpu:%d' % 0):
             with tf.name_scope('dev%d' % 0):
-                eval_s1_outputs = eval_pass_intermediate_stage(eval_inputs, stage1_configuration, verbose=False,
-                                                               use_same_activations_scope=args.same_network) 
+                eval_s1_outputs = eval_pass_intermediate_stage(eval_inputs, stage1_configuration, verbose=False) 
                 eval_s2_inputs = feed_pass(eval_inputs, eval_s1_outputs, stage2_configuration,
                                            mode='test', verbose=False)
                 eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, 
-                    verbose=False, use_same_activations_scope=args.same_network)
+                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False)
                 
             
 ########################################################################## Evaluation script
@@ -170,7 +165,10 @@ with tf.Graph().as_default() as graph:
             try:
                 while 1:
                     # Train
-                    global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
+                    if global_step_ >= multistage_configuration['train_num_iters_per_epoch'] * args.delayed_stage2_start:
+                        global_step_, full_loss_, _, _ = sess.run([global_step, full_loss, train_stage1_op, train_stage2_op])
+                    else:
+                        global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_stage1_op])
                     
                     if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
                         viz.display_loss(None, global_step_, full_loss_, start_time,
