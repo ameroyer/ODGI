@@ -15,30 +15,27 @@ def forward_pass(inputs,
                  outputs, 
                  configuration,
                  is_training=True,
-                 reuse=False, 
-                 reuse_activations=False,
+                 reuse=False,
                  scope_name='model',
-                 use_same_activations_scope=False,
                  verbose=False):
     """Forward-pass in the net"""
     network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
-    activations_scope_name = scope_name if not use_same_activations_scope else 'stage'
-    with tf.variable_scope(activations_scope_name, reuse=reuse or reuse_activations):        
+    with tf.variable_scope(scope_name, reuse=reuse): 
+        # activations
         if network == 'tiny-yolov2':
             activations = net.tiny_yolo_v2(
-                inputs["image"], is_training=is_training, reuse=reuse or reuse_activations, verbose=verbose, **configuration)
+                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
         elif network == 'yolov2':
             activations = net.yolo_v2(
-                inputs["image"], is_training=is_training, reuse=reuse or reuse_activations, verbose=verbose, **configuration)
+                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
         else:
             raise NotImplementedError('Uknown network architecture', network)
-    with tf.variable_scope(scope_name, reuse=reuse):        
+        # output
         net.get_detection_with_groups_outputs(
             activations, outputs, reuse=reuse, verbose=verbose, **configuration)
             
             
-def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, 
-               use_same_activations_scope=False, reuse_activations=False, verbose=1):
+def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, verbose=1):
     """ Compute outputs of the net and add losses to the graph.
     
     Args:
@@ -62,8 +59,8 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False,
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=True, reuse=not is_chief,
-                     reuse_activations=reuse_activations, use_same_activations_scope=use_same_activations_scope, verbose=dev_verbose) 
+        forward_pass(inputs, outputs, configuration, scope_name=base_name, 
+                     is_training=True, reuse=not is_chief, verbose=dev_verbose) 
         
     # Compute crops to feed to the next stage
     if intermediate_stage:
@@ -105,7 +102,7 @@ def feed_pass(inputs, outputs, configuration, mode='train', is_chief=True, verbo
         inputs, outputs['crop_boxes'], mode=mode, verbose=dev_verbose, **configuration)
         
     
-def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_scope=False, reuse=True, verbose=False):
+def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
     """ Evaluation pass for intermediate stages."""
     outputs = {}
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
@@ -116,8 +113,8 @@ def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_sco
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
-                     use_same_activations_scope=use_same_activations_scope, reuse=reuse, verbose=verbose) 
+        forward_pass(inputs, outputs, configuration, scope_name=base_name, 
+                     is_training=False,  reuse=reuse, verbose=verbose) 
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):
@@ -126,8 +123,7 @@ def eval_pass_intermediate_stage(inputs, configuration, use_same_activations_sco
     return outputs    
 
 
-def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, 
-                          use_same_activations_scope=False, reuse=True, verbose=False):
+def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, reuse=True, verbose=0):
     """ Evaluation for the full pipeline.
         Args:
             stage2_inputs: inputs dictionnary for stage2
@@ -152,8 +148,8 @@ def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configur
     
     # Feed forward
     with tf.name_scope('net'):
-        forward_pass(stage2_inputs, outputs, configuration, scope_name=base_name, is_training=False,
-                     use_same_activations_scope=use_same_activations_scope, reuse=reuse, verbose=verbose) 
+        forward_pass(stage2_inputs, outputs, configuration, scope_name=base_name, 
+                     is_training=False, reuse=reuse, verbose=verbose) 
             
     # Reshape outputs from stage2 to stage1
     crop_boxes = stage1_outputs["crop_boxes"]  

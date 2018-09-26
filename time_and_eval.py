@@ -17,7 +17,6 @@ except ImportError:
 
 import tensorflow as tf
 print("Tensorflow version", tf.__version__)
-from tensorflow.python.training.summary_io import SummaryWriterCache
 
 import defaults
 import eval_utils
@@ -26,7 +25,6 @@ import viz
 import odgi_graph
 import standard_graph
 
-tee = viz.Tee()    
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
@@ -44,10 +42,10 @@ configuration = {}
 if data.startswith('vedai'):
     configuration['setting'] = data
     configuration['image_suffix'] = '_co.png'
-elif data == 'stanford':
+elif data == 'sdd':
     configuration['setting'] = 'sdd'
     configuration['image_suffix'] = '.jpeg'
-elif data == 'sdd':
+elif data == 'dota':
     configuration['setting'] = 'dota'
     configuration['image_suffix'] = '.jpg'
 else:
