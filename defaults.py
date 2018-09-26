@@ -111,7 +111,7 @@ def build_base_config_from_args(args):
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 500 if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'vedai'
-    elif args.data == 'stanford':
+    elif args.data == 'sdd':
         configuration['setting'] = 'sdd'
         configuration['exp_name'] = 'sdd'
         configuration['save_summaries_steps'] = args.save_summaries_steps 
