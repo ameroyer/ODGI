@@ -10,7 +10,7 @@ import tensorflow as tf
 import tf_utils
 
 class Tee(object):
-    def __init__(self):
+    def __init__(self, filename='log.txt'):
         self.str = io.StringIO()
         self.stdout = sys.stdout
         self.files = [self.stdout, self.str]
@@ -26,7 +26,7 @@ class Tee(object):
             f.flush()
             
 def save_tee(log_dir, tee):
-    with open(os.path.join(log_dir, 'log.txt'), 'w') as fd:
+    with open(os.path.join(log_dir, tee.filename), 'w') as fd:
         tee.str.seek(0)
         shutil.copyfileobj(tee.str, fd)
 
