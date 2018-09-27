@@ -1,0 +1,12 @@
+train_tfrecords	Data/sdd_train
+train_max_num_bbs	101
+train_num_samples	18305
+val_tfrecords	Data/sdd_val
+val_max_num_bbs	101
+val_num_samples	2612
+test_tfrecords	Data/sdd_test
+test_max_num_bbs	101
+test_num_samples	5239
+data_classes	Biker,Bus,Car,Cart,Pedestrian,Skater
+feature_keys	im_id,num_boxes,bounding_boxes,classes
+image_folder	/nfs/scistore12/chlgrp/aroyer/Datasets/sdd_images
