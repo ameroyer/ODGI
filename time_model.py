@@ -25,6 +25,7 @@ import viz
 import odgi_graph
 import standard_graph
 
+tee = viz.Tee(filename='time_log.txt')  
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
@@ -179,3 +180,4 @@ with tf.Graph().as_default() as graph:
         print('   Avg. Loading Time:', loading_time)
         print('   Avg. Feed forward:', run_time)
         print('   Avg. time:', run_time + loading_time)
+        viz.save_tee(args.log_dir, tee)
