@@ -12,7 +12,6 @@ import tf_utils
 
 
 def forward_pass(inputs, 
-                 outputs, 
                  configuration,
                  scope_name='model',
                  is_training=True,
@@ -102,5 +101,5 @@ def eval_pass(inputs, configuration, reuse=True, verbose=1):
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        return forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
+        return forward_pass(inputs, configuration, scope_name=base_name, is_training=False, 
                            reuse=reuse, verbose=verbose)
