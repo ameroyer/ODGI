@@ -123,11 +123,10 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
     return outputs    
 
 
-def eval_pass_final_stage(stage2_inputs, stage1_inputs, stage1_outputs, configuration, reuse=True, verbose=0):
+def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=True, verbose=0):
     """ Evaluation for the full pipeline.
         Args:
             stage2_inputs: inputs dictionnary for stage2
-            stage1_inputs: inputs dictionnary for stage 1
             stage1_outputs: outputs dictionnary for stage1
             configuration: config dictionnary
             metrics_to_norms: Map metrics key to normalizer key

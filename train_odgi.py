@@ -113,7 +113,7 @@ with tf.Graph().as_default() as graph:
                 eval_s2_inputs = feed_pass(eval_inputs, eval_s1_outputs, stage2_configuration,
                                            mode='test', verbose=False)
                 eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, verbose=False)
+                    eval_s2_inputs, eval_s1_outputs, stage2_configuration, verbose=False)
                 
             
 ########################################################################## Evaluation script
