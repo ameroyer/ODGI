@@ -15,6 +15,7 @@ class Tee(object):
         self.stdout = sys.stdout
         self.files = [self.stdout, self.str]
         sys.stdout = self
+        self.filename = filename
     def __del__(self):
         sys.stdout = self.stdout
     def write(self, obj):
