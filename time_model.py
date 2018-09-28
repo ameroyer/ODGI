@@ -100,10 +100,10 @@ with tf.Graph().as_default() as graph:
         processed_image = tf.expand_dims(processed_image, axis=0)
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
-            outputs = odgi_graph.eval_pass_intermediate_stage(
+            crop_boxes = odgi_graph.eval_pass_intermediate_stage(
                 eval_inputs, stage1_configuration, reuse=False, verbose=False) 
-            #eval_s2_inputs = odgi_graph.feed_pass(
-            #    eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
+            outputs = odgi_graph.feed_pass(
+                eval_inputs, crop_boxes, stage2_configuration, mode='test', verbose=False)
             #eval_s2_outputs = odgi_graph.eval_pass_final_stage(
             #    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)         
                     
@@ -130,6 +130,7 @@ with tf.Graph().as_default() as graph:
 
     ########################################################################## Start Session
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
+    print('Outputs', outputs)
     print('\nLaunch session from %s:' % args.log_dir)
 
     if args.device == 'gpu':
