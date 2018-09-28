@@ -104,8 +104,8 @@ with tf.Graph().as_default() as graph:
                 eval_inputs, stage1_configuration, reuse=False, verbose=False) 
             outputs = odgi_graph.feed_pass(
                 eval_inputs, crop_boxes, stage2_configuration, mode='test', verbose=False)
-            #eval_s2_outputs = odgi_graph.eval_pass_final_stage(
-            #    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)         
+            outputs = odgi_graph.eval_pass_final_stage(
+                outputs, crop_boxes, stage2_configuration, reuse=False, verbose=False)         
                     
     ########################### Standard
     elif mode == 'standard':
