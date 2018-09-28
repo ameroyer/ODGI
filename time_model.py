@@ -101,13 +101,11 @@ with tf.Graph().as_default() as graph:
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
             eval_s1_outputs = odgi_graph.eval_pass_intermediate_stage(
-                eval_inputs, stage1_configuration, use_same_activations_scope=configuration['same_network'],
-                reuse=False, verbose=False) 
+                eval_inputs, stage1_configuration, reuse=False, verbose=False) 
             eval_s2_inputs = odgi_graph.feed_pass(
                 eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
             eval_s2_outputs = odgi_graph.eval_pass_final_stage(
-                eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, 
-                use_same_activations_scope=configuration['same_network'], reuse=False, verbose=False)                    
+                eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)                    
             outputs = [eval_s2_outputs['bounding_boxes'],
                        eval_s2_outputs['detection_scores'],
                        eval_s1_outputs['bounding_boxes'],
@@ -139,7 +137,7 @@ with tf.Graph().as_default() as graph:
 
     ########################################################################## Start Session
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
-    print('\nLaunch session:')
+    print('\nLaunch session from %s:' % args.log_dir)
 
     if args.device == 'gpu':
         gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=args.verbose)[0]    
@@ -168,7 +166,8 @@ with tf.Graph().as_default() as graph:
                 loading_time += load_time - start_time
                 run_time += end_time - load_time
                 num_samples += 1
-                print('\r Step %d' % num_samples, end='') 
+                if args.verbose == 2:
+                    print('\r Step %d' % num_samples, end='') 
         except tf.errors.OutOfRangeError:
             pass
         print()
