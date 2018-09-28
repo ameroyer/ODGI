@@ -127,8 +127,7 @@ with tf.Graph().as_default() as graph:
         processed_image = tf.expand_dims(processed_image, axis=0)  
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
-            eval_outputs = standard_graph.eval_pass(eval_inputs, standard_configuration, reuse=False, verbose=False)
-            outputs = eval_outputs['bounding_boxes']
+            outputs = standard_graph.eval_pass(eval_inputs, standard_configuration, reuse=False, verbose=False)
 
     else:
         raise ValueError('Unkown mode', mode)
