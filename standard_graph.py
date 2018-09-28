@@ -38,8 +38,7 @@ def forward_pass(inputs,
                 inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
         else:
             raise NotImplementedError('Uknown network architecture', network)
-        out = net.get_detection_outputs(
-            activations, reuse=reuse, verbose=verbose, **configuration)
+        return net.get_detection_outputs(activations, reuse=reuse, verbose=verbose, **configuration)
             
             
 def train_pass(inputs, configuration, is_chief=False, verbose=1):
