@@ -288,7 +288,10 @@ def get_tf_dataset(tfrecords_file,
 
 
 def extract_groups(inputs, 
-                   outputs,
+                   predicted_boxes,
+                   predicted_scores,
+                   offsets,
+                   group_classification_logits,
                    mode='train',
                    verbose=False,
                    epsilon=1e-8,
@@ -325,25 +328,26 @@ def extract_groups(inputs,
     # predicted_score: (batch, num_boxes, 1)
     # predicted_boxes: (batch, num_boxes, 4)
     with tf.name_scope('flat_output'):
-        predicted_scores = tf_utils.flatten_percell_output(outputs["confidence_scores"])
-        predicted_boxes = tf_utils.flatten_percell_output(outputs["bounding_boxes"])
+        predicted_scores = tf_utils.flatten_percell_output(predicted_scores)
+        predicted_boxes = tf_utils.flatten_percell_output(predicted_boxes)
         
     ## Filter
     with tf.name_scope('filter_groups'):
         # At test time, we keep out individual confidences with high confidence
-        if mode in ['test', 'val'] and 'group_classification_logits' in outputs:
+        if mode in ['test', 'val'] and group_classification_logits is not None:
             strong_confidence_threshold = graph_manager.get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
             # is_group: (batch, num_boxes, 1)
-            is_group = tf.to_float(tf.nn.sigmoid(outputs['group_classification_logits']) > 0.5)
+            is_group = tf.to_float(tf.nn.sigmoid(group_classification_logits) > 0.5)
             is_group = tf_utils.flatten_percell_output(is_group)
             # should_be_refined: (batch, num_boxes, 1) : groups and not strongly confident individuals
             is_not_strongly_confident = tf.to_float(predicted_scores <= strong_confidence_threshold)
             should_be_refined = tf.minimum(1., is_group + is_not_strongly_confident)
-            outputs['kept_out_filter'] = tf.squeeze(1. - should_be_refined, axis=-1)
+            #outputs['kept_out_filter'] = tf.squeeze(1. - should_be_refined, axis=-1)
             # Filter them out from potential crops
             predicted_scores *= should_be_refined
             predicted_boxes *= should_be_refined
+            del should_be_refined
         
         # Additionally, we filter out boxes with confidence below the threshold
         if confidence_threshold > 0.:
@@ -352,12 +356,13 @@ def extract_groups(inputs,
                 filtered = tf.to_float(predicted_scores > confidence_threshold)
                 predicted_scores *= filtered
                 predicted_boxes *= filtered
+                del filtered
         
     ## Rescale remaining  boxes with the learned offsets
     with tf.name_scope('offsets_rescale_boxes'):
-        if 'offsets' in outputs:
-            predicted_offsets = tf_utils.flatten_percell_output(outputs["offsets"])
-            predicted_boxes = tf_utils.rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon)
+        if offsets is not None:
+            predicted_boxes = tf_utils.rescale_with_offsets(
+                predicted_boxes, tf_utils.flatten_percell_output(offsets), epsilon)
     
     ## Extract n best patches
     # crop_boxes: (batch, num_crops, 4)
@@ -385,24 +390,17 @@ def extract_groups(inputs,
                 nms_boxes = tf.stack(nms_boxes, axis=0) 
                 nms_boxes = tf.slice(nms_boxes, (0, 0, 0), (current_batch, -1, -1))
                 nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
-                nms_boxes_confidences = tf.stack(nms_boxes_confidences, axis=0) 
-                nms_boxes_confidences = tf.slice(nms_boxes_confidences, (0, 0), (current_batch, -1))
-                nms_boxes_confidences = tf.reshape(nms_boxes_confidences, (-1, num_outputs))
-            outputs['crop_boxes'] = nms_boxes
-            outputs['crop_boxes_confidences'] = nms_boxes_confidences
+            return nms_boxes
         # No NMS
         else:
             top_scores, top_indices = tf.nn.top_k(predicted_scores, k=num_outputs)
             batch_indices = tf.range(tf.shape(predicted_scores)[0])
             batch_indices = tf.tile(tf.expand_dims(batch_indices, axis=-1), (1, num_outputs))
             gather_indices = tf.stack([batch_indices, top_indices], axis=-1)
-            top_boxes = tf.gather_nd(predicted_boxes, gather_indices)
-            outputs['crop_boxes'] = top_boxes
-            outputs['crop_boxes_confidences'] = top_scores
+            return tf.gather_nd(predicted_boxes, gather_indices)
     # No filtering 
     else:
-        outputs['crop_boxes'] = predicted_boxes
-        outputs['crop_boxes_confidences'] = predicted_scores
+        return predicted_boxes
 
 
 def tile_and_reshape(t, num_crops):

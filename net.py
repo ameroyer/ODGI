@@ -66,7 +66,6 @@ def get_detection_outputs(activations,
             
             
 def get_detection_with_groups_outputs(activations,
-                                      outputs,
                                       reuse=False,
                                       verbose=False,
                                       grid_offsets=None,
@@ -100,7 +99,7 @@ def get_detection_with_groups_outputs(activations,
     with tf.variable_scope(scope_name, reuse=reuse):
         # Fully connected layer
         with tf.name_scope('conv_out'):
-            num_outputs = [4, 1, 
+            num_outputs = [2, 2, 1, 
                            2 if with_offsets else 0, 
                            int(with_group_flags), 
                            num_classes]
@@ -120,23 +119,20 @@ def get_detection_with_groups_outputs(activations,
             print('    Output layer shape *%s*' % out.get_shape())
         out = tf.split(out, num_outputs, axis=-1)
         
-        # Confidence and class outputs
-        # detection_scores: (batch_size, num_cells, num_cells, 1, num_classes or 1)
-        get_confidence_output(out[1], outputs)             
-        if with_classification:
-            if verbose: print('    Classification task with %d classes' % num_classes)
-            get_classes_output(out[-1], outputs)
+        # coordinates
+        num_cells = tf.to_float(grid_offsets.shape[:2])
+        out[0] = (tf.nn.sigmoid(out[0]) +  grid_offsets) / num_cells
+        out[1] = tf.exp(out[1]) / num_cells
 
-        # Coordinates output: (batch_size, num_cells, num_cells, 1,, 4)
-        with tf.name_scope("coordinates_out"):
-            get_bounding_boxes_coordinates(out[0], outputs, grid_offsets)
-            
-        # offsets: (batch_size, num_cells, num_cells, 1, 2)
-        if with_offsets:
-            outputs['offsets'] = tf.nn.sigmoid(out[2], name='offsets_out')
-            
-        if with_group_flags:            
-            outputs['group_classification_logits'] = tf.identity(out[3 if with_offsets else 2], name='flags_logits_out')  
+        # detection scores
+        out[2] = tf.nn.sigmoid(out[2], name='confidences_out') 
+        
+        # offsets 
+        if with_offsets and with_group_flags:
+            out[3] = tf.nn.sigmoid(out[3], name='offsets_out')        
+            return tf.concat([out[0] - out[1] / 2, out[0] + out[1] / 2], axis=-1), out[2], out[3], out[4]
+        else:
+            return tf.concat([out[0] - out[1] / 2, out[0] + out[1] / 2], axis=-1), out[2], None, None
 
             
 def tiny_yolo_v2(images,

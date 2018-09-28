@@ -100,17 +100,12 @@ with tf.Graph().as_default() as graph:
         processed_image = tf.expand_dims(processed_image, axis=0)
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
-            eval_s1_outputs = odgi_graph.eval_pass_intermediate_stage(
+            outputs = odgi_graph.eval_pass_intermediate_stage(
                 eval_inputs, stage1_configuration, reuse=False, verbose=False) 
-            eval_s2_inputs = odgi_graph.feed_pass(
-                eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
-            eval_s2_outputs = odgi_graph.eval_pass_final_stage(
-                eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)                    
-            outputs = [eval_s2_outputs['bounding_boxes'],
-                       eval_s2_outputs['detection_scores'],
-                       eval_s1_outputs['bounding_boxes'],
-                       eval_s1_outputs['detection_scores'],
-                       eval_s1_outputs['kept_out_filter']]
+            #eval_s2_inputs = odgi_graph.feed_pass(
+            #    eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
+            #eval_s2_outputs = odgi_graph.eval_pass_final_stage(
+            #    eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)         
                     
     ########################### Standard
     elif mode == 'standard':

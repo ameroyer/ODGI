@@ -12,7 +12,6 @@ import tf_utils
 
 
 def forward_pass(inputs, 
-                 outputs, 
                  configuration,
                  is_training=True,
                  reuse=False,
@@ -31,8 +30,8 @@ def forward_pass(inputs,
         else:
             raise NotImplementedError('Uknown network architecture', network)
         # output
-        net.get_detection_with_groups_outputs(
-            activations, outputs, reuse=reuse, verbose=verbose, **configuration)
+        return net.get_detection_with_groups_outputs(
+            activations, reuse=reuse, verbose=verbose, **configuration)
             
             
 def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, verbose=1):
@@ -104,7 +103,6 @@ def feed_pass(inputs, outputs, configuration, mode='train', is_chief=True, verbo
     
 def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
     """ Evaluation pass for intermediate stages."""
-    outputs = {}
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
     if verbose == 2:
         print(' \033[31m> %s\033[0m' % base_name)
@@ -113,14 +111,12 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, 
-                     is_training=False,  reuse=reuse, verbose=verbose) 
+        out = forward_pass(inputs, configuration, scope_name=base_name, 
+                           is_training=False,  reuse=reuse, verbose=verbose) 
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):
-        tf_inputs.extract_groups(inputs, outputs, mode='test', verbose=verbose, **configuration)
-        
-    return outputs    
+        return tf_inputs.extract_groups(inputs, *out, mode='test', verbose=verbose, **configuration)
 
 
 def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=True, verbose=0):
