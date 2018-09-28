@@ -39,8 +39,8 @@ def forward_pass(inputs,
                 inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
         else:
             raise NotImplementedError('Uknown network architecture', network)
-        net.get_detection_outputs(
-            activations, outputs, reuse=reuse, verbose=verbose, **configuration)
+        out = net.get_detection_outputs(
+            activations, reuse=reuse, verbose=verbose, **configuration)
             
             
 def train_pass(inputs, configuration, is_chief=False, verbose=1):
@@ -94,7 +94,6 @@ def eval_pass(inputs, configuration, reuse=True, verbose=1):
     Returns:
         Dictionnary of outputs
     """
-    outputs = {}
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
     if verbose == 2:
         print(' \033[31m> %s\033[0m' % base_name)
@@ -103,8 +102,5 @@ def eval_pass(inputs, configuration, reuse=True, verbose=1):
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
-                     reuse=reuse, verbose=verbose)
-        
-    # Output the results
-    return outputs    
+        return forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
+                           reuse=reuse, verbose=verbose)

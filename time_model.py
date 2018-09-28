@@ -128,8 +128,7 @@ with tf.Graph().as_default() as graph:
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
             eval_outputs = standard_graph.eval_pass(eval_inputs, standard_configuration, reuse=False, verbose=False)
-            outputs = [eval_outputs['bounding_boxes'],
-                       eval_outputs['detection_scores']]
+            outputs = eval_outputs['bounding_boxes']
 
     else:
         raise ValueError('Unkown mode', mode)

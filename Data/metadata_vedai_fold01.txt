@@ -9,4 +9,4 @@ test_max_num_bbs	19
 test_num_samples	121
 data_classes	camping car,car,others,pick-up,plane,ship,tractor,truck,van
 feature_keys	im_id,num_boxes,bounding_boxes,classes
-image_folder	/nfs/scistore12/chlgrp/aroyer/Datasets/VEDAI/Vehicules1024/
+image_folder	/home/aroyer/Datasets/VEDAI/Vehicules1024/

@@ -5,59 +5,7 @@ import tensorflow.contrib.slim as slim
 
 
 """Define the main network architecture."""
-            
-def get_confidence_output(out, outputs):
-    """Add confidence to the output dictionnary
-    
-    Args:
-        out: A Tensor of shape (batch, num_cells, num_cells, num_boxes, 1)
-        outputs: outputs dictionnary
-    """
-    outputs['confidence_scores'] = tf.nn.sigmoid(out, name='confidences_out')
-    outputs['detection_scores'] = outputs['confidence_scores']
-    
-    
-def get_classes_output(out, outputs):
-    """Add class scores to the output dictionnary
-    
-    Args:
-        out: A Tensor of shape (batch, num_cells, num_cells, num_boxes, num_classes)
-        outputs: outputs dictionnary
-    """
-    outputs['classification_probs'] = tf.nn.softmax(out, name='classification_probs_out')
-    outputs['detection_scores'] *= outputs['classification_probs']
-    
-
-def get_bounding_boxes_coordinates(out, outputs, grid_offsets):
-    """Add coordinates to the output dictionnary
-    
-    Args:
-        out: A Tensor of shape (batch, num_cells, num_cells, num_boxes, 1)
-        outputs: outputs dictionnary
-    """
-    num_cells = tf.to_float(grid_offsets.shape[:2])
-    
-    # out_centers : (batch_size, num_cells, num_cells, num_boxes, 2)
-    out_centers = tf.nn.sigmoid(out[..., :2]) +  grid_offsets
-    outputs['shifted_centers'] = out_centers
-    out_centers /= num_cells 
-    out_centers = tf.identity(out_centers, name='xy_out')
-
-    # out_scales: (batch_size, num_cells, num_cells, num_boxes, 2)
-    out_scales = tf.exp(out[..., 2:]) / num_cells
-    out_scales = tf.identity(out_scales, name='wh_out')
-    outputs['log_scales'] = out[..., 2:] - tf.log(num_cells) 
-
-    # bounding_boxes: (batch_size, num_cells, num_cells, num_boxes, 4)
-    outputs['bounding_boxes'] = tf.concat([out_centers - out_scales / 2, 
-                                           out_centers + out_scales / 2], 
-                                          axis=-1,
-                                          name='bounding_boxes_out')
-    outputs['bounding_boxes'] = tf.clip_by_value(outputs['bounding_boxes'], 0., 1.)
-            
-            
 def get_detection_outputs(activations,
-                          outputs,
                           reuse=False,
                           verbose=False,
                           grid_offsets=None,
@@ -67,7 +15,6 @@ def get_detection_outputs(activations,
     
     Args:
         activations: Before-to-last convolutional outputs
-        outputs: Dictionnary to store outputs
         reuse: whether to reuse the current scope
         verbose: controls verbose output
         grid_offsets: Precomputed grid_offsets
@@ -90,7 +37,7 @@ def get_detection_outputs(activations,
     with tf.variable_scope(scope_name, reuse=reuse):        
         # Fully connected layer
         with tf.name_scope('conv_out'):
-            num_outputs = [4, 1, num_classes]
+            num_outputs = [2, 2, 1, num_classes]
             kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
             out = tf.layers.conv2d(activations, 
                                    num_boxes * sum(num_outputs),
@@ -107,16 +54,14 @@ def get_detection_outputs(activations,
             print('    Output layer shape *%s*' % out.get_shape())
         out = tf.split(out, num_outputs, axis=-1)
 
-        # Confidence and class outputs
-        # detection_scores: (batch_size, num_cells, num_cells, num_preds, num_classes or 1)
-        get_confidence_output(out[1], outputs)             
-        if with_classification:
-            if verbose: print('    Classification task with %d classes' % num_classes)
-            get_classes_output(out[2], outputs)
+        # coordinates
+        num_cells = tf.to_float(grid_offsets.shape[:2])
+        out[0] = (tf.nn.sigmoid(out[0]) +  grid_offsets) / num_cells
+        out[1] = tf.exp(out[1]) / num_cells
 
-        # Coordinates output
-        with tf.name_scope("coordinates_out"):
-            get_bounding_boxes_coordinates(out[0], outputs, grid_offsets)
+        # detection scores
+        out[2] = tf.nn.sigmoid(out[2], name='confidences_out') 
+        return tf.concat([out[0] - out[1] / 2, out[0] + out[1] / 2], axis=-1), out[2]
             
             
             
