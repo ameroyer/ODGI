@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --array=1-10
 #SBATCH -o ./dummy_logs/slurm-%j.out
-SIZE=512
-STAGE2_IMAGE_SIZE=256          
+SIZE=256
+STAGE2_IMAGE_SIZE=128          
 NETWORK='tiny-yolov2'
 
 NUM_GPUS=2
