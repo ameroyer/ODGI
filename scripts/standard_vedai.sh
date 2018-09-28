@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --array=5,8
+#SBATCH --array=5
 #SBATCH -o ./dummy_logs/slurm-%j.out 
-SIZE=128        
+SIZE=1024        
 NETWORK='tiny-yolov2'
 
 NUM_GPUS=2
@@ -16,7 +16,7 @@ sbatch <<EOT
 #SBATCH -n 2                            # number of cores
 #SBATCH --mail-user=aroyer@ist.ac.at    # send mail to user
 #SBATCH --mail-type=FAIL,END            # if a job fails or ends
-#SBATCH --mem 20G                       # memory pool for all cores
+#SBATCH --mem 32G                       # memory pool for all cores
 #SBATCH --time 1-00:00                  # max runtime (D-HH:MM)
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:$NUM_GPUS            # how many GPUs to reserve
