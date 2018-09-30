@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH -o ./dummy_logs/slurm-%j.out 
-SIZE=1024        
+SIZE=128        
 NETWORK='yolov2'
 
 NUM_GPUS=4
 BATCH_SIZE=4     
-NUM_EPOCHS=120
+NUM_EPOCHS=50
 LEARNING_RATE=1e-3
 sbatch <<EOT
 #!/bin/bash
