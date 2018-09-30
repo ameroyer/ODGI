@@ -4,11 +4,11 @@ SIZE=512
 STAGE2_IMAGE_SIZE=256          
 NETWORK='yolov2'
 
-NUM_GPUS=2
-BATCH_SIZE=12       
-NUM_EPOCHS=120
+NUM_GPUS=4
+BATCH_SIZE=4       
+NUM_EPOCHS=50
 LEARNING_RATE=1e-3
-DELAYED_STAGE2_START=5
+DELAYED_STAGE2_START=1
 sbatch <<EOT
 #!/bin/bash
 #SBATCH -N 1                            # number of nodes (usually 1)
