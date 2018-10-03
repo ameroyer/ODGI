@@ -62,14 +62,26 @@ with tf.Graph().as_default() as graph:
             is_chief = (i == 0)
             with tf.device('/gpu:%d' % i):
                 with tf.name_scope('dev%d' % i):
-                    train_inputs, _ = graph_manager.get_inputs(
-                        mode='train', shard_index=i, verbose=args.verbose * int(is_chief), **stage1_configuration)
-                    train_s1_outputs = train_pass(train_inputs, stage1_configuration, is_chief=is_chief, 
-                                                  intermediate_stage=True, verbose=args.verbose)
-                    train_s2_inputs = feed_pass(train_inputs, train_s1_outputs, stage2_configuration,
-                                                mode='train', is_chief=is_chief, verbose=args.verbose)
-                    train_s2_outputs = train_pass(train_s2_inputs, stage2_configuration, is_chief=is_chief,
-                                                  intermediate_stage=False, verbose=args.verbose) 
+                    train_inputs, _ = graph_manager.get_inputs(mode='train', 
+                                                               shard_index=i, 
+                                                               verbose=args.verbose * int(is_chief),
+                                                               **stage1_configuration)
+                    train_s1_outputs = train_pass(train_inputs,
+                                                  stage1_configuration, 
+                                                  is_chief=is_chief, 
+                                                  intermediate_stage=True,
+                                                  verbose=args.verbose)
+                    train_s2_inputs = feed_pass(train_inputs,
+                                                train_s1_outputs['crop_boxes'], 
+                                                stage2_configuration,
+                                                mode='train',
+                                                is_chief=is_chief, 
+                                                verbose=args.verbose)
+                    train_s2_outputs = train_pass(train_s2_inputs, 
+                                                  stage2_configuration, 
+                                                  is_chief=is_chief,
+                                                  intermediate_stage=False,
+                                                  verbose=args.verbose) 
                     if is_chief and add_summaries:
                         print(' > summaries:')
                         graph_manager.add_summaries(train_inputs, train_s1_outputs, mode='train', 
@@ -109,11 +121,18 @@ with tf.Graph().as_default() as graph:
             name='eval_inputs')
         with tf.device('/gpu:%d' % 0):
             with tf.name_scope('dev%d' % 0):
-                eval_s1_outputs = eval_pass_intermediate_stage(eval_inputs, stage1_configuration, verbose=False) 
-                eval_s2_inputs = feed_pass(eval_inputs, eval_s1_outputs, stage2_configuration,
-                                           mode='test', verbose=False)
-                eval_s2_outputs = eval_pass_final_stage(
-                    eval_s2_inputs, eval_s1_outputs, stage2_configuration, verbose=False)
+                eval_s1_outputs = eval_pass_intermediate_stage(eval_inputs, 
+                                                               stage1_configuration, 
+                                                               verbose=False) 
+                eval_s2_inputs = feed_pass(eval_inputs, 
+                                           eval_s1_outputs['crop_boxes'],
+                                           stage2_configuration,
+                                           mode='test', 
+                                           verbose=False)
+                eval_s2_outputs = eval_pass_final_stage(eval_s2_inputs, 
+                                                        eval_s1_outputs['crop_boxes'], 
+                                                        stage2_configuration, 
+                                                        verbose=False)
                 
             
 ########################################################################## Evaluation script

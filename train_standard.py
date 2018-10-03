@@ -41,12 +41,16 @@ with tf.Graph().as_default() as graph:
             is_chief = (i == 0)
             with tf.device('/gpu:%d' % i):
                 with tf.name_scope('inputs%d' % i):
-                    train_inputs, _ = graph_manager.get_inputs(
-                        mode='train', shard_index=i, verbose=args.verbose * int(is_chief), **standard_configuration) 
+                    train_inputs, _ = graph_manager.get_inputs(mode='train',
+                                                               shard_index=i, 
+                                                               verbose=args.verbose * int(is_chief),
+                                                               **standard_configuration) 
                     
                 with tf.name_scope('dev%d' % i):
-                    train_outputs = train_pass(train_inputs, standard_configuration,
-                                               is_chief=is_chief, verbose=args.verbose)   
+                    train_outputs = train_pass(train_inputs,
+                                               standard_configuration,
+                                               is_chief=is_chief, 
+                                               verbose=args.verbose)   
                     if is_chief and add_summaries:
                         print(' > summaries:')
                         graph_manager.add_summaries(
