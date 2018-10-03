@@ -159,7 +159,7 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
     return outputs    
 
 
-def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=True, verbose=0):
+def eval_pass_final_stage(stage2_inputs, crop_boxes, configuration, reuse=True, verbose=0):
     """ Evaluation for the full pipeline.
         Args:
             stage2_inputs: inputs dictionnary for stage2
@@ -174,7 +174,6 @@ def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=Tr
             Dictionnary of outputs, merge by image
             Dictionnary of unscaled ouputs (for summary purposes)
     """
-    outputs = {}
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
     if verbose == 2:
         print(' \033[31m> %s\033[0m' % base_name)
@@ -191,7 +190,7 @@ def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=Tr
                                verbose=verbose) 
             
     # Reshape outputs from stage2 to stage1 batch size
-    num_crops = stage1_outputs["crop_boxes"].get_shape()[1].value
+    num_crops = crop_boxes.get_shape()[1].value
     num_boxes = outputs['bounding_boxes'].get_shape()[-2].value
     num_cells = outputs['bounding_boxes'].get_shape()[-2].value
     with tf.name_scope('reshape_outputs'):
@@ -209,7 +208,6 @@ def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=Tr
     # Re-scale bounding boxes from stage2 to stage1
     with tf.name_scope('rescale_bounding_boxes'):
         # tile crop_boxes to (stage1_batch, 1, 1, num_crops * num_boxes, 4)
-        crop_boxes = stage1_outputs["crop_boxes"]
         crop_boxes = tf.expand_dims(crop_boxes, axis=-2)
         crop_boxes = tf.tile(crop_boxes, (1, 1, num_boxes, 1))
         crop_boxes = tf.reshape(crop_boxes, (-1, 1, 1, num_crops * num_boxes, 4))
