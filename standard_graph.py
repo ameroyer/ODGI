@@ -12,7 +12,6 @@ import tf_utils
 
 
 def forward_pass(inputs, 
-                 outputs, 
                  configuration,
                  scope_name='model',
                  is_training=True,
@@ -30,17 +29,33 @@ def forward_pass(inputs,
         verbose: verbosity level
     """
     network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
-    with tf.variable_scope(scope_name, reuse=reuse):        
-        if network == 'tiny-yolov2':
-            activations = net.tiny_yolo_v2(
-                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
-        elif network == 'yolov2':
-            activations = net.yolo_v2(
-                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
-        else:
-            raise NotImplementedError('Uknown network architecture', network)
-        net.get_detection_outputs(
-            activations, outputs, reuse=reuse, verbose=verbose, **configuration)
+    assert network in ['tiny-yolov2', 'yolov2']
+    with tf.variable_scope(scope_name, reuse=reuse):     
+        # activations
+        activation_fn = net.tiny_yolo_v2 if network == 'tiny-yolov2' else net.yolo_v2
+        activations = activation_fn(inputs["image"],
+                                    is_training=is_training,
+                                    reuse=reuse, 
+                                    verbose=verbose, 
+                                    **configuration)
+        # format output
+        outputs = {}
+        (outputs['shifted_centers'],
+         outputs['log_scales'],
+         outputs['confidence_scores'],
+         outputs['classification_probs'],
+         outputs['bounding_boxes'], 
+         outputs['detection_scores']) = net.get_detection_outputs(activations, 
+                                                                  is_training=is_training, 
+                                                                  reuse=reuse, 
+                                                                  verbose=verbose,
+                                                                  **configuration)
+        # return
+        keys = list(outputs.keys())
+        for k in keys:
+            if outputs[k] is None:
+                del outputs[k]
+        return outputs
             
             
 def train_pass(inputs, configuration, is_chief=False, verbose=1):
@@ -55,7 +70,6 @@ def train_pass(inputs, configuration, is_chief=False, verbose=1):
     Returns:
         Dictionnary of outputs
     """
-    outputs = {}
     dev_verbose = verbose * is_chief
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=dev_verbose)[0]
     if dev_verbose == 2:
@@ -65,8 +79,12 @@ def train_pass(inputs, configuration, is_chief=False, verbose=1):
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, 
-                     is_training=True, reuse=not is_chief, verbose=dev_verbose) 
+        outputs = forward_pass(inputs, 
+                               configuration, 
+                               scope_name=base_name, 
+                               is_training=True,
+                               reuse=not is_chief, 
+                               verbose=dev_verbose) 
         
     # Add losses
     with tf.name_scope('%s/loss' % base_name):
@@ -94,7 +112,6 @@ def eval_pass(inputs, configuration, reuse=True, verbose=1):
     Returns:
         Dictionnary of outputs
     """
-    outputs = {}
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=verbose)[0]
     if verbose == 2:
         print(' \033[31m> %s\033[0m' % base_name)
@@ -103,8 +120,9 @@ def eval_pass(inputs, configuration, reuse=True, verbose=1):
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, is_training=False, 
-                     reuse=reuse, verbose=verbose)
-        
-    # Output the results
-    return outputs    
+        return forward_pass(inputs,
+                            configuration, 
+                            scope_name=base_name, 
+                            is_training=False, 
+                            reuse=reuse,
+                            verbose=verbose)

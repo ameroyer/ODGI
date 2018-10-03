@@ -11,8 +11,7 @@ import tf_utils
 """Helper functions to build the train and eval graph for ODGI."""
 
 
-def forward_pass(inputs, 
-                 outputs, 
+def forward_pass(inputs,
                  configuration,
                  is_training=True,
                  reuse=False,
@@ -20,19 +19,35 @@ def forward_pass(inputs,
                  verbose=False):
     """Forward-pass in the net"""
     network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
+    assert network in ['tiny-yolov2', 'yolov2']
     with tf.variable_scope(scope_name, reuse=reuse): 
         # activations
-        if network == 'tiny-yolov2':
-            activations = net.tiny_yolo_v2(
-                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
-        elif network == 'yolov2':
-            activations = net.yolo_v2(
-                inputs["image"], is_training=is_training, reuse=reuse, verbose=verbose, **configuration)
-        else:
-            raise NotImplementedError('Uknown network architecture', network)
-        # output
-        net.get_detection_with_groups_outputs(
-            activations, outputs, reuse=reuse, verbose=verbose, **configuration)
+        activation_fn = net.tiny_yolo_v2 if network == 'tiny-yolov2' else net.yolo_v2
+        activations = activation_fn(inputs["image"],
+                                    is_training=is_training,
+                                    reuse=reuse, 
+                                    verbose=verbose, 
+                                    **configuration)
+        # format output
+        outputs = {}
+        (outputs['shifted_centers'],
+         outputs['log_scales'],
+         outputs['confidence_scores'],
+         outputs['offsets'],
+         outputs['group_classification_logits'],
+         outputs['classification_probs'],
+         outputs['bounding_boxes'], 
+         outputs['detection_scores']) = net.get_detection_with_groups_outputs(activations, 
+                                                                              is_training=is_training,
+                                                                              reuse=reuse, 
+                                                                              verbose=verbose,
+                                                                              **configuration)
+        # return
+        keys = list(outputs.keys())
+        for k in keys:
+            if outputs[k] is None:
+                del outputs[k]
+        return outputs
             
             
 def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, verbose=1):
@@ -49,7 +64,6 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, 
     Returns:
         Dictionnary of outputs
     """
-    outputs = {}
     dev_verbose = verbose * is_chief
     base_name = graph_manager.get_defaults(configuration, ['base_name'], verbose=dev_verbose)[0]
     if dev_verbose == 2:
@@ -59,20 +73,29 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, 
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, 
-                     is_training=True, reuse=not is_chief, verbose=dev_verbose) 
+        outputs = forward_pass(inputs,
+                               configuration,
+                               scope_name=base_name, 
+                               is_training=True, 
+                               reuse=not is_chief, 
+                               verbose=dev_verbose) 
         
     # Compute crops to feed to the next stage
     if intermediate_stage:
         with tf.name_scope('extract_patches'):
-            tf_inputs.extract_groups(inputs, outputs, mode='train', verbose=dev_verbose, **configuration)  
+            outputs['crop_boxes'], _, _ = tf_inputs.extract_groups(
+                inputs,
+                outputs['bounding_boxes'],
+                outputs['confidence_scores'],
+                predicted_group_flags=outputs['group_classification_logits'],
+                predicted_offsets=outputs['offsets'],
+                mode='train', 
+                verbose=dev_verbose,
+                **configuration)
         
     # Add losses
     with tf.name_scope('%s/loss' % base_name):
-        if intermediate_stage:
-            loss_fn = loss_utils.get_odgi_loss
-        else:
-            loss_fn = loss_utils.get_standard_loss
+        loss_fn = loss_utils.get_odgi_loss if intermediate_stage else loss_utils.get_standard_loss
         graph_manager.add_losses_to_graph(
             loss_fn, inputs, outputs, configuration, is_chief=is_chief, verbose=is_chief)
         
@@ -83,10 +106,12 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, 
     elif dev_verbose == 2:
         print('\n'.join("    \x1b[32m*%s*\x1b[0m: shape=%s, dtype=%s" % (
             key, value.get_shape().as_list(), value.dtype) for key, value in outputs.items()))
+        
+    # Return
     return outputs
 
 
-def feed_pass(inputs, outputs, configuration, mode='train', is_chief=True, verbose=False):
+def feed_pass(inputs, crop_boxes, configuration, mode='train', is_chief=True, verbose=False):
     """
         Args:
             inputs: inputs dictionnary
@@ -98,8 +123,7 @@ def feed_pass(inputs, outputs, configuration, mode='train', is_chief=True, verbo
     """
     dev_verbose = verbose * is_chief
     if dev_verbose: print(' > create stage 2 inputs:')
-    return graph_manager.get_stage2_inputs(
-        inputs, outputs['crop_boxes'], mode=mode, verbose=dev_verbose, **configuration)
+    return graph_manager.get_stage2_inputs(inputs, crop_boxes, mode=mode, verbose=dev_verbose, **configuration)
         
     
 def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
@@ -113,12 +137,24 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
         
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
-        forward_pass(inputs, outputs, configuration, scope_name=base_name, 
-                     is_training=False,  reuse=reuse, verbose=verbose) 
+        outputs = forward_pass(inputs, 
+                               configuration,
+                               scope_name=base_name, 
+                               is_training=False, 
+                               reuse=reuse, 
+                               verbose=verbose) 
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):
-        tf_inputs.extract_groups(inputs, outputs, mode='test', verbose=verbose, **configuration)
+        outputs['crop_boxes'], _, outputs['kept_out_filter'] = tf_inputs.extract_groups(
+            inputs,
+            outputs['bounding_boxes'],
+            outputs['confidence_scores'],
+            predicted_group_flags=outputs['group_classification_logits'],
+            predicted_offsets=outputs['offsets'],
+            mode='test', 
+            verbose=verbose,
+            **configuration)
         
     return outputs    
 
@@ -147,18 +183,20 @@ def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=Tr
     
     # Feed forward
     with tf.name_scope('net'):
-        forward_pass(stage2_inputs, outputs, configuration, scope_name=base_name, 
-                     is_training=False, reuse=reuse, verbose=verbose) 
+        outputs = forward_pass(stage2_inputs,
+                               configuration, 
+                               scope_name=base_name, 
+                               is_training=False, 
+                               reuse=reuse, 
+                               verbose=verbose) 
             
-    # Reshape outputs from stage2 to stage1
-    crop_boxes = stage1_outputs["crop_boxes"]  
-    num_crops = crop_boxes.get_shape()[1].value
+    # Reshape outputs from stage2 to stage1 batch size
+    num_crops = stage1_outputs["crop_boxes"].get_shape()[1].value
     num_boxes = outputs['bounding_boxes'].get_shape()[-2].value
     num_cells = outputs['bounding_boxes'].get_shape()[-2].value
-    # for summary
     with tf.name_scope('reshape_outputs'):
         #batch_size = graph_manager.get_defaults(configuration, ['batch_size'], verbose=verbose)[0]
-        # outputs:  (stage1_batch * num_crops, num_cell, num_cell, num_boxes, ...)
+        # outputs: (stage1_batch * num_crops, num_cell, num_cell, num_boxes, ...)
         # to: (stage1_batch, num_cell, num_cell, num_boxes * num_crops, ...)
         for key, value in outputs.items():            
             shape = tf.shape(value)
@@ -168,18 +206,17 @@ def eval_pass_final_stage(stage2_inputs, stage1_outputs, configuration, reuse=Tr
             batches = tf.concat(tf.unstack(batches, num=num_crops, axis=1), axis=3)
             outputs[key] = tf.stack(batches, axis=0)
     
-    # Rescale bounding boxes from stage2 to stage1
+    # Re-scale bounding boxes from stage2 to stage1
     with tf.name_scope('rescale_bounding_boxes'):
-        # crop_boxes: (stage1_batch, 1, 1, num_crops * num_boxes, 4)
+        # tile crop_boxes to (stage1_batch, 1, 1, num_crops * num_boxes, 4)
+        crop_boxes = stage1_outputs["crop_boxes"]
         crop_boxes = tf.expand_dims(crop_boxes, axis=-2)
         crop_boxes = tf.tile(crop_boxes, (1, 1, num_boxes, 1))
         crop_boxes = tf.reshape(crop_boxes, (-1, 1, 1, num_crops * num_boxes, 4))
-        crop_mins, crop_maxs = tf.split(crop_boxes, 2, axis=-1)
+        crop_boxes = tf.split(crop_boxes, 2, axis=-1)
         # bounding_boxes: (stage1_batch, num_cells, num_cells, num_crops * num_boxes, 4)
-        bounding_boxes = outputs['bounding_boxes']
-        bounding_boxes *= tf.maximum(1e-8, tf.tile(crop_maxs - crop_mins, (1, 1, 1, 1, 2)))
-        bounding_boxes += tf.tile(crop_mins, (1, 1, 1, 1, 2))
-        bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1.)
-        outputs['bounding_boxes'] = bounding_boxes
+        outputs['bounding_boxes'] *= tf.maximum(1e-8, tf.tile(crop_boxes[1] - crop_boxes[0], (1, 1, 1, 1, 2)))
+        outputs['bounding_boxes'] += tf.tile(crop_boxes[0], (1, 1, 1, 1, 2))
+        outputs['bounding_boxes'] = tf.clip_by_value(outputs['bounding_boxes'], 0., 1.)
         
     return outputs
