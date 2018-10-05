@@ -80,13 +80,6 @@ stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size']
 stage2_configuration['base_name'] = 'stage2'
 graph_manager.finalize_grid_offsets(stage2_configuration, verbose=0)
 
-# Sweep parameters over the validation set, save best hypoerparams for each num_crops
-best_val_map = {k: 0. for k in test_num_crops_sweep}
-best_test_num_crops = {k: None for k in test_num_crops_sweep}
-best_test_patch_nms_threshold = {k: None for k in test_num_crops_sweep}
-best_test_patch_confidence_threshold = {k: None for k in test_num_crops_sweep}
-best_test_patch_strong_confidence_threshold = {k: None for k in test_num_crops_sweep}
-
 
 def build_graph(nms_threshold, max_test_num_crops=test_num_crops_sweep[-1]):
     """Build the graph.
@@ -100,7 +93,7 @@ def build_graph(nms_threshold, max_test_num_crops=test_num_crops_sweep[-1]):
     # crop extractio
     stage1_configuration["test_num_crops"] = max_test_num_crops
     stage2_configuration["test_num_crops_slice"] = test_num_crops                               
-    stage1_configuration["test_patch_nms_threshold"] = test_patch_nms_threshold_                
+    stage1_configuration["test_patch_nms_threshold"] = nms_threshold                
     stage1_configuration["test_patch_confidence_threshold"] = test_patch_confidence_threshold 
     stage1_configuration["test_patch_strong_confidence_threshold"] = test_patch_strong_confidence_threshold
 
@@ -126,10 +119,10 @@ def build_graph(nms_threshold, max_test_num_crops=test_num_crops_sweep[-1]):
                                                            stage2_configuration,
                                                            reuse=False,
                                                            verbose=False)
-    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
 
     # Evaluation function
-    def run_eval(sess, results_path, feed_dict):
+    def run_eval(sess, feed_dict):
+        results_path = os.path.join(args.log_dir, 'validate_temp.txt')
         with open(results_path, 'w') as f:
             f.write('results\n')
         sess.run(eval_initializer, feed_dict=feed_dict)
@@ -152,7 +145,7 @@ def build_graph(nms_threshold, max_test_num_crops=test_num_crops_sweep[-1]):
             pass
         eval_aps, eval_aps_thresholds = eval_utils.detect_eval(results_path, **configuration)
         maps = [sum(x[t] for x in eval_aps.values()) / len(eval_aps) for t, thresh in enumerate(eval_aps_thresholds)]
-        print('%.3f used crops,' % (sum(num_useful_crops) / len(num_useful_crops)), ' - '.join(
+        print('   %.3f used crops,' % (sum(num_useful_crops) / len(num_useful_crops)), ' - '.join(
             'map@%.2f = %.5f' % (thresh, m) for (thresh, m) in zip(eval_aps_thresholds, maps)))
         # return map@0.5
         return maps[0]
@@ -171,9 +164,18 @@ if gpu_mem_frac < 1.0:
         gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
 else:
     config = tf.ConfigProto(allow_soft_placement=True)
-results_path = os.path.join(args.log_dir, 'validate_temp.txt')
 
 
+
+# Sweep parameters over the validation set, save best hypoerparams for each num_crops
+best_val_map = {k: 0. for k in test_num_crops_sweep}
+best_test_num_crops = {k: None for k in test_num_crops_sweep}
+best_test_patch_nms_threshold = {k: None for k in test_num_crops_sweep}
+best_test_patch_confidence_threshold = {k: None for k in test_num_crops_sweep}
+best_test_patch_strong_confidence_threshold = {k: None for k in test_num_crops_sweep}
+
+
+##### Validation sweep
 # test_patch_nkms_threshold has to live as afloat not a placeholder
 for test_patch_nms_threshold_ in test_patch_nms_threshold_sweep:    
     with tf.Graph().as_default() as graph:
@@ -193,10 +195,10 @@ for test_patch_nms_threshold_ in test_patch_nms_threshold_sweep:
                                      test_patch_confidence_threshold: test_patch_confidence_threshold_,
                                      test_patch_strong_confidence_threshold: test_patch_strong_confidence_threshold_}
                         # print eval
-                        print('(%s, %s, %s, %s) :  ' % (test_num_crops_, test_patch_nms_threshold_,
-                                                        test_patch_confidence_threshold_, 
-                                                        test_patch_strong_confidence_threshold_), end='')
-                        val_map = run_eval(sess, results_path, feed_dict)
+                        print('   (%s, %s, %s, %s) :' % (test_num_crops_, test_patch_nms_threshold_,
+                                                         test_patch_confidence_threshold_, 
+                                                         test_patch_strong_confidence_threshold_), end='')
+                        val_map = run_eval(sess, feed_dict)
                         viz.save_tee(args.log_dir, tee)
                         # save best params
                         if val_map > best_val_map[test_num_crops_]:
@@ -206,7 +208,8 @@ for test_patch_nms_threshold_ in test_patch_nms_threshold_sweep:
                             best_test_patch_confidence_threshold[test_num_crops_] = test_patch_confidence_threshold_
                             best_test_patch_strong_confidence_threshold[
                                 test_num_crops_] = test_patch_strong_confidence_threshold_
-                            
+                
+####### Test Accuracy
 # Output best result for each
 for test_num_crops_ in test_num_crops_sweep:                       
     # Print best parameters
@@ -225,10 +228,10 @@ for test_num_crops_ in test_num_crops_sweep:
         
         feed_dict = {use_test_split: True,
                      test_num_crops: best_test_num_crops[test_num_crops_],
-                     test_patch_confidence_threshold: best_test_num_crops[test_num_crops_],
+                     test_patch_confidence_threshold: best_test_patch_confidence_threshold[test_num_crops_],
                      test_patch_strong_confidence_threshold: best_test_patch_strong_confidence_threshold[test_num_crops_]}
         session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
         with tf.train.MonitoredSession(session_creator=session_creator) as sess:
-            run_eval(sess, results_path, feed_dict)
+            run_eval(sess, feed_dict)
             
 viz.save_tee(args.log_dir, tee)
