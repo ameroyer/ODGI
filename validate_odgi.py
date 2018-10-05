@@ -168,7 +168,6 @@ def build_graph(nms_threshold, max_test_num_crops=test_num_crops_sweep[-1]):
 gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=0)[0]    
 config = tf.ConfigProto(
     gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
-session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
 results_path = os.path.join(args.log_dir, 'validate_temp.txt')
 
 
@@ -180,6 +179,7 @@ for test_patch_nms_threshold_ in test_patch_nms_threshold_sweep:
             test_patch_nms_threshold_, max_test_num_crops=test_num_crops_sweep[-1])
 
         ########################################################################## Start Session
+        session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
         with tf.train.MonitoredSession(session_creator=session_creator) as sess:
             for test_num_crops_ in test_num_crops_sweep:                                                
                 for test_patch_confidence_threshold_ in test_patch_confidence_threshold_sweep:
@@ -191,8 +191,8 @@ for test_patch_nms_threshold_ in test_patch_nms_threshold_sweep:
                                      test_patch_strong_confidence_threshold: test_patch_strong_confidence_threshold_}
                         # print eval
                         print('(%s, %s, %s, %s) :  ' % (test_num_crops_, test_patch_nms_threshold_,
-                                                    test_patch_confidence_threshold_, 
-                                                    test_patch_strong_confidence_threshold_), end='')
+                                                        test_patch_confidence_threshold_, 
+                                                        test_patch_strong_confidence_threshold_), end='')
                         val_map = run_eval(sess, results_path, feed_dict)
                         viz.save_tee(args.log_dir, tee)
                         # save best params
@@ -204,6 +204,7 @@ for test_patch_nms_threshold_ in test_patch_nms_threshold_sweep:
                             best_test_patch_strong_confidence_threshold[
                                 test_num_crops_] = test_patch_strong_confidence_threshold_
                             
+# Output best result for each
 for test_num_crops_ in test_num_crops_sweep:                       
     # Print best parameters
     print('\nBest hyperparameters for %d crops: (val = %.4f)' % (test_num_crops_, best_val_map[test_num_crops_]))
@@ -223,6 +224,7 @@ for test_num_crops_ in test_num_crops_sweep:
                      test_num_crops: best_test_num_crops[test_num_crops_],
                      test_patch_confidence_threshold: best_test_num_crops[test_num_crops_],
                      test_patch_strong_confidence_threshold: best_test_patch_strong_confidence_threshold[test_num_crops_]}
+        session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
         with tf.train.MonitoredSession(session_creator=session_creator) as sess:
             run_eval(sess, results_path, feed_dict)
             
