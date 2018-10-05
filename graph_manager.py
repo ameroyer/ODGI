@@ -65,7 +65,7 @@ def finalize_configuration(configuration, verbose=2):
         print('\n'.join('  *%s*: %s' % (k, v) for k, v in sorted(configuration.items()) if k != 'grid_offsets'))
 
 
-def finalize_grid_offsets(configuration):    
+def finalize_grid_offsets(configuration, verbose=2):    
     """Compute the current number of cells and grid offset in the given configuration
     
     Args:
@@ -79,7 +79,8 @@ def finalize_grid_offsets(configuration):
     else:
         raise NotImplementedError('Uknown network architecture', network)
     configuration['grid_offsets'] = precompute_grid_offsets(configuration['num_cells'])
-    print("   using grid size", configuration['num_cells'])   
+    if verbose:
+        print("   using grid size", configuration['num_cells'])   
 
 
 def get_num_cells(image_size, num_layers):
