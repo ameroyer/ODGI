@@ -23,6 +23,9 @@ def load_image(im_id, image_size, image_folder, image_format):
     elif image_format == 'sdd':     # STANFORD DRONE DATASET
         filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=8) + '.jpeg'
         type = 'jpg'
+    elif image_format == 'deepscores':    # DeepScores
+        filename = image_folder  +  '/' + tf.as_string(im_id, fill='0', width=6) + '.png'
+        type = 'jpg'
     elif image_format == 'dota':    # DOTA
         filename = image_folder  +  '/' + tf.as_string(im_id, fill='0', width=7) + '.jpg'
         type = 'jpg'
@@ -366,11 +369,12 @@ def extract_groups(inputs,
         if mode in ['test', 'val'] and predicted_group_flags is not None:
             strong_confidence_threshold = graph_manager.get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
-            predicted_boxes, predicted_scores, kept_out_filter = filter_individuals(
-                predicted_boxes, predicted_scores, predicted_group_flags, strong_confidence_threshold)
+            if isinstance(strong_confidence_threshold, tf.Tensor) or strong_confidence_threshold < 1.0:
+                predicted_boxes, predicted_scores, kept_out_filter = filter_individuals(
+                    predicted_boxes, predicted_scores, predicted_group_flags, strong_confidence_threshold)
         
         # Additionally, we filter out boxes with confidence below the threshold
-        if confidence_threshold > 0.:
+        if isinstance(confidence_threshold, tf.Tensor) or confidence_threshold > 0.:
             with tf.name_scope('filter_confidence'):
                 predicted_boxes, predicted_scores = filter_threshold(
                     predicted_boxes, predicted_scores, confidence_threshold)
