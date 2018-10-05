@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH -o ./dummy_logs/slurm-%j.out 
-SIZE=128        
+SIZE=128       
 NETWORK='yolov2'
 
 NUM_GPUS=4
 BATCH_SIZE=4     
-NUM_EPOCHS=50
-LEARNING_RATE=1e-3
+NUM_EPOCHS=100
+LEARNING_RATE=8e-4
 sbatch <<EOT
 #!/bin/bash
 #SBATCH -N 1                            # number of nodes (usually 1)
@@ -27,6 +27,5 @@ module load cudnn
 module load tensorflow/python3/1.10.0
 cd ${HOME}/Jupyter/ODGI                   # working directory
 
-python3 -u train_standard.py 'sdd' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
-exit 0
+python3 -u train_standard.py 'sdd' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE 
 EOT

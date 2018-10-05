@@ -28,5 +28,4 @@ module load tensorflow/python3/1.10.0
 cd ${HOME}/Jupyter/ODGI                   # working directory
 
 python3 -u train_standard.py 'deepscores' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
-exit 0
 EOT

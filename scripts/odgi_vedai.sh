@@ -2,7 +2,7 @@
 #SBATCH --array=1-10
 #SBATCH -o ./dummy_logs/slurm-%j.out
 SIZE=256
-STAGE2_IMAGE_SIZE=128          
+STAGE2_IMAGE_SIZE=64          
 NETWORK='tiny-yolov2'
 
 NUM_GPUS=2
@@ -21,7 +21,7 @@ sbatch <<EOT
 #SBATCH --mem 32G                       # memory pool for all cores
 #SBATCH --time 1-00:00                  # max runtime (D-HH:MM)
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
-#SBATCH --gres=gpu:2                    # how many GPUs to reserve
+#SBATCH --gres=gpu:$NUM_GPUS                    # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
 #SBATCH --job-name=odgi-vedai_fold$FOLD-$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE
 #SBATCH -o ./log/output_logs/odgi-vedai_fold$FOLD-$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
@@ -35,5 +35,4 @@ cd ${HOME}/Jupyter/ODGI                   # working directory
 
 echo '============================================================== FOLD $FOLD'
 python3 -u train_odgi.py 'vedai_fold$FOLD' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --stage2_image_size=$STAGE2_IMAGE_SIZE --learning_rate=$LEARNING_RATE --delayed_stage2_start=$DELAYED_STAGE2_START
-exit 0
 EOT

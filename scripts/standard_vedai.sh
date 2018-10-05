@@ -32,5 +32,4 @@ cd ${HOME}/Jupyter/ODGI                   # working directory
 
 echo '============================================================== FOLD $FOLD'
 python3 -u train_standard.py 'vedai_fold$FOLD' --network=$NETWORK --size=$SIZE --num_epochs=$NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size=$BATCH_SIZE --learning_rate=$LEARNING_RATE   
-exit 0
 EOT
