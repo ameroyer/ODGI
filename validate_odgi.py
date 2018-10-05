@@ -165,9 +165,12 @@ def build_graph(nms_threshold, max_test_num_crops=test_num_crops_sweep[-1]):
             run_eval)
 
 # Session creator
-gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=0)[0]    
-config = tf.ConfigProto(
-    gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
+gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=0)[0] 
+if gpu_mem_frac < 1.0:
+    config = tf.ConfigProto(
+        gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
+else:
+    config = tf.ConfigProto(allow_soft_placement=True)
 results_path = os.path.join(args.log_dir, 'validate_temp.txt')
 
 
