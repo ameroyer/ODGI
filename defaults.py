@@ -116,8 +116,16 @@ def build_base_config_from_args(args):
         configuration['exp_name'] = 'sdd'
         configuration['save_summaries_steps'] = args.save_summaries_steps 
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = 120 if args.num_epochs is None else args.num_epochs
+        configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'sdd'
+    elif args.data == 'deepscores':
+        configuration['setting'] = 'deepscores'
+        configuration['exp_name'] = 'deepscores'
+        configuration['save_summaries_steps'] = args.save_summaries_steps 
+        configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
+        configuration['num_epochs'] = 50 if args.num_epochs is None else args.num_epochs
+        configuration['image_format'] = 'deepscores'
+        configuration['train_num_crops'] = 6
     elif args.data == 'dota':
         configuration['setting'] = 'dota'
         configuration['exp_name'] = 'dota'
@@ -132,7 +140,8 @@ def build_base_config_from_args(args):
     tfrecords_path = 'Data/metadata_%s.txt'
     metadata = load_metadata(tfrecords_path % configuration['setting'])
     configuration.update(metadata)
-    configuration['num_classes'] = len(configuration['data_classes'])
+    if 'data_classes' in configuration:
+        configuration['num_classes'] = len(configuration['data_classes'])
         
     ## Network 
     configuration['network'] = args.network
