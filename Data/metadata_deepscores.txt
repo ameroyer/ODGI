@@ -1,0 +1,11 @@
+train_tfrecords	Data/deepscores_train
+train_max_num_bbs	816
+train_num_samples	14000
+val_tfrecords	Data/deepscores_val
+val_max_num_bbs	816
+val_num_samples	1000
+test_tfrecords	Data/deepscores_test
+test_max_num_bbs	816
+test_num_samples	5000
+feature_keys	im_id,num_boxes,bounding_boxes
+image_folder	/nfs/scistore12/chlgrp/aroyer/Datasets/DeepScores/half_images/
