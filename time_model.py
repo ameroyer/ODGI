@@ -35,7 +35,7 @@ parser.add_argument('--test_patch_nms_threshold', default=0.25, type=float, help
 parser.add_argument('--test_patch_confidence_threshold', default=0.1, type=float, help='Low confidence threshold')
 parser.add_argument('--test_patch_strong_confidence_threshold', default=0.9, type=float, help='High confidence threshold')
 parser.add_argument('--test_num_crops', default=1, type=int, help='Number of crops')
-parser.add_argument('--num_runs', default=500, type=int, help='Number of timing runs')
+parser.add_argument('--num_runs', default=100, type=int, help='Number of timing runs')
 parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
