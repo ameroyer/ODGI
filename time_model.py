@@ -155,8 +155,6 @@ with tf.Graph().as_default() as graph:
     loading_time = 0.
     run_time = 0.
     with tf.train.MonitoredSession(session_creator=session_creator) as sess:
-        images = [os.path.join(configuration['image_folder'], x) for x in os.listdir(configuration['image_folder'])
-                  if x.endswith(configuration['image_suffix'])]
         try:
             image_path = './timing_image.png'
             for i in range(args.num_runs):
