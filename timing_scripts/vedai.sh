@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-echo '============================================================== 512x256'
+echo '============================================================== ODGI 512x256'
 for i in $(seq 1 10); 
 do 
     python3 time_model.py --test_num_crops $i --test_patch_nms_threshold 0.25 --test_patch_confidence_threshold 0.1 --test_patch_strong_confidence_threshold 0.9 ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50
