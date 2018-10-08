@@ -33,6 +33,7 @@ parser.add_argument('--test_patch_nms_threshold', default=0.25, type=float, help
 parser.add_argument('--test_patch_confidence_threshold', default=0.1, type=float, help='Low confidence threshold')
 parser.add_argument('--test_patch_strong_confidence_threshold', default=0.9, type=float, help='High confidence threshold')
 parser.add_argument('--test_num_crops', default=1, type=int, help='Number of crops')
+parser.add_argument('--num_runs', default=500, type=int, help='Number of timing runs')
 parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
@@ -140,7 +141,7 @@ with tf.Graph().as_default() as graph:
 
     ########################################################################## Start Session
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
-    print('Outputs', outputs)
+    print('Outputs', '\n'.join(list(map(str, outputs))))
     print('\nLaunch session from %s:' % args.log_dir)
 
     if args.device == 'gpu':
@@ -151,14 +152,14 @@ with tf.Graph().as_default() as graph:
     else:
         session_creator = tf.train.ChiefSessionCreator()#checkpoint_dir=args.log_dir)
 
-    num_samples = 0
     loading_time = 0.
     run_time = 0.
     with tf.train.MonitoredSession(session_creator=session_creator) as sess:
         images = [os.path.join(configuration['image_folder'], x) for x in os.listdir(configuration['image_folder'])
                   if x.endswith(configuration['image_suffix'])]
         try:
-            for image_path in images:
+            image_path = './timing_image.png'
+            for i in range(args.num_runs):
                 # load
                 start_time = time.time()
                 read_img = load_and_resize(image_path, imsize)
@@ -172,16 +173,15 @@ with tf.Graph().as_default() as graph:
                 end_time = time.time()                
                 loading_time += load_time - start_time
                 run_time += end_time - load_time
-                num_samples += 1
                 if args.verbose == 2:
-                    print('\r Step %d' % num_samples, end='') 
+                    print('\r Step %d/%d' % (i + 1, num_runs), end='') 
         except tf.errors.OutOfRangeError:
             pass
         print()
-        print('Evaluated %d samples' % num_samples)
+        print('Evaluated %d samples' % num_runs)
         # Timing 
-        loading_time /= num_samples
-        run_time /= num_samples
+        loading_time /= num_runs
+        run_time /= num_runs
         print('Timings:')
         print('   Avg. Loading Time:', loading_time)
         print('   Avg. Feed forward:', run_time)
