@@ -109,13 +109,13 @@ with tf.Graph().as_default() as graph:
         processed_image = tf.expand_dims(processed_image, axis=0)
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
-            crop_boxes, kept_out_boxes = odgi_graph.eval_pass_intermediate_stage(
+            crop_boxes, kept_out_boxes, kept_out_scores = odgi_graph.eval_pass_intermediate_stage(
                 eval_inputs, stage1_configuration, reuse=False, verbose=False) 
             outputs = odgi_graph.feed_pass(
                 eval_inputs, crop_boxes, stage2_configuration, mode='test', verbose=False)
             outputs = odgi_graph.eval_pass_final_stage(
                 outputs, crop_boxes, stage2_configuration, reuse=False, verbose=False)    
-            outputs['kept_out_boxes'] = kept_out_boxes
+            
                     
     ########################### Standard
     elif mode == 'standard':
@@ -165,7 +165,10 @@ with tf.Graph().as_default() as graph:
                 feed_dict = {image: read_img}    
                 # run
                 load_time = time.time()  
-                out_ = sess.run(outputs, feed_dict=feed_dict)
+                if mode == 'standard':
+                    out_ = sess.run(outputs, feed_dict=feed_dict)
+                else:
+                    out_ = sess.run([outputs, kept_out_boxes, kept_out_scores], feed_dict=feed_dict)
                 end_time = time.time()                
                 loading_time += load_time - start_time
                 run_time += end_time - load_time
