@@ -1,5 +1,7 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import warnings
+warnings.filterwarnings("ignore")
 
 import argparse
 import time
@@ -16,7 +18,7 @@ except ImportError:
         return np.array(img).astype(np.uint8)
 
 import tensorflow as tf
-print("Tensorflow version", tf.__version__)
+#print("Tensorflow version", tf.__version__)
 
 import defaults
 import eval_utils
@@ -141,8 +143,9 @@ with tf.Graph().as_default() as graph:
 
     ########################################################################## Start Session
     print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
+    print('test_num_crops', args.test_num_crops)
     print('Outputs', '\n'.join(list(map(str, outputs))))
-    print('\nLaunch session from %s:' % args.log_dir)
+    print('Launch session from %s:' % args.log_dir)
 
     if args.device == 'gpu':
         gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=args.verbose)[0]    
@@ -150,7 +153,7 @@ with tf.Graph().as_default() as graph:
             gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
         session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
     else:
-        session_creator = tf.train.ChiefSessionCreator()#checkpoint_dir=args.log_dir)
+        session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir)
 
     loading_time = 0.
     run_time = 0.
