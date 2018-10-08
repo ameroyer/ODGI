@@ -172,14 +172,14 @@ with tf.Graph().as_default() as graph:
                 loading_time += load_time - start_time
                 run_time += end_time - load_time
                 if args.verbose == 2:
-                    print('\r Step %d/%d' % (i + 1, num_runs), end='') 
+                    print('\r Step %d/%d' % (i + 1, args.num_runs), end='') 
         except tf.errors.OutOfRangeError:
             pass
         print()
-        print('Evaluated %d samples' % num_runs)
+        print('Evaluated %d samples' % args.num_runs)
         # Timing 
-        loading_time /= num_runs
-        run_time /= num_runs
+        loading_time /= args.num_runs
+        run_time /= args.num_runs
         print('Timings:')
         print('   Avg. Loading Time:', loading_time)
         print('   Avg. Feed forward:', run_time)
