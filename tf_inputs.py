@@ -467,22 +467,7 @@ def get_next_stage_inputs(inputs,
     
     # new_image: (num_patches, image_size, image_size, 3)
     with tf.name_scope('extract_image_patches'):
-        # Re-load full res image (flip if necessary)
-        if image_folder is not None and full_image_size > 0:
-            full_images = []
-            current_batch = tf.shape(inputs['im_id'])[0]
-            for i in range(previous_batch_size): 
-                image = tf.cond(i < current_batch, # last batch can be smaller                                
-                                true_fn=lambda: load_image(inputs['im_id'][i], full_image_size, image_folder, image_format),
-                                false_fn=lambda: tf.zeros((full_image_size, full_image_size, 3)))
-                full_images.append(image)
-            full_images = tf.stack(full_images, axis=0)
-            full_images = tf.slice(full_images, (0, 0, 0, 0), (current_batch, -1, -1, -1))
-            full_images = tf.reshape(full_images, (-1, full_image_size, full_image_size, 3))
-            full_images = tf.where(inputs["is_flipped"] > 0., tf.reverse(full_images, [2]), full_images)
-        # Otherwise extract patches from the image directly
-        else:
-            full_images = inputs['image']
+        full_images = inputs['image']
         # Extract patches and resize
         # crop_boxes_indices: (batch_size * num_crops,)
         # crop_boxes_flat: (batch_size * num_crops, 4)

@@ -6,14 +6,14 @@ import time
 try:
     from scipy.misc import imread, imresize
     def load_and_resize(image_path, imsize):
-        return imresize(imread(image_path, mode='RGB'), (imsize, imsize))
+        return imresize(imread(image_path, mode='RGB'), (imsize, imsize)).astype(np.uint8)
 except ImportError:
     from PIL import Image  
     import numpy as np
     def load_and_resize(image_path, imsize):
         img = Image.open(image_path)
         img = img.resize((imsize, imsize), Image.ANTIALIAS)
-        return np.array(img)
+        return np.array(img).astype(np.uint8)
 
 import tensorflow as tf
 print("Tensorflow version", tf.__version__)
