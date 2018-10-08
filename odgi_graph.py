@@ -204,13 +204,32 @@ def eval_pass_final_stage(stage2_inputs, crop_boxes, configuration, reuse=True, 
             batches = tf.reshape(value, new_shape)
             batches = tf.concat(tf.unstack(batches, num=num_crops, axis=1), axis=3)
             outputs[key] = tf.stack(batches, axis=0)
+            
+     # Slic
+    if "test_num_crops_slice" in configuration:
+        num_crops = configuration["test_num_crops_slice"]
+        begin = [0] * len(crop_boxes.get_shape())
+        end = [-1] * len(crop_boxes.get_shape())
+        end[1] = num_crops
+        crop_boxes = tf.slice(crop_boxes, tf.stack(begin, axis=0), tf.stack(end, axis=0))
+        for key, value in outputs.items():         
+            begin = [0] * len(value.get_shape())
+            end = [-1] * len(value.get_shape())
+            end[3] = num_boxes * num_crops
+            outputs[key] = tf.slice(value, tf.stack(begin, axis=0), tf.stack(end, axis=0))
+        outputs['num_useful_crops'] = tf.reduce_sum(tf.to_float(
+            tf.logical_and(crop_boxes[:, :, 3] > crop_boxes[:, :, 1], crop_boxes[:, :, 2] > crop_boxes[:, :, 0])), axis=1)
+        
     
     # Re-scale bounding boxes from stage2 to stage1
     with tf.name_scope('rescale_bounding_boxes'):
         # tile crop_boxes to (stage1_batch, 1, 1, num_crops * num_boxes, 4)
         crop_boxes = tf.expand_dims(crop_boxes, axis=-2)
         crop_boxes = tf.tile(crop_boxes, (1, 1, num_boxes, 1))
-        crop_boxes = tf.reshape(crop_boxes, (-1, 1, 1, num_crops * num_boxes, 4))
+        if "test_num_crops_slice" in configuration:
+            crop_boxes = tf.reshape(crop_boxes, tf.stack([-1, 1, 1, num_crops * num_boxes, 4], axis=0))
+        else:
+            crop_boxes = tf.reshape(crop_boxes, (-1, 1, 1, num_crops * num_boxes, 4))
         crop_boxes = tf.split(crop_boxes, 2, axis=-1)
         # bounding_boxes: (stage1_batch, num_cells, num_cells, num_crops * num_boxes, 4)
         outputs['bounding_boxes'] *= tf.maximum(1e-8, tf.tile(crop_boxes[1] - crop_boxes[0], (1, 1, 1, 1, 2)))
