@@ -29,6 +29,10 @@ tee = viz.Tee(filename='time_log.txt')
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
+parser.add_argument('--test_patch_nms_threshold', default=0.25, type=float, help='NMS threshold')
+parser.add_argument('--test_patch_confidence_threshold', default=0.1, type=float, help='Low confidence threshold')
+parser.add_argument('--test_patch_strong_confidence_threshold', default=0.9, type=float, help='High confidence threshold')
+parser.add_argument('--test_num_crops', default=1, type=int, help='Number of crops')
 parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
@@ -51,6 +55,11 @@ elif data == 'dota':
     configuration['image_suffix'] = '.jpg'
 else:
     raise ValueError("unknown data", data)
+    
+configuration['test_patch_nms_threshold'] = args.test_patch_nms_threshold
+configuration['test_patch_confidence_threshold'] = args.test_patch_confidence_threshold
+configuration['test_patch_strong_confidence_threshold'] = args.test_patch_strong_confidence_threshold
+configuration['test_num_crops'] = args.test_num_crops
     
 # Metadata
 tfrecords_path = 'Data/metadata_%s.txt'
@@ -100,12 +109,13 @@ with tf.Graph().as_default() as graph:
         processed_image = tf.expand_dims(processed_image, axis=0)
         eval_inputs = {'image': processed_image}
         with tf.device('/%s:0' % args.device):
-            crop_boxes = odgi_graph.eval_pass_intermediate_stage(
+            crop_boxes, kept_out_boxes = odgi_graph.eval_pass_intermediate_stage(
                 eval_inputs, stage1_configuration, reuse=False, verbose=False) 
             outputs = odgi_graph.feed_pass(
                 eval_inputs, crop_boxes, stage2_configuration, mode='test', verbose=False)
             outputs = odgi_graph.eval_pass_final_stage(
-                outputs, crop_boxes, stage2_configuration, reuse=False, verbose=False)         
+                outputs, crop_boxes, stage2_configuration, reuse=False, verbose=False)    
+            outputs['kept_out_boxes'] = kept_out_boxes
                     
     ########################### Standard
     elif mode == 'standard':
@@ -139,7 +149,7 @@ with tf.Graph().as_default() as graph:
             gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
         session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
     else:
-        session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir)
+        session_creator = tf.train.ChiefSessionCreator()#checkpoint_dir=args.log_dir)
 
     num_samples = 0
     loading_time = 0.

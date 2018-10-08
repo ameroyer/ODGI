@@ -287,6 +287,22 @@ def get_tf_dataset(tfrecords_file,
     return in_, iterator_init
 
 
+def filter_stage1_bbs(predicted_scores, predicted_boxes, group_classification_logits, strong_confidence_threshold):    
+    # is_group: (batch, num_boxes, 1)
+    is_group = tf.to_float(tf.nn.sigmoid(group_classification_logits) > 0.5)
+    is_group = tf_utils.flatten_percell_output(is_group)
+    # should_be_refined: (batch, num_boxes, 1) : groups and not strongly confident individuals
+    is_not_strongly_confident = tf.to_float(predicted_scores <= strong_confidence_threshold)
+    should_be_refined = tf.minimum(1., is_group + is_not_strongly_confident)
+    # Filter them out from potential crops
+    predicted_scores *= should_be_refined
+    predicted_boxes *= should_be_refined
+    # Select bb1
+    # predicted_boxes: (1, num_boxes, 4)
+    # kept_out_filter: (1, num_boxes, 1)
+    kept_out_boxes = tf.gather(predicted_boxes, tf.to_int32(tf.squeeze(1. - should_be_refined, axis=(0, -1))), axis=1)
+    return predicted_scores, predicted_boxes, kept_out_boxes
+
 def extract_groups(inputs, 
                    predicted_boxes,
                    predicted_scores,
@@ -332,22 +348,15 @@ def extract_groups(inputs,
         predicted_boxes = tf_utils.flatten_percell_output(predicted_boxes)
         
     ## Filter
+    kept_out_boxes = tf.zeros(())
     with tf.name_scope('filter_groups'):
         # At test time, we keep out individual confidences with high confidence
         if mode in ['test', 'val'] and group_classification_logits is not None:
             strong_confidence_threshold = graph_manager.get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
-            # is_group: (batch, num_boxes, 1)
-            is_group = tf.to_float(tf.nn.sigmoid(group_classification_logits) > 0.5)
-            is_group = tf_utils.flatten_percell_output(is_group)
-            # should_be_refined: (batch, num_boxes, 1) : groups and not strongly confident individuals
-            is_not_strongly_confident = tf.to_float(predicted_scores <= strong_confidence_threshold)
-            should_be_refined = tf.minimum(1., is_group + is_not_strongly_confident)
-            #outputs['kept_out_filter'] = tf.squeeze(1. - should_be_refined, axis=-1)
-            # Filter them out from potential crops
-            predicted_scores *= should_be_refined
-            predicted_boxes *= should_be_refined
-            del should_be_refined
+            if strong_confidence_threshold < 1.:
+                predicted_scores, predicted_boxes, kept_out_boxes = filter_stage1_bbs(
+                    predicted_scores, predicted_boxes, group_classification_logits, strong_confidence_threshold)
         
         # Additionally, we filter out boxes with confidence below the threshold
         if confidence_threshold > 0.:
@@ -371,36 +380,26 @@ def extract_groups(inputs,
     if num_outputs > 0:    
         # Non-Maximum Suppression
         if nms_threshold < 1.0:
-            batch_size = graph_manager.get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
-            current_batch = tf.shape(inputs['image'])[0]
             with tf.name_scope('nms'):
                 nms_boxes = []
                 nms_boxes_confidences = []
-                for i in range(batch_size):
-                    boxes, scores = tf.cond(
-                        i < current_batch, # last batch can be smaller  
-                        true_fn=lambda:tf_utils.nms_with_pad(predicted_boxes[i, :, :], 
-                                                             predicted_scores[i, :],
-                                                             num_outputs, 
-                                                             iou_threshold=nms_threshold),
-                        false_fn=lambda: (tf.zeros((num_outputs, 4)), tf.zeros((num_outputs,))) 
-                    )
-                    nms_boxes.append(boxes)
-                    nms_boxes_confidences.append(scores)
+                boxes, scores = tf_utils.nms_with_pad(predicted_boxes[0, :, :], 
+                                                      predicted_scores[0, :],
+                                                      num_outputs, 
+                                                      iou_threshold=nms_threshold)
                 nms_boxes = tf.stack(nms_boxes, axis=0) 
-                nms_boxes = tf.slice(nms_boxes, (0, 0, 0), (current_batch, -1, -1))
-                nms_boxes = tf.reshape(nms_boxes, (-1, num_outputs, 4))
-            return nms_boxes
+                nms_boxes = tf.reshape(nms_boxes, (1, num_outputs, 4))
+            return nms_boxes, kept_out_boxes
         # No NMS
         else:
             top_scores, top_indices = tf.nn.top_k(predicted_scores, k=num_outputs)
             batch_indices = tf.range(tf.shape(predicted_scores)[0])
             batch_indices = tf.tile(tf.expand_dims(batch_indices, axis=-1), (1, num_outputs))
             gather_indices = tf.stack([batch_indices, top_indices], axis=-1)
-            return tf.gather_nd(predicted_boxes, gather_indices)
+            return tf.gather_nd(predicted_boxes, gather_indices), kept_out_boxes
     # No filtering 
     else:
-        return predicted_boxes
+        return predicted_boxes, kept_out_boxes
 
 
 def tile_and_reshape(t, num_crops):
