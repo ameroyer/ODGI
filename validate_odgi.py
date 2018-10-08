@@ -69,6 +69,7 @@ stage2_configuration['batch_size'] = None
 # Image sizes
 stage1_configuration['image_size'] = int(aux[2])
 stage2_configuration['image_size'] = int(aux[3])
+stage2_configuration['network'] = 'tiny-yolov2'
 
 # Group flags
 stage1_configuration['base_name'] = 'stage1'
@@ -216,7 +217,7 @@ for test_num_crops_ in test_num_crops_sweep:
     print('\nBest hyperparameters for %d crops: (val = %.4f)' % (test_num_crops_, best_val_map[test_num_crops_]))
     print('  num_crops=', best_test_num_crops[test_num_crops_])
     print('  nms_threshold=', best_test_patch_nms_threshold[test_num_crops_])
-    print('  tau_low=', best_test_num_crops[test_num_crops_])
+    print('  tau_low=', best_test_patch_confidence_threshold[test_num_crops_])
     print('  tau_high=', best_test_patch_strong_confidence_threshold[test_num_crops_])
     
     # Evaluate on the test set
