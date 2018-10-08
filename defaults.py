@@ -118,6 +118,8 @@ def build_base_config_from_args(args):
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'sdd'
+        if args.network == 'yolov2':
+            configuration['train_num_crops'] = 6
     elif args.data == 'deepscores':
         configuration['setting'] = 'deepscores'
         configuration['exp_name'] = 'deepscores'

@@ -44,6 +44,7 @@ stage1_configuration['with_offsets'] = True
 graph_manager.finalize_grid_offsets(stage1_configuration)
 # stage 2
 stage2_configuration['base_name'] = 'stage2'
+stage2_configuration['network'] = 'tiny-yolov2'
 stage2_configuration['batch_size'] = args.stage2_batch_size 
 stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
 graph_manager.finalize_grid_offsets(stage2_configuration)
