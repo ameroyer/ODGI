@@ -8,14 +8,14 @@ import time
 try:
     from scipy.misc import imread, imresize
     def load_and_resize(image_path, imsize):
-        return imresize(imread(image_path, mode='RGB'), (imsize, imsize)).astype(np.uint8)
+        return imresize(imread(image_path, mode='RGB'), (imsize, imsize))
 except ImportError:
     from PIL import Image  
     import numpy as np
     def load_and_resize(image_path, imsize):
         img = Image.open(image_path)
         img = img.resize((imsize, imsize), Image.ANTIALIAS)
-        return np.array(img).astype(np.uint8)
+        return np.array(img)
 
 import tensorflow as tf
 #print("Tensorflow version", tf.__version__)
@@ -35,7 +35,7 @@ parser.add_argument('--test_patch_nms_threshold', default=0.25, type=float, help
 parser.add_argument('--test_patch_confidence_threshold', default=0.1, type=float, help='Low confidence threshold')
 parser.add_argument('--test_patch_strong_confidence_threshold', default=0.9, type=float, help='High confidence threshold')
 parser.add_argument('--test_num_crops', default=1, type=int, help='Number of crops')
-parser.add_argument('--num_runs', default=500, type=int, help='Number of timing runs')
+parser.add_argument('--num_runs', default=200, type=int, help='Number of timing runs')
 parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
@@ -92,6 +92,7 @@ with tf.Graph().as_default() as graph:
         # Image sizes
         stage1_configuration['image_size'] = int(aux[2])
         stage2_configuration['image_size'] = int(aux[3])
+        stage2_configuration['network'] = 'tiny-yolov2'
         if len(aux) == 5:
             assert aux[-1] == 'same'
             configuration['same_network'] = True
