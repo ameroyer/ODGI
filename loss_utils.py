@@ -134,6 +134,45 @@ def get_standard_loss(inputs,
                 reduction=tf.losses.Reduction.SUM_BY_NONZERO_WEIGHTS)
     else:
         classification_loss = 0.        
+        
+    ## Offsets loss
+    # pred_bbs: 4 * (batch, num_cells, num_cells, num_preds, 1)
+    # true_bbs: 4 * (batch, 1, 1, 1, num_gt)
+    # obj_ij_mask: (batch, num_cells, num_cells, num_preds, num_gt, 1)
+    if 'offsets' in outputs:
+        offsets_loss_weight, offsets_margin = graph_manager.get_defaults(
+            kwargs, ['offsets_loss_weight', 'offsets_margin'], verbose=verbose)
+        # pred_centers, pred_scales: (batch, num_cells, num_cells, 1, 1, 2)
+        pred_centers = tf.concat([pred_bbs[0] + pred_bbs[2], pred_bbs[1] + pred_bbs[3]], axis=-1) / 2.
+        pred_scales = tf.concat([pred_bbs[2] - pred_bbs[0], pred_bbs[3] - pred_bbs[1]], axis=-1)  
+        pred_centers = tf.expand_dims(pred_centers, axis=-2) 
+        pred_scales = tf.expand_dims(pred_scales, axis=-2)
+        # coords: (batch, 1, 1, 1, num_gt, 2, 2)
+        x_coords = tf.stack([true_bbs[0], true_bbs[2]], axis=-1)
+        y_coords = tf.stack([true_bbs[1], true_bbs[3]], axis=-1)
+        x_coords = tf.expand_dims(x_coords, axis=-2)
+        y_coords = tf.expand_dims(y_coords, axis=-2)
+        coords = tf.concat([x_coords, y_coords], axis=-2)
+        # target_scales: (batch, num_cells, num_cells, 1, num_gt, 2)
+        target_scales = tf.reduce_max(tf.abs(tf.expand_dims(pred_centers, axis=-1) - coords), axis=-1)
+        target_scales = 2. * (target_scales + offsets_margin)
+        
+        # target_offsets: (batch, num_cells, num_cells, num_preds, 2)     
+        target_offsets = tf.minimum(1., pred_scales / tf.maximum(epsilon, target_scales))          
+        target_offsets = tf.stop_gradient(target_offsets)
+        #print('target_offsets', target_offsets)
+        #print('output_offsets', outputs["offsets"])
+        #print('mask', obj_ij_mask)
+        #print()
+        #raise SystemExit
+        offsets_diffs = target_offsets - tf.expand_dims(outputs["offsets"], axis=-2)
+        offsets_loss = tf.losses.compute_weighted_loss(
+            offsets_diffs**2,
+            weights=offsets_loss_weight * obj_ij_mask,
+            reduction=tf.losses.Reduction.SUM_BY_NONZERO_WEIGHTS)
+    else:
+        offsets_loss = 0.        
+    
     
     ## Add informative summaries
     if is_chief:
@@ -144,7 +183,8 @@ def get_standard_loss(inputs,
             ('%s_scales_localization_loss' % base_name, scales_localization_loss),
             ('%s_confidence_obj_loss' % base_name, confidence_loss_obj),
             ('%s_confidence_noobj_loss' % base_name, confidence_loss_noobj),
-            ('%s_classification_loss' % base_name, classification_loss)]
+            ('%s_classification_loss' % base_name, classification_loss),
+            ('%s_offsets_loss' % base_name, offsets_loss)]
 
 
 def get_odgi_loss(inputs, 

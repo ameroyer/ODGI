@@ -38,8 +38,8 @@ stage2_configuration['image_size'] = stage1_configuration['image_size'] // 2 if 
 
 # stage 1
 stage1_configuration['base_name'] = 'stage1'
-stage1_configuration['with_groups'] = True
-stage1_configuration['with_group_flags'] = True
+stage1_configuration['with_groups'] = False
+stage1_configuration['with_group_flags'] = False
 stage1_configuration['with_offsets'] = True
 graph_manager.finalize_grid_offsets(stage1_configuration)
 # stage 2
@@ -49,7 +49,7 @@ stage2_configuration['batch_size'] = args.stage2_batch_size
 stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
 graph_manager.finalize_grid_offsets(stage2_configuration)
 # exp name
-multistage_configuration['exp_name'] += '/%s_odgi_%d_%d' % (
+multistage_configuration['exp_name'] += '/%s_odginogroups_%d_%d' % (
     stage1_configuration['network'], stage1_configuration['image_size'], stage2_configuration['image_size'])
     
 

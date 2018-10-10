@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -o ./dummy_logs/slurm-%j.out
-SIZE=512
-STAGE2_IMAGE_SIZE=256       
+SIZE=128
+STAGE2_IMAGE_SIZE=64       
   
 ## Stage 1 as tiny-YOLO
 NETWORK='tiny-yolov2'
@@ -26,8 +26,8 @@ sbatch <<EOT
 #SBATCH --gres=gpu:$NUM_GPUS                    # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
 #SBATCH --job-name=odgi-sdd-$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE
-#SBATCH -o ./log/output_logs/odgi-sdd-$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
-#SBATCH -e ./log/error_logs/odgi-sdd-$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE-$NUM_EPOCHS.%j.err      # logfile for stderr
+#SBATCH -o ./log/output_logs/odgi-sdd-nogroups_$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
+#SBATCH -e ./log/error_logs/odgi-sdd-nogroups_$NETWORK-$SIZE-$STAGE2_IMAGE_SIZE-$NUM_EPOCHS.%j.err      # logfile for stderr
 
 module load cuda/9.0
 module load cudnn
