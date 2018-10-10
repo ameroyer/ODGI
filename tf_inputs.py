@@ -292,13 +292,16 @@ def get_tf_dataset(tfrecords_file,
 
 def filter_individuals(predicted_boxes, predicted_scores, predicted_group_flags, strong_confidence_threshold=1.0):
     """Filter out individuals predictions with confidence higher than the given threhsold"""
-    # is_group: (batch, num_boxes, 1)
-    is_group = tf.to_float(tf.nn.sigmoid(predicted_group_flags) > 0.5)
-    is_group = tf_utils.flatten_percell_output(is_group)
     # should_be_refined: (batch, num_boxes, 1) : groups and not strongly confident individuals
-    is_not_strongly_confident = tf.to_float(predicted_scores <= strong_confidence_threshold)
+    if predicted_group_flags is not None:
+        is_not_strongly_confident = tf.to_float(predicted_scores <= strong_confidence_threshold)
+        # is_group: (batch, num_boxes, 1)
+        is_group = tf.to_float(tf.nn.sigmoid(predicted_group_flags) > 0.5)
+        is_group = tf_utils.flatten_percell_output(is_group)
+        should_be_refined = tf.minimum(1., is_group + is_not_strongly_confident)
+    else:
+        should_be_refined = tf.to_float(predicted_scores <= strong_confidence_threshold)
     # Filter them out from potential crops
-    should_be_refined = tf.minimum(1., is_group + is_not_strongly_confident)
     predicted_scores *= should_be_refined
     predicted_boxes *= should_be_refined
     # Return filtered boxes and filter
@@ -353,9 +356,6 @@ def extract_groups(inputs,
     if verbose:        
         print('  > extracting %d crops' % num_outputs)
         
-    ## Outputs
-    kept_out_filter = None
-        
     ## Flatten
     # predicted_score: (batch, num_boxes, 1)
     # predicted_boxes: (batch, num_boxes, 4)
@@ -364,9 +364,10 @@ def extract_groups(inputs,
         predicted_scores = tf_utils.flatten_percell_output(predicted_scores)
         
     ## Filter
+    kept_out_filter = tf.zeros(tf.shape(predicted_scores)) # default
     with tf.name_scope('filter_groups'):
         # At test time, we keep out individual confidences with high confidence
-        if mode in ['test', 'val'] and predicted_group_flags is not None:
+        if mode in ['test', 'val']:
             strong_confidence_threshold = graph_manager.get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
             if isinstance(strong_confidence_threshold, tf.Tensor) or strong_confidence_threshold < 1.0:
