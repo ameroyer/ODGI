@@ -87,15 +87,15 @@ def train_pass(inputs, configuration, intermediate_stage=False, is_chief=False, 
                 inputs,
                 outputs['bounding_boxes'],
                 outputs['confidence_scores'],
-                predicted_group_flags=outputs['group_classification_logits'],
-                predicted_offsets=outputs['offsets'],
+                predicted_group_flags=outputs['group_classification_logits'] if 'group_classification_logits' in outputs else None,
+                predicted_offsets=outputs['offsets'] if 'offsets' in outputs else None,
                 mode='train', 
                 verbose=dev_verbose,
                 **configuration)
         
     # Add losses
     with tf.name_scope('%s/loss' % base_name):
-        loss_fn = loss_utils.get_odgi_loss if intermediate_stage else loss_utils.get_standard_loss
+        loss_fn = loss_utils.get_odgi_loss if (intermediate_stage and 'group_bounding_boxes_per_cell' in inputs) else loss_utils.get_standard_loss
         graph_manager.add_losses_to_graph(
             loss_fn, inputs, outputs, configuration, is_chief=is_chief, verbose=is_chief)
         
@@ -150,8 +150,8 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
             inputs,
             outputs['bounding_boxes'],
             outputs['confidence_scores'],
-            predicted_group_flags=outputs['group_classification_logits'],
-            predicted_offsets=outputs['offsets'],
+            predicted_group_flags=outputs['group_classification_logits'] if 'group_classification_logits' in outputs else None,
+            predicted_offsets=outputs['offsets'] if 'offsets' in outputs else None,
             mode='test', 
             verbose=verbose,
             **configuration)
