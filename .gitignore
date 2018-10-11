@@ -1,2 +1,7 @@
 Data/*
 log/*
+dummy_logs/*
+Data_old/*
+scripts/*
+*.pyc
+*~
