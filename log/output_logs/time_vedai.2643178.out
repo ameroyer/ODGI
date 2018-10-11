@@ -1,0 +1,761 @@
+============================================================== ODGI 512x256
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05730123233795166
+   Avg. Feed forward: 0.027236252784729003
+   Avg. time: 0.08453748512268067
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 2, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.053907251358032225
+   Avg. Feed forward: 0.012375906944274902
+   Avg. time: 0.06628315830230713
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 3, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.057171037673950195
+   Avg. Feed forward: 0.013057308197021484
+   Avg. time: 0.07022834587097168
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 4, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05626998138427734
+   Avg. Feed forward: 0.01339595890045166
+   Avg. time: 0.069665940284729
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 5, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.055210588455200195
+   Avg. Feed forward: 0.013679325103759766
+   Avg. time: 0.06888991355895996
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 6, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05576056289672852
+   Avg. Feed forward: 0.015182049751281738
+   Avg. time: 0.07094261264801026
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 7, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.06039233589172363
+   Avg. Feed forward: 0.015739356994628906
+   Avg. time: 0.07613169288635253
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 8, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05657311248779297
+   Avg. Feed forward: 0.015298301696777344
+   Avg. time: 0.07187141418457031
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 9, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.056300020217895506
+   Avg. Feed forward: 0.017122215270996093
+   Avg. time: 0.0734222354888916
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 10, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_256/09-28_17-50:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05657107353210449
+   Avg. Feed forward: 0.016887964248657225
+   Avg. time: 0.07345903778076171
+============================================================== ODGI 512x64
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05982699775695801
+   Avg. Feed forward: 0.014658621788024902
+   Avg. time: 0.07448561954498291
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 2, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05740373992919922
+   Avg. Feed forward: 0.012302048683166504
+   Avg. time: 0.06970578861236572
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 3, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.056092227935791016
+   Avg. Feed forward: 0.013807830810546875
+   Avg. time: 0.0699000587463379
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 4, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05705248165130615
+   Avg. Feed forward: 0.013150530815124512
+   Avg. time: 0.07020301246643067
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 5, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05623862552642822
+   Avg. Feed forward: 0.013186906814575195
+   Avg. time: 0.06942553234100342
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 6, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05656392383575439
+   Avg. Feed forward: 0.013191516876220704
+   Avg. time: 0.06975544071197509
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 7, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05544713115692139
+   Avg. Feed forward: 0.013081768035888671
+   Avg. time: 0.06852889919281006
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 8, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05631147956848145
+   Avg. Feed forward: 0.01302083683013916
+   Avg. time: 0.06933231639862061
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 9, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.057388116836547855
+   Avg. Feed forward: 0.012598130226135254
+   Avg. time: 0.06998624706268311
+   using grid size [16 16]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 10, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_512_64/09-27_16-00:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05730741882324219
+   Avg. Feed forward: 0.013010578155517578
+   Avg. time: 0.07031799697875976
+============================================================== ODGI 256x128
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05453106594085693
+   Avg. Feed forward: 0.01165748691558838
+   Avg. time: 0.06618855285644532
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 2, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05700201892852783
+   Avg. Feed forward: 0.011427611351013183
+   Avg. time: 0.06842963027954102
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 3, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.053850146293640135
+   Avg. Feed forward: 0.01161228084564209
+   Avg. time: 0.06546242713928223
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 4, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05288071918487549
+   Avg. Feed forward: 0.011444229125976563
+   Avg. time: 0.06432494831085206
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 5, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05304214859008789
+   Avg. Feed forward: 0.0118209171295166
+   Avg. time: 0.0648630657196045
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 6, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05391319847106934
+   Avg. Feed forward: 0.011312506675720214
+   Avg. time: 0.06522570514678955
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 7, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.054325979232788084
+   Avg. Feed forward: 0.012878446578979493
+   Avg. time: 0.06720442581176758
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 8, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05662928867340088
+   Avg. Feed forward: 0.012581809997558594
+   Avg. time: 0.06921109867095947
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 9, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05696268653869629
+   Avg. Feed forward: 0.011668460845947266
+   Avg. time: 0.06863114738464356
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 10, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_128/09-28_16-43:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05436319732666016
+   Avg. Feed forward: 0.013187261581420898
+   Avg. time: 0.06755045890808106
+============================================================== ODGI 256x64
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05633189296722412
+   Avg. Feed forward: 0.011303520202636719
+   Avg. time: 0.06763541316986084
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 2, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05410313606262207
+   Avg. Feed forward: 0.011327923774719239
+   Avg. time: 0.06543105983734131
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 3, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05341929817199707
+   Avg. Feed forward: 0.010809176445007325
+   Avg. time: 0.0642284746170044
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 4, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.059640387535095214
+   Avg. Feed forward: 0.012410224914550782
+   Avg. time: 0.072050612449646
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 5, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.056333206176757813
+   Avg. Feed forward: 0.012235899925231934
+   Avg. time: 0.06856910610198974
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 6, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.054781102180480955
+   Avg. Feed forward: 0.011223446846008301
+   Avg. time: 0.06600454902648925
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 7, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.0548573579788208
+   Avg. Feed forward: 0.011613598823547363
+   Avg. time: 0.06647095680236816
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 8, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05333158779144287
+   Avg. Feed forward: 0.010917767524719239
+   Avg. time: 0.0642493553161621
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 9, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05521104526519775
+   Avg. Feed forward: 0.011150217056274414
+   Avg. time: 0.06636126232147217
+   using grid size [8 8]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 10, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_256_64/10-05_14-32:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05404522228240967
+   Avg. Feed forward: 0.011733562469482421
+   Avg. time: 0.06577878475189208
+============================================================== ODGI 128x64
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05383622646331787
+   Avg. Feed forward: 0.012019128799438476
+   Avg. time: 0.06585535526275635
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 2, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.052333843231201174
+   Avg. Feed forward: 0.010448219299316407
+   Avg. time: 0.06278206253051757
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 3, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05576221561431885
+   Avg. Feed forward: 0.011938520431518555
+   Avg. time: 0.0677007360458374
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 4, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05385606384277344
+   Avg. Feed forward: 0.011177435874938964
+   Avg. time: 0.0650334997177124
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 5, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05237905788421631
+   Avg. Feed forward: 0.011709776878356934
+   Avg. time: 0.06408883476257324
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 6, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.0574083423614502
+   Avg. Feed forward: 0.01096473503112793
+   Avg. time: 0.06837307739257813
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 7, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05654940414428711
+   Avg. Feed forward: 0.01114120101928711
+   Avg. time: 0.06769060516357422
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 8, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05178773593902588
+   Avg. Feed forward: 0.01108109474182129
+   Avg. time: 0.06286883068084717
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 9, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05468369293212891
+   Avg. Feed forward: 0.01203839874267578
+   Avg. time: 0.0667220916748047
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.02 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 10, 4), dtype=float32, device=/device:GPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 2, 2, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_odgi_128_64/09-27_10-44:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05570578289031983
+   Avg. Feed forward: 0.011147715568542481
+   Avg. time: 0.0668534984588623
+============================================================== STANDARD 1024
+   using grid size [32 32]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 32, 32, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 32, 32, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_1024/09-25_13-58/:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05323571586608887
+   Avg. Feed forward: 0.016610440254211427
+   Avg. time: 0.06984615612030029
+============================================================== STANDARD 512
+   using grid size [16 16]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 16, 16, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 16, 16, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_512/09-24_10-16/:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.058777594566345216
+   Avg. Feed forward: 0.008624979972839356
+   Avg. time: 0.06740257453918458
+============================================================== STANDARD 256
+   using grid size [8 8]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 8, 8, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 8, 8, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_256/09-26_12-46/:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05654560470581055
+   Avg. Feed forward: 0.008453328132629395
+   Avg. time: 0.06499893283843994
+============================================================== STANDARD 128
+   using grid size [4 4]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 4, 4, 1, 4), dtype=float32, device=/device:GPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 4, 4, 1, 1), dtype=float32, device=/device:GPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_128/09-26_18-24/:
+
+Evaluated 250 samples
+Timings:
+   Avg. Loading Time: 0.05299250221252441
+   Avg. Feed forward: 0.0068430652618408205
+   Avg. time: 0.059835567474365234
