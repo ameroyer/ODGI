@@ -1,0 +1,479 @@
+============================================================== ODI YOLO 512x256
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.4965654945373535
+   Avg. Feed forward: 12.036146726608276
+   Avg. time: 12.53271222114563
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 2, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.5609100151062012
+   Avg. Feed forward: 13.788242292404174
+   Avg. time: 14.349152307510375
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 3, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.5685565972328186
+   Avg. Feed forward: 14.556564359664916
+   Avg. time: 15.125120956897735
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 4, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.574472451210022
+   Avg. Feed forward: 15.350228781700133
+   Avg. time: 15.924701232910156
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.5773276090621948
+   Avg. Feed forward: 16.119333817958832
+   Avg. time: 16.696661427021027
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 6, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.5784819221496582
+   Avg. Feed forward: 16.833194255828857
+   Avg. time: 17.411676177978517
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 7, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.5782208395004272
+   Avg. Feed forward: 17.50246822834015
+   Avg. time: 18.080689067840577
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 8, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.5800369882583618
+   Avg. Feed forward: 18.254829919338228
+   Avg. time: 18.834866907596588
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 9, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.582549331188202
+   Avg. Feed forward: 18.988064420223235
+   Avg. time: 19.570613751411436
+   using grid size [16 16]
+   using grid size [8 8]
+
+total graph size: 0.03 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 8, 8, 10, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_512_256/10-05_14-39:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.584818205833435
+   Avg. Feed forward: 19.655199830532073
+   Avg. time: 20.24001803636551
+============================================================== ODGI YOLO 256x128
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.42294259786605837
+   Avg. Feed forward: 3.9067107605934144
+   Avg. time: 4.329653358459472
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 2, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.41603923320770264
+   Avg. Feed forward: 4.084489057064056
+   Avg. time: 4.500528290271759
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 3, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.42143553495407104
+   Avg. Feed forward: 4.260064127445221
+   Avg. time: 4.681499662399292
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 4, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.43213030338287356
+   Avg. Feed forward: 4.437191932201386
+   Avg. time: 4.869322235584259
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.436288914680481
+   Avg. Feed forward: 4.605063621997833
+   Avg. time: 5.041352536678314
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 6, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.4411437368392944
+   Avg. Feed forward: 4.80359914302826
+   Avg. time: 5.244742879867554
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 7, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.4480476045608521
+   Avg. Feed forward: 4.979499645233155
+   Avg. time: 5.4275472497940065
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 8, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.451667046546936
+   Avg. Feed forward: 5.162516238689423
+   Avg. time: 5.614183285236359
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 9, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.45423263788223267
+   Avg. Feed forward: 5.355117659568787
+   Avg. time: 5.80935029745102
+   using grid size [8 8]
+   using grid size [4 4]
+
+total graph size: 0.03 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 4, 4, 10, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_256_128/10-06_23-45:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.45835782527923585
+   Avg. Feed forward: 5.540936460494995
+   Avg. time: 5.999294285774231
+============================================================== ODGI YOLO 128x64
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 1
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(1, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3317108726501465
+   Avg. Feed forward: 1.2714787721633911
+   Avg. time: 1.6031896448135377
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 2
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 2, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(2, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3323660349845886
+   Avg. Feed forward: 1.292572467327118
+   Avg. time: 1.6249385023117067
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 3
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 3, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(3, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.33284999132156373
+   Avg. Feed forward: 1.3369851589202881
+   Avg. time: 1.6698351502418518
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 4
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 4, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(4, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3273586702346802
+   Avg. Feed forward: 1.4133666706085206
+   Avg. time: 1.7407253408432009
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 5
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(5, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3369246244430542
+   Avg. Feed forward: 1.4117093324661254
+   Avg. time: 1.7486339569091796
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 6
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 6, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(6, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.34102186918258665
+   Avg. Feed forward: 1.45427508354187
+   Avg. time: 1.7952969527244567
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 7
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 7, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(7, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3447637677192688
+   Avg. Feed forward: 1.488615207672119
+   Avg. time: 1.8333789753913878
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 8
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 8, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(8, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3339256882667542
+   Avg. Feed forward: 1.6130746293067932
+   Avg. time: 1.9470003175735475
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 9
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 9, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(9, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3484727096557617
+   Avg. Feed forward: 1.5759473061561584
+   Avg. time: 1.9244200158119202
+   using grid size [4 4]
+   using grid size [2 2]
+
+total graph size: 0.03 MB
+test_num_crops 10
+Outputs Tensor("rescale_bounding_boxes/clip_by_value:0", shape=(1, 2, 2, 10, 4), dtype=float32, device=/device:CPU:0)
+Tensor("net/stage2/yolov2_odgi_out/confidences_out:0", shape=(10, 2, 2, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_odgi_128_64/10-06_23-46:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.35016871690750123
+   Avg. Feed forward: 1.6164922785758973
+   Avg. time: 1.9666609954833985
+============================================================== STANDARD 1024
+   using grid size [32 32]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 32, 32, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 32, 32, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_1024/10-04_10-19:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.377472722530365
+   Avg. Feed forward: 48.170215561389924
+   Avg. time: 48.54768828392029
+============================================================== STANDARD 512
+   using grid size [16 16]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 16, 16, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 16, 16, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_512/10-03_16-16:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.583953411579132
+   Avg. Feed forward: 12.359548766613006
+   Avg. time: 12.943502178192139
+============================================================== STANDARD 256
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 8, 8, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 8, 8, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_256/10-04_13-18:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.4328587079048157
+   Avg. Feed forward: 3.5591578483581543
+   Avg. time: 3.99201655626297
+============================================================== STANDARD 128
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 4, 4, 1, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 4, 4, 1, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_128/10-04_13-18:
+ Step 1/100 Step 2/100 Step 3/100 Step 4/100 Step 5/100 Step 6/100 Step 7/100 Step 8/100 Step 9/100 Step 10/100 Step 11/100 Step 12/100 Step 13/100 Step 14/100 Step 15/100 Step 16/100 Step 17/100 Step 18/100 Step 19/100 Step 20/100 Step 21/100 Step 22/100 Step 23/100 Step 24/100 Step 25/100 Step 26/100 Step 27/100 Step 28/100 Step 29/100 Step 30/100 Step 31/100 Step 32/100 Step 33/100 Step 34/100 Step 35/100 Step 36/100 Step 37/100 Step 38/100 Step 39/100 Step 40/100 Step 41/100 Step 42/100 Step 43/100 Step 44/100 Step 45/100 Step 46/100 Step 47/100 Step 48/100 Step 49/100 Step 50/100 Step 51/100 Step 52/100 Step 53/100 Step 54/100 Step 55/100 Step 56/100 Step 57/100 Step 58/100 Step 59/100 Step 60/100 Step 61/100 Step 62/100 Step 63/100 Step 64/100 Step 65/100 Step 66/100 Step 67/100 Step 68/100 Step 69/100 Step 70/100 Step 71/100 Step 72/100 Step 73/100 Step 74/100 Step 75/100 Step 76/100 Step 77/100 Step 78/100 Step 79/100 Step 80/100 Step 81/100 Step 82/100 Step 83/100 Step 84/100 Step 85/100 Step 86/100 Step 87/100 Step 88/100 Step 89/100 Step 90/100 Step 91/100 Step 92/100 Step 93/100 Step 94/100 Step 95/100 Step 96/100 Step 97/100 Step 98/100 Step 99/100 Step 100/100
+Evaluated 100 samples
+Timings:
+   Avg. Loading Time: 0.3338457202911377
+   Avg. Feed forward: 1.0986747789382934
+   Avg. time: 1.432520499229431
