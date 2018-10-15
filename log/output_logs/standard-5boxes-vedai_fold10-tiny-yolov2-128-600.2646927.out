@@ -1,0 +1,109 @@
+============================================================== FOLD 10
+Tensorflow version 1.10.1
+Standard detection - vedai_fold10, Input size 128
+
+968 train samples (41 iters)
+121 test samples (11 iters)
+
+Config:
+   [96mbatch_size:[0m 12
+   [96mdata_classes:[0m ['camping car', 'car', 'others', 'pick-up', 'plane', 'ship', 'tractor', 'truck', 'van']
+   [96mexp_name:[0m vedai_fold10
+   [96mfeature_keys:[0m ['im_id', 'num_boxes', 'bounding_boxes', 'classes']
+   [96mgpu_mem_frac:[0m 1.0
+   [96mimage_folder:[0m /nfs/scistore12/chlgrp/aroyer/Datasets/VEDAI/Vehicules1024/
+   [96mimage_format:[0m vedai
+   [96mlearning_rate:[0m 0.001
+   [96mnetwork:[0m tiny-yolov2
+   [96mnum_boxes:[0m 5
+   [96mnum_classes:[0m 9
+   [96mnum_epochs:[0m 600
+   [96mnum_gpus:[0m 2
+   [96msave_evaluation_steps:[0m 500
+   [96msave_summaries_steps:[0m None
+   [96msetting:[0m vedai_fold10
+   [96mtest_max_num_bbs:[0m 19
+   [96mtest_num_iters_per_epoch:[0m 11
+   [96mtest_num_samples:[0m 121
+   [96mtest_num_samples_per_iter:[0m 12
+   [96mtest_tfrecords:[0m Data/vedai_fold10_test
+   [96mtrain_max_num_bbs:[0m 19
+   [96mtrain_num_iters_per_epoch:[0m 41
+   [96mtrain_num_samples:[0m 968
+   [96mtrain_num_samples_per_iter:[0m 24
+   [96mtrain_tfrecords:[0m Data/vedai_fold10_train
+   [96mval_max_num_bbs:[0m 19
+   [96mval_num_samples:[0m 121
+   [96mval_tfrecords:[0m Data/vedai_fold10_val
+   using grid size [4 4]
+
+Graph:
+    with default `num_threads` = 8
+    with default `prefetch_capacity` = 1
+    with default `with_groups` = False
+    with default `with_classification` = False
+    with default `shuffle_buffer` = 2000
+    with default `data_augmentation_threshold` = 0.5
+ [31m> load_inputs[0m
+    [32mim_id[0m: shape=[None], dtype=<dtype: 'int32'>
+    [32mimage[0m: shape=[None, 128, 128, 3], dtype=<dtype: 'float32'>
+    [32mnum_boxes[0m: shape=[None], dtype=<dtype: 'int32'>
+    [32mbounding_boxes[0m: shape=[None, 19, 4], dtype=<dtype: 'float32'>
+    [32mobj_i_mask_bbs[0m: shape=[None, 4, 4, 1, 19], dtype=<dtype: 'float32'>
+    [32mis_flipped[0m: shape=[None], dtype=<dtype: 'float32'>
+ [31m> tiny-yolov2[0m
+    with default `weight_decay` = 0.0
+    with default `normalizer_decay` = 0.9
+    with default `with_classification` = False
+    Output layer shape *(?, 4, 4, 5, 5)*
+    with default `target_conf_fn` = iou
+    with default `assignment_reward_fn` = iou
+    with default `centers_localization_loss_weight` = 1.0
+    with default `scales_localization_loss_weight` = 1.0
+    with default `confidence_loss_weight` = 5.0
+    with default `noobj_confidence_loss_weight` = 1.0
+    [32m*shifted_centers*[0m: shape=[None, 4, 4, 5, 2], dtype=<dtype: 'float32'>
+    [32m*log_scales*[0m: shape=[None, 4, 4, 5, 2], dtype=<dtype: 'float32'>
+    [32m*confidence_scores*[0m: shape=[None, 4, 4, 5, 1], dtype=<dtype: 'float32'>
+    [32m*bounding_boxes*[0m: shape=[None, 4, 4, 5, 4], dtype=<dtype: 'float32'>
+    [32m*detection_scores*[0m: shape=[None, 4, 4, 5, 1], dtype=<dtype: 'float32'>
+    [32m*target_bounding_boxes*[0m: shape=[None, 4, 4, 5, 4], dtype=<dtype: 'float32'>
+
+Losses:
+ [31m> Collecting losses[0m
+
+    Scope 
+        *tiny-yolov2_centers_localization_loss*: 2 tensors
+        *tiny-yolov2_scales_localization_loss*: 2 tensors
+        *tiny-yolov2_confidence_obj_loss*: 2 tensors
+        *tiny-yolov2_confidence_noobj_loss*: 2 tensors
+        *tiny-yolov2_classification_loss*: 2 tensors
+        *tiny-yolov2_offsets_loss*: 2 tensors
+        tiny-yolov2/tinyyolov2_net/conv1/weights:0, tiny-yolov2/tinyyolov2_net/conv1/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv2/weights:0, tiny-yolov2/tinyyolov2_net/conv2/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv3/weights:0, tiny-yolov2/tinyyolov2_net/conv3/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv4/weights:0, tiny-yolov2/tinyyolov2_net/conv4/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv5/weights:0, tiny-yolov2/tinyyolov2_net/conv5/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv6/weights:0, tiny-yolov2/tinyyolov2_net/conv6/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv7/weights:0, tiny-yolov2/tinyyolov2_net/conv7/BatchNorm/beta:0, tiny-yolov2/tinyyolov2_net/conv_out_2/weights:0, tiny-yolov2/tinyyolov2_net/conv_out_2/BatchNorm/beta:0, tiny-yolov2/yolov2_out/out_conv/kernel:0, tiny-yolov2/yolov2_out/out_conv/bias:0
+ [31m> Build train operation[0m
+    with default `optimizer` = ADAM
+    Using optimizer ADAM with learning rate 1.00e-03
+    with default `beta1` = 0.9
+    32 update operations found
+
+Losses:
+    *tiny-yolov2_centers_localization_loss*: 2 tensors
+    *tiny-yolov2_scales_localization_loss*: 2 tensors
+    *tiny-yolov2_confidence_obj_loss*: 2 tensors
+    *tiny-yolov2_confidence_noobj_loss*: 2 tensors
+    *tiny-yolov2_classification_loss*: 2 tensors
+    *tiny-yolov2_offsets_loss*: 2 tensors
+
+total graph size: 0.32 MB
+    with default `base_log_dir` = ./log
+    Log directory /nfs/scistore12/chlgrp/aroyer/Jupyter/ODGI/log/vedai_fold10/tiny-yolov2_standard_5boxes_128/10-12_18-12
+
+Launch session:
+    with default `max_to_keep` = 1
+    with default `save_checkpoint_steps` = 2000
+    [31mWarning:[0m No summaries found in collection "outputs"
+    [31mWarning:[0m No summaries found in collection "config"
+    saving checkpoint in [36m./log/vedai_fold10/tiny-yolov2_standard_5boxes_128/10-12_18-12[0m
+
+Start training:
+  > Step 1 (epoch 1): loss = 6.90395
