@@ -20,13 +20,14 @@ defaults.build_base_parser(parser)
 args = parser.parse_args()
 print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 configuration = defaults.build_base_config_from_args(args)
+configuration['num_boxes'] = 5
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
 
 ########################################################################## Network Config
 standard_configuration = configuration.copy()
-standard_configuration['base_name'] =  args.network
+standard_configuration['base_name'] = args.network
 standard_configuration['image_size'] = args.size
-standard_configuration['exp_name'] += '/%s_standard_%d' % (standard_configuration['network'], 
+standard_configuration['exp_name'] += '/%s_standard_5boxes_%d' % (standard_configuration['network'], 
                                                            standard_configuration['image_size'])
 graph_manager.finalize_grid_offsets(standard_configuration)
 

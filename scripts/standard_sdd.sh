@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -o ./dummy_logs/slurm-%j.out 
-SIZE=128       
+SIZE=128   
 NETWORK='yolov2'
 
 NUM_GPUS=4
@@ -19,8 +19,8 @@ sbatch <<EOT
 #SBATCH --gres=gpu:$NUM_GPUS            # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
 #SBATCH --job-name=standard-sdd-$NETWORK-$SIZE
-#SBATCH -o ./log/output_logs/standard-sdd-$NETWORK-$SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
-#SBATCH -e ./log/error_logs/standard-sdd-$NETWORK-$SIZE-$NUM_EPOCHS.%j.err      # logfile for stderr
+#SBATCH -o ./log/output_logs/standard-5boxes-sdd-$NETWORK-$SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
+#SBATCH -e ./log/error_logs/standard-5boxes-sdd-$NETWORK-$SIZE-$NUM_EPOCHS.%j.err      # logfile for stderr
 
 module load cuda/9.0
 module load cudnn

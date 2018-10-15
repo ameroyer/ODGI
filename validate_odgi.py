@@ -20,13 +20,15 @@ parser = argparse.ArgumentParser(description='Hyperparameter sweep on the valida
 parser.add_argument('log_dir', type=str, help='log directory to load from')
 parser.add_argument('--batch_size', type=int, default=16, help='Batch size')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
+parser.add_argument('--no_offsets', action='store_true')
+parser.add_argument('--group_flags', action='store_true')
 args = parser.parse_args()
 
 # Sweeps
 test_num_crops_sweep = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]                                
 test_patch_nms_threshold_sweep = [0.25, 0.5, 0.75]                      
-test_patch_confidence_threshold_sweep  = [0., 0.1, 0.2, 0.3, 0.4]
-test_patch_strong_confidence_threshold_sweep = [0.6, 0.7, 0.8, 0.9, 1.0]
+test_patch_confidence_threshold_sweep  = [0., 0.1, 0.2]
+test_patch_strong_confidence_threshold_sweep = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
 ########################################################################## Infer configuration from log dir name
 # Data 
@@ -57,7 +59,7 @@ configuration['network'] = aux[0]
 configuration['gpu_mem_frac'] = args.gpu_mem_frac
 mode = aux[1]
 
-assert mode == 'odgi'
+assert mode.startswith('odgi')
 assert len(aux) in [4, 5]
 stage1_configuration = configuration.copy()
 stage2_configuration = configuration.copy()
@@ -73,9 +75,9 @@ stage2_configuration['network'] = 'tiny-yolov2'
 
 # Group flags
 stage1_configuration['base_name'] = 'stage1'
-stage1_configuration['with_groups'] = True
-stage1_configuration['with_group_flags'] = True
-stage1_configuration['with_offsets'] = True
+stage1_configuration['with_groups'] = False
+stage1_configuration['with_group_flags'] = args.group_flags
+stage1_configuration['with_offsets'] = not args.no_offsets
 graph_manager.finalize_grid_offsets(stage1_configuration, verbose=0)
 stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
 stage2_configuration['base_name'] = 'stage2'

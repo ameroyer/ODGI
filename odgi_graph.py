@@ -15,7 +15,7 @@ def forward_pass(inputs,
                  configuration,
                  is_training=True,
                  reuse=False,
-                 scope_name='model',
+                 scope_name='model',                 
                  verbose=False):
     """Forward-pass in the net"""
     network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
@@ -135,6 +135,10 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
     elif verbose == 1:
         print(' > %s' % base_name)
         
+    offsets = True    
+    if 'with_offsets' in configuration:
+        offsets = configuration['with_offsets']
+    configuration['with_offsets'] = True
     # Feed forward
     with tf.name_scope('%s/net' % base_name):
         outputs = forward_pass(inputs, 
@@ -143,6 +147,9 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
                                is_training=False, 
                                reuse=reuse, 
                                verbose=verbose) 
+    if not offsets:
+        del outputs['offsets']
+    configuration['with_offsets'] = offsets
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):

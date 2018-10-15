@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --array=5
+#SBATCH --array=1-10
 #SBATCH -o ./dummy_logs/slurm-%j.out 
-SIZE=1024        
+SIZE=128
 NETWORK='tiny-yolov2'
 
 NUM_GPUS=2
@@ -22,8 +22,8 @@ sbatch <<EOT
 #SBATCH --gres=gpu:$NUM_GPUS            # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
 #SBATCH --job-name=standard-vedai_fold$FOLD-$NETWORK-$SIZE
-#SBATCH -o ./log/output_logs/standard-vedai_fold$FOLD-$NETWORK-$SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
-#SBATCH -e ./log/error_logs/standard-vedai_fold$FOLD-$NETWORK-$SIZE-$NUM_EPOCHS.%j.err      # logfile for stderr
+#SBATCH -o ./log/output_logs/standard-5boxes-vedai_fold$FOLD-$NETWORK-$SIZE-$NUM_EPOCHS.%j.out     # logfile for stdout
+#SBATCH -e ./log/error_logs/standard-5boxes-vedai_fold$FOLD-$NETWORK-$SIZE-$NUM_EPOCHS.%j.err      # logfile for stderr
 
 module load cuda/9.0
 module load cudnn

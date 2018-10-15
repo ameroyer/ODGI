@@ -64,7 +64,12 @@ configuration['network'] = aux[0]
 configuration['gpu_mem_frac'] = args.gpu_mem_frac
 configuration['same_network'] = False
 mode = aux[1]
-imsize = int(aux[2])
+if aux[2] == '5boxes':
+    assert mode == 'standard'
+    configuration['num_boxes'] = 5
+    imsize = int(aux[3])
+else:
+    imsize = int(aux[2])
 
 with tf.Graph().as_default() as graph:
     ########################### ODGI
