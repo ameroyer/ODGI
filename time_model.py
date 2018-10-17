@@ -76,12 +76,17 @@ configuration['network'] = aux[0]
 configuration['gpu_mem_frac'] = args.gpu_mem_frac
 configuration['same_network'] = False
 mode = aux[1]
-imsize = int(aux[2])
+if aux[2] == '5boxes':
+    assert mode == 'standard'
+    configuration['num_boxes'] = 5
+    imsize = int(aux[3])
+else:
+    imsize = int(aux[2])
 
 with tf.Graph().as_default() as graph:
     ########################### ODGI
     if mode == 'odgi':
-        assert len(aux) in [4, 5]
+        #assert len(aux) in [4, 5]
         stage1_configuration = configuration.copy()
         stage2_configuration = configuration.copy()
 
@@ -123,11 +128,11 @@ with tf.Graph().as_default() as graph:
                     
     ########################### Standard
     elif mode == 'standard':
-        assert len(aux) == 3
+        #assert len(aux) == 3
         standard_configuration = configuration.copy()
         standard_configuration['batch_size'] = 1
         standard_configuration['base_name'] = configuration['network']
-        standard_configuration['image_size'] = int(aux[2])
+        standard_configuration['image_size'] = imsize
         graph_manager.finalize_grid_offsets(standard_configuration)
         imsize = standard_configuration['image_size']
                      

@@ -1,0 +1,56 @@
+============================================================== STANDARD 1024
+   using grid size [32 32]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 32, 32, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 32, 32, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_5boxes_1024/10-11_16-39:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.07697954773902893
+   Avg. Feed forward: 3.1641204345226286
+   Avg. time: 3.2410999822616575
+============================================================== STANDARD 512
+   using grid size [16 16]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 16, 16, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 16, 16, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_5boxes_512/10-12_08-04:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.078740473985672
+   Avg. Feed forward: 0.801177762746811
+   Avg. time: 0.8799182367324829
+============================================================== STANDARD 256
+   using grid size [8 8]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 8, 8, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 8, 8, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_5boxes_256/10-13_08-10:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.0777825653553009
+   Avg. Feed forward: 0.21011242985725403
+   Avg. time: 0.2878949952125549
+============================================================== STANDARD 128
+   using grid size [4 4]
+
+total graph size: 0.01 MB
+test_num_crops 1
+Outputs Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/concat:0", shape=(1, 4, 4, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("tiny-yolov2/net/tiny-yolov2/yolov2_out/confidences_out:0", shape=(1, 4, 4, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/vedai_fold01/tiny-yolov2_standard_5boxes_128/10-12_18-12:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.07688598036766052
+   Avg. Feed forward: 0.06387147903442383
+   Avg. time: 0.14075745940208434

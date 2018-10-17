@@ -1,0 +1,56 @@
+============================================================== STANDARD 1024
+   using grid size [32 32]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 32, 32, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 32, 32, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_5boxes_1024/10-11_16-41:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.09061120510101318
+   Avg. Feed forward: 9.967245252132416
+   Avg. time: 10.057856457233429
+============================================================== STANDARD 512
+   using grid size [16 16]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 16, 16, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 16, 16, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_5boxes_512/10-11_21-03:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.08548072099685669
+   Avg. Feed forward: 2.5106502139568327
+   Avg. time: 2.5961309349536896
+============================================================== STANDARD 256
+   using grid size [8 8]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 8, 8, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 8, 8, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_5boxes_256/10-11_16-41:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.07354116916656495
+   Avg. Feed forward: 0.6656091606616974
+   Avg. time: 0.7391503298282623
+============================================================== STANDARD 128
+   using grid size [4 4]
+
+total graph size: 0.02 MB
+test_num_crops 1
+Outputs Tensor("yolov2/net/yolov2/yolov2_out/concat:0", shape=(1, 4, 4, 5, 4), dtype=float32, device=/device:CPU:0)
+Tensor("yolov2/net/yolov2/yolov2_out/confidences_out:0", shape=(1, 4, 4, 5, 1), dtype=float32, device=/device:CPU:0)
+Launch session from ./log/sdd/yolov2_standard_5boxes_128/10-12_08-26:
+
+Evaluated 200 samples
+Timings:
+   Avg. Loading Time: 0.07813861846923828
+   Avg. Feed forward: 0.21357075691223146
+   Avg. time: 0.29170937538146974
