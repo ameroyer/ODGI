@@ -172,7 +172,7 @@ def detect_eval(output_file_path, **kwargs):
                 
                 # parse boxes
                 aux = content.split('\t')                
-                pred_boxes = np.array([list(map(float, box.split(',')[:4])) for box in aux[1:] if box[-1]], dtype=np.float32)
+                pred_boxes = np.array([list(map(float, box.split(',')[:4])) for box in aux[1:] if int(box[-1])], dtype=np.float32)
                 
                 # Match current best predictions to gt until all gt have been matched
                 num_preds = pred_boxes.shape[0]
