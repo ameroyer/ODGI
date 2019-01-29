@@ -57,7 +57,7 @@ def rescale_with_offsets(predicted_boxes, predicted_offsets, epsilon=1e-8):
     pred_scales = tf.stack([pred_bbs[2] - pred_bbs[0], pred_bbs[3] - pred_bbs[1]], axis=-1)
     # Rescale predictions
     target_scales = pred_scales / (predicted_offsets + epsilon)
-    target_scales = tf.minimum(1., tf.reduce_max(target_scales, axis=-1, keepdims=True))  # always extract square
+    target_scales = tf.minimum(1., tf.reduce_max(target_scales, axis=-1, keep_dims=True))  # always extract square
     # Final boxes
     predicted_boxes = tf.concat([pred_centers - target_scales / 2, 
                                  pred_centers + target_scales / 2], axis=-1)

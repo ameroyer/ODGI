@@ -212,14 +212,14 @@ def get_tf_dataset(tfrecords_file,
         if with_groups:
             obj_i_mask = tf.transpose(obj_i_mask, (0, 1, 3, 2)) # (num_cells, num_cells, num_bbs, 1)
             mins = mins + 1. - obj_i_mask 
-            mins = tf.reduce_min(mins, axis=2, keepdims=True) # (num_cells, num_cells, 1, 2)
+            mins = tf.reduce_min(mins, axis=2, keep_dims=True) # (num_cells, num_cells, 1, 2)
             maxs = maxs * obj_i_mask
-            maxs = tf.reduce_max(maxs, axis=2, keepdims=True)
+            maxs = tf.reduce_max(maxs, axis=2, keep_dims=True)
             group_bounding_boxes_per_cell = tf.concat([mins, maxs], axis=-1)
             group_bounding_boxes_per_cell = tf.clip_by_value(group_bounding_boxes_per_cell, 0., 1.)
             output["group_bounding_boxes_per_cell"] = group_bounding_boxes_per_cell
             
-            num_bbs_per_cell = tf.reduce_sum(obj_i_mask, axis=2, keepdims=True)
+            num_bbs_per_cell = tf.reduce_sum(obj_i_mask, axis=2, keep_dims=True)
             num_group_boxes = tf.reduce_sum(tf.to_int32(num_bbs_per_cell > 0))
             output["num_group_boxes"] = num_group_boxes
             
@@ -239,7 +239,7 @@ def get_tf_dataset(tfrecords_file,
             if with_groups:
                 percell_class_labels = tf.expand_dims(tf.expand_dims(class_labels, axis=0), axis=0)
                 percell_class_labels = obj_i_mask * tf.to_float(percell_class_labels)
-                percell_class_labels = tf.reduce_sum(percell_class_labels, axis=2, keepdims=True)
+                percell_class_labels = tf.reduce_sum(percell_class_labels, axis=2, keep_dims=True)
                 group_class_labels = tf.argmax(percell_class_labels, axis=-1)
                 group_class_labels = tf.one_hot(group_class_labels, num_classes,
                                                 axis=-1, on_value=1, off_value=0, dtype=tf.int32)
