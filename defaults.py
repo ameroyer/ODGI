@@ -65,7 +65,8 @@ defaults_dict = {
 def build_base_parser(parser):
     """Add common arguments to the base parser"""
     parser.add_argument('data', type=str, help='Dataset. One of "vedai", "stanford" or "dota"')
-    parser.add_argument('--network', type=str, default="tiny-yolov2", help='Architecture. One of "tiny-yolov2" or "yolov2"')
+    parser.add_argument('--network', type=str, default="tiny_yolo_v2", help='Backbone architecture',
+                        choices=['tiny_yolo_v2', 'yolo_v2', 'mobilenet'])
     parser.add_argument('--size', default=1024, type=int, help='Size of input images')
     parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs workers to use')
     parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
