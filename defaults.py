@@ -39,7 +39,7 @@ defaults_dict = {
     "classification_loss_weight": 1.0,
     "confidence_loss_weight": 5.0,
     "noobj_confidence_loss_weight": 1.0,
-    "group_classification_loss_weight": 1.,
+    "group_classification_loss_weight": 1.0,
     "offsets_loss_weight": 1.0,
     # Patch Extraction (train time)
     "train_num_crops": 10,                                 # Maximum number of crops per image to predict (train)
