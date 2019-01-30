@@ -123,7 +123,7 @@ def add_image_summaries(inputs,
                         confidence_thresholds=[0.],
                         family=None,
                         display_inputs=True,
-                        collection='outputs'):
+                        collection='outputs_summaries'):
     """Add image and classification summaries
     
     Args:
