@@ -72,10 +72,12 @@ def finalize_grid_offsets(configuration, verbose=2):
         configuration dictionnary   
     """
     network, image_size = get_defaults(configuration, ['network', 'image_size'])
-    if network == 'tiny-yolov2':        
+    if network == 'tiny_yolo_v2':        
         configuration['num_cells'] = get_num_cells(image_size, 5)
-    elif network == 'yolov2':        
+    elif network == 'yolo_v2':        
         configuration['num_cells'] = get_num_cells(image_size, 5)
+    elif network == 'mobilenet':
+        configuration['num_cells'] = get_num_cells(image_size, 5)        
     else:
         raise NotImplementedError('Uknown network architecture', network)
     configuration['grid_offsets'] = precompute_grid_offsets(configuration['num_cells'])
@@ -177,13 +179,14 @@ def get_monitored_training_session(with_ready_op=False,
             
     # Summary hooks
     hooks = []
-    collection = tf.get_collection('outputs')
+    collection = tf.get_collection('outputs_summaries')
     if len(collection) > 0:
         save_summaries_steps = get_defaults(kwargs, ['save_summaries_steps'], verbose=verbose)[0]
         hooks.append(tf.train.SummarySaverHook(
             save_steps=save_summaries_steps, output_dir=log_dir, summary_op=tf.summary.merge(collection)))
     else:
-        print('    \033[31mWarning:\033[0m No summaries found in collection "outputs"')        
+        print('    \033[31mWarning:\033[0m No summaries found in collection "outputs_summaries"') 
+        
     try:
         hooks.append(tf.train.SummarySaverHook(
             save_steps=1e6, output_dir=log_dir, summary_op=tf.summary.merge_all(key='config')))
@@ -395,7 +398,7 @@ def add_losses_to_graph(loss_fn, inputs, outputs, configuration, is_chief=False,
         tf.add_to_collection(key, loss)
         
         
-def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbose=0):
+def get_total_loss(collection='outputs_summaries', add_summaries=True, splits=[''], verbose=0):
     """Retrieve the total loss over all collections and all devices.
     All collections ending with '_loss' will be taken as a loss function
     
@@ -413,7 +416,7 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbos
         print(' > Collecting losses%s' % ('' if splits == [''] else (' (scopes: %s)' % ', '.join(splits))))
     elif verbose == 2:
         print(' \033[31m> Collecting losses\033[0m%s' % (
-            '' if splits == [''] else (' (scopes: %s)' % ', '.join(splits))))        
+            '' if splits == [''] else (' (scopes: %s)' % ', '.join(splits))))    
     losses = []
     for split in splits:
         ## Collect losses from  `*_loss' collections
@@ -446,7 +449,7 @@ def get_total_loss(collection='outputs', add_summaries=True, splits=[''], verbos
             print('\n    Scope %s' % split)
             print('\n'.join(["        *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
                              for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
-            print('       ', ', '.join(list(map(lambda x: x.name, train_vars))))
+            print('       Trainable variables: ', ', '.join(list(map(lambda x: x.name, train_vars))))
             
     # Return
     return losses
@@ -534,7 +537,7 @@ def add_summaries(inputs,
     assert mode in ['train', 'test']
     num_summaries, summary_confidence_thresholds = get_defaults(
         kwargs, ['num_summaries', 'summary_confidence_thresholds'], verbose=verbose)
-    collection = 'outputs' if mode == 'train' else 'evaluation'
+    collection = 'outputs_summaries' if mode == 'train' else 'evaluation'
     
     # Image summaries
     viz.add_image_summaries(inputs,
