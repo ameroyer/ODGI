@@ -2,6 +2,13 @@ import numpy as np
 import graph_manager
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+
+import os
+import sys
+tf_models_path = os.path.expanduser('~/Libs/models/research/slim/')
+if os.path.isdir(tf_models_path):
+    sys.path.append(tf_models_path)
+    from nets.mobilenet import mobilenet_v2
            
             
 def get_detection_outputs(activations,
@@ -350,4 +357,27 @@ def yolo_v2(images,
                         net = slim.conv2d(net, 1024, [3, 3], scope='conv_out')
 
                         # Outputs
-                        return net           
+                        return net  
+                    
+                    
+def mobilenet(images,
+              is_training=True,
+              reuse=False,
+              verbose=False,
+              scope_name='MobilenetV2',
+              **kwargs):    
+    """MobileNetv2 network based on tensorflow/models implementation
+    """
+    base_scope = tf.get_variable_scope().name    
+    # Input in [0., 1.] -> [-1, 1]
+    with tf.control_dependencies([tf.assert_greater_equal(images, 0.)]):
+        with tf.control_dependencies([tf.assert_less_equal(images, 1.)]):
+            net = (images - 0.5) * 2.            
+    # Mobilenet
+    with tf.contrib.slim.arg_scope(mobilenet_v2.training_scope(is_training=is_training)):
+        net, endpoints = mobilenet_v2.mobilenet(net, base_only=True, scope=scope_name, reuse=reuse)
+        var_list = {x.op.name.replace('%s/' % base_scope, ''): x
+                    for x in tf.global_variables(scope='%s/%s' % (base_scope, scope_name))}
+        saver = tf.train.Saver(var_list=var_list)
+        tf.add_to_collection('saver', saver)
+    return net
