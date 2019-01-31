@@ -1,5 +1,5 @@
 import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import argparse
 import pickle
 import time
@@ -133,6 +133,10 @@ with tf.Graph().as_default() as graph:
         with graph_manager.get_monitored_training_session(**standard_configuration) as sess:             
             print('\nStart training:')
             start_time = time.time()
+            #### restore mobilenet
+            saver = tf.get_collection('saver')
+            if len(saver):
+                saver[0].restore(sess, 'mobilenet/mobilenet_v2_1.0_224.ckpt')
             try:
                 while 1:                       
                     # Train
