@@ -361,6 +361,7 @@ def yolo_v2(images,
                     
                     
 def mobilenet(images,
+              depth_multiplier=1.0,
               is_training=True,
               reuse=False,
               verbose=False,
