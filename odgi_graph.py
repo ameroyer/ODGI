@@ -19,10 +19,9 @@ def forward_pass(inputs,
                  verbose=False):
     """Forward-pass in the net"""
     network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
-    assert network in ['tiny-yolov2', 'yolov2']
     with tf.variable_scope(scope_name, reuse=reuse): 
         # activations
-        activation_fn = net.tiny_yolo_v2 if network == 'tiny-yolov2' else net.yolo_v2
+        activation_fn = getattr(net, network)
         activations = activation_fn(inputs["image"],
                                     is_training=is_training,
                                     reuse=reuse, 
