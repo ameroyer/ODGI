@@ -133,10 +133,11 @@ with tf.Graph().as_default() as graph:
         with graph_manager.get_monitored_training_session(**standard_configuration) as sess:             
             print('\nStart training:')
             start_time = time.time()
-            #### restore mobilenet
+            #### restore mobilenet 1.0
             saver = tf.get_collection('saver')
             if len(saver):
-                saver[0].restore(sess, 'mobilenet/mobilenet_v2_1.0_224.ckpt')
+                saver[0].restore(sess, 'mobilenet/mobilenet_100/mobilenet_v2_1.0_224.ckpt')
+            #### restore mobilenet
             try:
                 while 1:                       
                     # Train

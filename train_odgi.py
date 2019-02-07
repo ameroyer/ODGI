@@ -1,5 +1,5 @@
 import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Uncomment to hide tensorflow logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Uncomment to hide tensorflow logs
 import argparse
 import pickle
 import time
@@ -32,6 +32,22 @@ multistage_configuration['full_image_size'] = args.full_image_size
 stage1_configuration = multistage_configuration.copy()
 stage2_configuration = multistage_configuration.copy()
 
+####### set architecture
+if stage1_configuration['network'] in ['yolo_v2', 'tiny_yolo_v2']:
+    stage2_configuration['network'] = 'tiny_yolo_v2'
+elif stage1_configuration['network'] == 'mobilenet':
+    #### first xp
+    #stage1_configuration['depth_multiplier'] = 1.0
+    #stage2_configuration['depth_multiplier'] = 0.5
+    #### second xp
+    #stage1_configuration['depth_multiplier'] = 0.5
+    #stage2_configuration['depth_multiplier'] = 0.5
+    #### thrid xp
+    stage1_configuration['depth_multiplier'] = 1.0
+    stage2_configuration['depth_multiplier'] = 0.35
+    print('Depth', stage1_configuration['depth_multiplier'], stage2_configuration['depth_multiplier'])
+####### set architecture
+
 # Inputs sizes
 stage1_configuration['image_size'] = args.size
 stage2_configuration['image_size'] = stage1_configuration['image_size'] // 2 if args.stage2_image_size is None else args.stage2_image_size
@@ -44,7 +60,6 @@ stage1_configuration['with_offsets'] = True
 graph_manager.finalize_grid_offsets(stage1_configuration)
 # stage 2
 stage2_configuration['base_name'] = 'stage2'
-stage2_configuration['network'] = 'tiny-yolov2'
 stage2_configuration['batch_size'] = args.stage2_batch_size 
 stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
 graph_manager.finalize_grid_offsets(stage2_configuration)
@@ -182,6 +197,15 @@ with tf.Graph().as_default() as graph:
         with graph_manager.get_monitored_training_session(**multistage_configuration) as sess:              
             print('\nStart training:')  
             start_time = time.time()
+            #### restore mobilenet
+            saver = tf.get_collection('saver')
+            if len(saver):
+                assert len(saver) == 2
+                m1 = stage1_configuration['depth_multiplier']
+                saver[0].restore(sess, 'mobilenet/mobilenet_%d/mobilenet_v2_%s_224.ckpt' % (int(100 * m1), m1))
+                m2 = stage2_configuration['depth_multiplier']
+                saver[1].restore(sess, 'mobilenet/mobilenet_%d/mobilenet_v2_%s_224.ckpt' % (int(100 * m2), m2))
+            #### restore mobilenet
             try:
                 while 1:
                     # Train

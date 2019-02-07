@@ -79,7 +79,9 @@ def finalize_grid_offsets(configuration, verbose=2):
     elif network == 'mobilenet':
         configuration['num_cells'] = get_num_cells(image_size, 5)        
     else:
-        raise NotImplementedError('Uknown network architecture', network)
+        ### TODO
+        configuration['num_cells'] = get_num_cells(image_size, 5)  
+        #raise NotImplementedError('Uknown network architecture', network)
     configuration['grid_offsets'] = precompute_grid_offsets(configuration['num_cells'])
     if verbose:
         print("   using grid size", configuration['num_cells'])   
@@ -444,7 +446,7 @@ def get_total_loss(collection='outputs_summaries', add_summaries=True, splits=['
             tf.summary.scalar('%stotal_loss' % split, full_loss, collections=[collection]) 
             
         train_vars = tf.trainable_variables(scope=split)
-        losses.append((full_loss, train_vars))
+        losses.append((full_loss, train_vars, split))
         if verbose == 2:
             print('\n    Scope %s' % split)
             print('\n'.join(["        *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
@@ -501,11 +503,19 @@ def get_train_op(full_losses,
         raise NotImplementedError(optimizer_type)
     
     # Train op for each stage
-    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-    print('   ', len(update_ops), 'update operations found')
-    with tf.control_dependencies(update_ops):
-        train_ops = [get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True) 
-                     for full_loss, var_list in full_losses]
+    train_ops = []
+    for full_loss, var_list, scope in full_losses:
+        update_ops = [x for x in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if scope in x.name]
+        print('   ', len(update_ops), 'update operations found in scope', scope)
+        with tf.control_dependencies(update_ops):
+            train_op = get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True)
+        train_ops.append(train_op)
+        
+    #update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+    #print('   ', len(update_ops), 'update operations found in scope', scope)
+    #with tf.control_dependencies(update_ops):
+        #train_ops = [get_optimizer_op().minimize(full_loss, var_list=var_list, colocate_gradients_with_ops=True) 
+        #             for full_loss, var_list in full_losses]
     
     # Collect update_ops for batch norm
     

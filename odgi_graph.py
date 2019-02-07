@@ -135,8 +135,8 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
         print(' > %s' % base_name)
         
     # Feed forward
-    with_offsets = configuration['with_offsets']
-    configuration['with_offsets'] = True
+    #with_offsets = configuration['with_offsets']
+    #configuration['with_offsets'] = True
     with tf.name_scope('%s/net' % base_name):
         outputs = forward_pass(inputs, 
                                configuration,
@@ -144,10 +144,10 @@ def eval_pass_intermediate_stage(inputs, configuration, reuse=True, verbose=0):
                                is_training=False, 
                                reuse=reuse, 
                                verbose=verbose) 
-    if with_offsets:
-        outputs['offsets'] = tf.ones(tf.shape(outputs['offsets'])) * 0.666
-    else:
-        del outputs['offsets']
+    #if with_offsets:
+    #    outputs['offsets'] = tf.ones(tf.shape(outputs['offsets'])) * 0.666
+    #else:
+    #    del outputs['offsets']
         
     # Compute crops to feed to the next stage
     with tf.name_scope('extract_patches'):

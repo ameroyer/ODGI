@@ -30,6 +30,7 @@ tee = viz.Tee(filename='time_log.txt')
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
 parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
+parser.add_argument('--mobilenet', type=float, default=1.0, help='GPU or CPU')
 parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
 args = parser.parse_args()
@@ -64,7 +65,12 @@ configuration['network'] = aux[0]
 configuration['gpu_mem_frac'] = args.gpu_mem_frac
 configuration['same_network'] = False
 mode = aux[1]
-imsize = int(aux[2])
+if aux[2] == '5boxes':
+    assert mode == 'standard'
+    configuration['num_boxes'] = 5
+    imsize = int(aux[3])
+else:
+    imsize = int(aux[2])
 
 with tf.Graph().as_default() as graph:
     ########################### ODGI
@@ -93,6 +99,9 @@ with tf.Graph().as_default() as graph:
         stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
         stage2_configuration['base_name'] = 'stage2'
         graph_manager.finalize_grid_offsets(stage2_configuration)
+        
+        stage1_configuration['depth_multiplier'] = args.mobilenet
+        stage2_configuration['depth_multiplier'] = 0.5
 
         # Graph
         image = tf.placeholder(tf.uint8, [imsize, imsize, 3]) 
@@ -103,9 +112,9 @@ with tf.Graph().as_default() as graph:
             eval_s1_outputs = odgi_graph.eval_pass_intermediate_stage(
                 eval_inputs, stage1_configuration, reuse=False, verbose=False) 
             eval_s2_inputs = odgi_graph.feed_pass(
-                eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
+                eval_inputs, eval_s1_outputs['crop_boxes'], stage2_configuration, mode='test', verbose=False)
             eval_s2_outputs = odgi_graph.eval_pass_final_stage(
-                eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)                    
+                eval_s2_inputs, eval_s1_outputs['crop_boxes'], stage2_configuration, reuse=False, verbose=False)                    
             outputs = [eval_s2_outputs['bounding_boxes'],
                        eval_s2_outputs['detection_scores'],
                        eval_s1_outputs['bounding_boxes'],
@@ -153,6 +162,8 @@ with tf.Graph().as_default() as graph:
     with tf.train.MonitoredSession(session_creator=session_creator) as sess:
         images = [os.path.join(configuration['image_folder'], x) for x in os.listdir(configuration['image_folder'])
                   if x.endswith(configuration['image_suffix'])]
+        #### TODO
+        images = images[:200]
         try:
             for image_path in images:
                 # load
