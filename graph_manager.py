@@ -11,19 +11,20 @@ import tf_utils
 import viz
 
 ############################################################ Configuration
-def get_defaults(kwargs, defaults, verbose=0):
+def get_defaults(kwargs, args, verbose=0):
     """ Set default for agument not in kwargs and print the default value if chosen
     
     Args:
         kwargs: A dict of kwargs
-        defaults: A list of (key, default_value) pairs. Set key to default_value iff not in kwargs.
+        args: A list of strings. If args is not in kwargs, set it to its default value.
         verbose: Whether to print the default
         
     Returns:
         The list of variables in defaults set to the correct value
     """
+    global defaults_dict
     output = []
-    for key in defaults:
+    for key in args:
         if key in kwargs:
             v = kwargs[key]
         elif key in defaults_dict:

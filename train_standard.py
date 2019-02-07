@@ -1,5 +1,5 @@
 import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import argparse
 import pickle
 import time
@@ -10,10 +10,13 @@ print("Tensorflow version", tf.__version__)
 import defaults
 import eval_utils
 import graph_manager
+import net
 import viz
 from standard_graph import *
 
 tee = viz.Tee() 
+
+
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Standard Object Detection.')
 defaults.build_base_parser(parser)
@@ -21,6 +24,7 @@ args = parser.parse_args()
 print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
 configuration = defaults.build_base_config_from_args(args)
 graph_manager.finalize_configuration(configuration, verbose=args.verbose)
+
 
 ########################################################################## Network Config
 standard_configuration = configuration.copy()
@@ -32,7 +36,12 @@ graph_manager.finalize_grid_offsets(standard_configuration)
 
 
 ########################################################################## Graph
-with tf.Graph().as_default() as graph:          
+with tf.Graph().as_default() as graph:  
+    
+    
+    network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
+    forward_fn = getattr(net, network)
+    forward_fn = tf.make_template(network, forward_fn)
     ############################### Train
     with tf.name_scope('train'):        
         print('\nGraph:')      

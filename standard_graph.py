@@ -11,9 +11,8 @@ import tf_utils
 """Helper functions to build the train and eval graph for standard detection."""
 
 
-def forward_pass(inputs, 
+def forward_pass(inputs,
                  configuration,
-                 scope_name='model',
                  is_training=True,
                  reuse=False, 
                  verbose=0):

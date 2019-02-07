@@ -1,15 +1,20 @@
 import numpy as np
-import graph_manager
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+
+from graph_manager import get_defaults
            
-            
+    
+#########################################
+#          Format Outputs               #
+#########################################
+    
 def get_detection_outputs(activations,
                           is_training=False,
                           reuse=False,
                           verbose=False,
                           grid_offsets=None,
-                          scope_name='yolov2_out',
+                          scope_name='format_output',
                           **kwargs):
     """ Standard detection outputs (final stage).
     
@@ -34,19 +39,23 @@ def get_detection_outputs(activations,
         [opt] log_scales: a Tensor of shape (batch, num_cells, num_cells, num_boxes, 2)
         [opt] confidence_scores: a Tensor of shape (batch, num_cells, num_cells, num_boxes, 1)
     """
-    # Kwargs
-    num_boxes, with_classification = graph_manager.get_defaults(
+    # Set number of outputs
+    assert grid_offsets is not None
+    num_boxes, with_classification = get_defaults(
         kwargs, ['num_boxes', 'with_classification'], verbose=verbose)    
-    assert grid_offsets is not None   
-    num_classes = 0
     if with_classification:
-        num_classes = graph_manager.get_defaults(kwargs, ['num_classes'], verbose=verbose)[0]   
+        num_classes = get_defaults(kwargs, ['num_classes'], verbose=verbose)[0]   
         assert num_classes > 1
-    
-    with tf.variable_scope(scope_name, reuse=reuse):        
-        # Fully connected layer
+    else:
+        num_classes = 0
+    del kwargs
+         
+    ## Fully connected layer
+    with tf.variable_scope(scope_name, reuse=reuse):   
+        # For each bounding box, outputs center coordinates, width and height, 
+        # confidence, and optional classes probabilities.
+        num_outputs = [2, 2, 1, num_classes]
         with tf.name_scope('conv_out'):
-            num_outputs = [2, 2, 1, num_classes]
             kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
             out = tf.layers.conv2d(activations, 
                                    num_boxes * sum(num_outputs),
@@ -58,44 +67,47 @@ def get_detection_outputs(activations,
                                    name='out_conv')
             out = tf.stack(tf.split(out, num_boxes, axis=-1), axis=-2)   
             
-        # Split: centers, log_scales, 
         if verbose:
             print('    Output layer shape *%s*' % out.get_shape())
-        out = tf.split(out, num_outputs, axis=-1)
+        out = tf.split(out, num_outputs, axis=-1, name='split_output')
 
-        # Format
-        # bounding boxes coordinates
+    ## Format outputs
+    with tf.name_scope('format_center_coordinates'):
         num_cells = tf.to_float(grid_offsets.shape[:2])
-        out[0] = tf.nn.sigmoid(out[0]) +  grid_offsets
+        out[0] = tf.nn.sigmoid(out[0]) + grid_offsets
+        
+    with tf.name_scope('format_bbs'):
         bounding_boxes = tf.concat([(out[0] - tf.exp(out[1]) / 2.) / num_cells, 
-                                    (out[0] + tf.exp(out[1]) / 2.) / num_cells], 
-                                   axis=-1, name='bounding_boxes_out')
-        bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1.)
-        # format log_scales
+                                    (out[0] + tf.exp(out[1]) / 2.) / num_cells], axis=-1)
+        bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1., name='bounding_boxes')
+        
+    with tf.name_scope('format_log_scales'):
         out[1] -= tf.log(num_cells)
-        # confidences
+        
+    with tf.name_scope('format_confidence_scores'):
         out[2] = tf.nn.sigmoid(out[2], name='confidences_out')
         detection_scores = out[2]
-        # classification probabilities
+        
+    with tf.name_scope('format_class_probabilities'):
         if with_classification:
             out[3] = tf.nn.softmax(out[3], name='classification_probs_out')
             detection_scores *= out[3]
-        # Return
-        return (out[0] if is_training else None, 
-                out[1] if is_training else None,
-                out[2],
-                out[3] if with_classification else None, 
-                bounding_boxes, 
-                detection_scores)
+            
+    ## Return
+    return (out[0] if is_training else None, 
+            out[1] if is_training else None,
+            out[2],
+            out[3] if with_classification else None, 
+            bounding_boxes, 
+            detection_scores)            
             
             
-            
-def get_detection_with_groups_outputs(activations,
+def get_detection_outputs_with_groups(activations,
                                       grid_offsets=None,
                                       is_training=True,
                                       reuse=False,
                                       verbose=False,
-                                      scope_name='yolov2_odgi_out',
+                                      scope_name='format_output',
                                       **kwargs):
     """ Add the final convolution and preprocess the outputs for Yolov2.
     
@@ -124,67 +136,81 @@ def get_detection_with_groups_outputs(activations,
     """
     # Kwargs    
     assert grid_offsets is not None    
-    with_classification, with_group_flags, with_offsets = graph_manager.get_defaults(
+    with_classification, with_group_flags, with_offsets = get_defaults(
         kwargs, ['with_classification', 'with_group_flags', 'with_offsets'], verbose=verbose)  
-    num_classes = 0
     if with_classification:
-        num_classes = graph_manager.get_defaults(kwargs, ['num_classes'], verbose=verbose)[0]   
+        num_classes = get_defaults(kwargs, ['num_classes'], verbose=verbose)[0]   
         assert num_classes > 1
+    else:
+        num_classes = 0
+    del kwargs
     
+    ## Fully connected layer
     with tf.variable_scope(scope_name, reuse=reuse):
-        # Fully connected layer
-        with tf.name_scope('conv_out'):
-            num_outputs = [2, 2, 1, 2 if with_offsets else 0, int(with_group_flags), num_classes]
-            kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
-            out = tf.layers.conv2d(activations, 
-                                   sum(num_outputs),
-                                   [1, 1], 
-                                   strides=[1, 1],
-                                   padding='valid',
-                                   activation=None,
-                                   kernel_initializer=kernel_initializer,
-                                   name='out_conv')
-            out = tf.stack(tf.split(out, 1, axis=-1), axis=-2)            
+        # For each cell, outputs center coordinates, width and height, 
+        # confidence, group flag, optional offsets and optional classes probabilities.
+        num_outputs = [2, 2, 1, 1, 2 if with_offsets else 0, num_classes]
+        kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
+        out = tf.layers.conv2d(activations, sum(num_outputs),
+                               [1, 1], 
+                               strides=[1, 1],
+                               padding='valid',
+                               activation=None,
+                               kernel_initializer=kernel_initializer,
+                               name='out_conv')
+        out = tf.stack(tf.split(out, 1, axis=-1), axis=-2)            
             
         # Split: centers, log_scales, confidences, offsets, group_flags, class_confidences 
         if verbose:
             print('    Output layer shape *%s*' % out.get_shape())
-        out = tf.split(out, num_outputs, axis=-1)
+        out = tf.split(out, num_outputs, axis=-1, name='split_output')
 
-        # Format
-        # bounding boxes coordinates
+    ## Format outputs
+    with tf.name_scope('format_center_coordinates'):
         num_cells = tf.to_float(grid_offsets.shape[:2])
         out[0] = tf.nn.sigmoid(out[0]) +  grid_offsets
+
+    with tf.name_scope('format_bbs'):
         bounding_boxes = tf.concat([(out[0] - tf.exp(out[1]) / 2.) / num_cells, 
                                     (out[0] + tf.exp(out[1]) / 2.) / num_cells], 
                                    axis=-1, name='bounding_boxes_out')
-        bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1.)
-        # format log_scales
+        bounding_boxes = tf.clip_by_value(bounding_boxes, 0., 1., name='bounding_boxes')
+        
+    with tf.name_scope('format_log_scales'):
         out[1] -= tf.log(num_cells)
-        # confidences
+        
+        
+    with tf.name_scope('format_confidence_scores'):
         out[2] = tf.nn.sigmoid(out[2], name='confidences_out')
         detection_scores = out[2]
-        # offsets
+        
+    with tf.name_scope('format_log_scales'):
+        out[3] = tf.identity(out[3], name='flags_logits_out')
+        
+    with tf.name_scope('format_offsets'):
         if with_offsets:
-            out[3] = tf.nn.sigmoid(out[3], name='offsets_out')
-        # group flags
-        if with_group_flags:            
-            out[4] = tf.identity(out[4], name='flags_logits_out')
-        # classification probabilities
+            out[3] = tf.nn.sigmoid(out[4], name='offsets_out')
+            
+    with tf.name_scope('format_class_probabilities'):
         if with_classification:
             out[5] = tf.nn.softmax(out[5], name='classification_probs_out')
             detection_scores *= out[5]
-        # Return
-        return (out[0] if is_training else None, 
-                out[1] if is_training else None,
-                out[2],
-                out[3] if with_offsets else None,
-                out[4] if with_group_flags else None,
-                out[5] if with_classification else None, 
-                bounding_boxes, 
-                detection_scores)
-
             
+    ## Return
+    return (out[0] if is_training else None, 
+            out[1] if is_training else None,
+            out[2],
+            out[3],
+            out[4] if with_offsets else None,
+            out[5] if with_classification else None, 
+            bounding_boxes, 
+            detection_scores)
+    
+    
+#########################################
+#              BACKBONES                #
+#########################################
+
 def tiny_yolo_v2(images,
                  is_training=True,
                  reuse=False,
@@ -202,15 +228,16 @@ def tiny_yolo_v2(images,
         verbose: verbosity level
         
     Kwargs:
-        weight_decay: Regularization cosntant. Defaults to 0.
+        weight_decay: Regularization constant. Defaults to 0.
         normalizer_decay: Batch norm decay. Defaults to 0.9
     """
     # kwargs:
-    weight_decay, normalizer_decay = graph_manager.get_defaults(
+    weight_decay, normalizer_decay = get_defaults(
         kwargs, ['weight_decay', 'normalizer_decay'], verbose=verbose)
-    num_filters = [16, 32, 64, 128, 256, 512, 1024]
+    del kwargs
               
     # Config
+    num_filters = [16, 32, 64, 128, 256, 512, 1024]
     weights_initializer = tf.truncated_normal_initializer(stddev=0.1)
     weights_regularizer = tf.contrib.layers.l2_regularizer(weight_decay)
     activation_fn = lambda x: tf.nn.leaky_relu(x, 0.1)
@@ -281,8 +308,9 @@ def yolo_v2(images,
         normalizer_decay: Batch norm decay. Defaults to 0.9
     """
     # kwargs:
-    weight_decay, normalizer_decay = graph_manager.get_defaults(
+    weight_decay, normalizer_decay = get_defaults(
         kwargs, ['weight_decay', 'normalizer_decay'], verbose=verbose)
+    del kwargs
               
     # Config
     weights_initializer = tf.truncated_normal_initializer(stddev=0.1)
@@ -308,8 +336,6 @@ def yolo_v2(images,
                 with tf.control_dependencies([tf.assert_greater_equal(images, 0.)]):
                     with tf.control_dependencies([tf.assert_less_equal(images, 1.)]):
                         net = images
-
-                        # Convolutions 
                         # conv 1
                         net = slim.conv2d(net, 32, [3, 3], scope='conv1')
                         net = slim.max_pool2d(net, [2, 2], stride=2, scope='pool1')  

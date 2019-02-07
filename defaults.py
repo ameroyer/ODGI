@@ -1,7 +1,6 @@
 ##### Default option
 defaults_dict = {
     # Base 
-    "batch_size": 16,                                     
     "base_name": "net",                                    # Base name for variable scopes
     "exp_name": "exp",                                     # Base name for current run's directory
     "network": 'tiny-yolov2',                              # One of tiny-yolov2 or yolov2
@@ -10,26 +9,27 @@ defaults_dict = {
     "with_group_flags": False, 
     "with_offsets": False,                                 # If True, use learned offsets
     "with_classification": False,                          # If True, output class scores 
-    # Data
-    "data_augmentation_threshold": 0.5,                    # Data augmentation (flip lr) ratio
+    # Inputs
+    "batch_size": 16,                                     
     "image_size": 512,                                     # Input Image Size
+    "data_augmentation_threshold": 0.5,                    # Data augmentation (flip lr) ratio
     "full_image_size": -1,                                 # image size to load for extracting the crops
     "shuffle_buffer": 2000,                                # Shuffle buffer size in the main dataset object
     "num_threads": 8,                                      # Number of parallel readers for the input queues
     "prefetch_capacity": 1,                                # prefetch capacity for the main dataset object
     "subset": -1,                                          # If > 0, select a subset of the dataset
     # Training Setting
-    "learning_rate": 1e-3,
+    "learning_rate": 1e-3,                                 # Initial learning rate
     "num_epochs": 100,                                     # Number of training epochs
     "num_gpus": 1,                                         # Number of gpus to use
-    "gpu_mem_frac": 1.0,                                   # memory usage per gpu
+    "gpu_mem_frac": 1.0,                                   # Memory usage per gpu
     "optimizer": "ADAM",                                   # 'ADAM' or 'MOMENTUM'
     "beta1": 0.9,                                          # If using ADAM optimizer
     "lr_decay_rate": 0.995,                                # If using Momentum optimizer
     "lr_decay_steps": 1,                                   # If using Momentum optimizer
     "momentum": 0.9,                                       # If using momentum optimizer
     "normalizer_decay": 0.9,                               # Batch norm decay
-    "weight_decay": 0.,
+    "weight_decay": 0.,                                    # Weight Decay
     # Loss Function
     "assignment_reward_fn": "iou",                         # function for assigning gt to best predictor
     "target_conf_fn": "iou",                               # function for to compute the confidence scores ground-truth 
@@ -57,15 +57,17 @@ defaults_dict = {
     "retrieval_confidence_threshold": 0.,                  # Only keep boxes above this threshold for evaluation
     "retrieval_iou_threshold": [0.5, 0.75],                # Evaluate at these retrieval threshold
     "retrieval_nms_threshold": 0.5,                        # IoU threshold for the Non-maximum suppression during evaluation
-    "save_checkpoint_steps": 2000,                          # Save checkpoints at the given frequency (in seconds)
+    "save_checkpoint_steps": 2000,                         # Save checkpoints at the given frequency (in seconds)
     "summary_confidence_thresholds": [0.5],                # Plot output boxes cut at the given thresholds  
     "num_summaries": 3,                                    # Number of image to display in summaries
 }
 
+
 def build_base_parser(parser):
-    """Add common arguments to the base parser"""
-    parser.add_argument('data', type=str, help='Dataset. One of "vedai", "stanford" or "dota"')
-    parser.add_argument('--network', type=str, default="tiny-yolov2", help='Architecture. One of "tiny-yolov2" or "yolov2"')
+    """Base parser for common line arguments"""
+    parser.add_argument('data', type=str, help='Dataset.', choices=['vedai', 'sdd'])
+    parser.add_argument('--network', type=str, default="tiny_yolo_v2", help='Architecture."',
+                        choices=['tiny_yolo_v2', 'yolo_v2'])
     parser.add_argument('--size', default=1024, type=int, help='Size of input images')
     parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs workers to use')
     parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
@@ -109,32 +111,17 @@ def build_base_config_from_args(args):
         configuration['exp_name'] = args.data
         configuration['save_summaries_steps'] = args.save_summaries_steps
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = 500 if args.num_epochs is None else args.num_epochs
+        configuration['num_epochs'] = defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'vedai'
     elif args.data == 'sdd':
         configuration['setting'] = 'sdd'
         configuration['exp_name'] = 'sdd'
         configuration['save_summaries_steps'] = args.save_summaries_steps 
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
+        configuration['num_epochs'] = defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'sdd'
         if args.network == 'yolov2':
             configuration['train_num_crops'] = 6
-    elif args.data == 'deepscores':
-        configuration['setting'] = 'deepscores'
-        configuration['exp_name'] = 'deepscores'
-        configuration['save_summaries_steps'] = args.save_summaries_steps 
-        configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = 50 if args.num_epochs is None else args.num_epochs
-        configuration['image_format'] = 'deepscores'
-        configuration['train_num_crops'] = 6
-    elif args.data == 'dota':
-        configuration['setting'] = 'dota'
-        configuration['exp_name'] = 'dota'
-        configuration['save_summaries_steps'] = args.save_summaries_steps
-        configuration['save_evaluation_steps'] = 1000 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = 100 if args.num_epochs is None else args.num_epochs
-        configuration['image_format'] = 'dota'
     else:
         raise ValueError("unknown data", args.data)
     
