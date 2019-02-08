@@ -11,11 +11,7 @@ import tf_utils
 """Helper functions to build the train and eval graph for standard detection."""
 
 
-def forward_pass(inputs,
-                 configuration,
-                 is_training=True,
-                 reuse=False, 
-                 verbose=0):
+def forward_pass(inputs, forward_fn, configuration, is_training=True, reuse=False, verbose=0):
     """Forward-pass in the net.
     
     Args:
@@ -27,37 +23,20 @@ def forward_pass(inputs,
         reuse: whether to reuse the variable scopes
         verbose: verbosity level
     """
-    network = graph_manager.get_defaults(configuration, ['network'], verbose=True)[0]
-    assert network in ['tiny-yolov2', 'yolov2']
-    with tf.variable_scope(scope_name, reuse=reuse):     
-        # activations
-        activation_fn = net.tiny_yolo_v2 if network == 'tiny-yolov2' else net.yolo_v2
-        activations = activation_fn(inputs["image"],
-                                    is_training=is_training,
-                                    reuse=reuse, 
-                                    verbose=verbose, 
-                                    **configuration)
-        # format output
-        outputs = {}
-        (outputs['shifted_centers'],
-         outputs['log_scales'],
-         outputs['confidence_scores'],
-         outputs['classification_probs'],
-         outputs['bounding_boxes'], 
-         outputs['detection_scores']) = net.get_detection_outputs(activations, 
-                                                                  is_training=is_training, 
-                                                                  reuse=reuse, 
-                                                                  verbose=verbose,
-                                                                  **configuration)
-        # return
-        keys = list(outputs.keys())
-        for k in keys:
-            if outputs[k] is None:
-                del outputs[k]
-        return outputs
+    outputs = {}
+    activations = forward_fn(inputs["image"], is_training=is_training, verbose=verbose, **configuration)
+    (outputs['shifted_centers'], outputs['log_scales'], 
+     outputs['confidence_scores'], outputs['classification_probs'], 
+     outputs['bounding_boxes'], outputs['detection_scores']) = net.get_detection_outputs(
+        activations, is_training=is_training, verbose=verbose, **configuration)
+    keys = list(outputs.keys())
+    for k in keys:
+        if outputs[k] is None:
+            del outputs[k]
+    return outputs
             
             
-def train_pass(inputs, configuration, is_chief=False, verbose=1):
+def train_graph(inputs, forward_fn, configuration, is_chief=False, verbose=1):
     """ Compute outputs of the net and add losses to the graph.
     
     Args:
