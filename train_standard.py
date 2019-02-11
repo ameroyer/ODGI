@@ -101,7 +101,7 @@ with tf.name_scope('eval'):
         false_fn=lambda: graph_manager.get_inputs(mode='val', verbose=False, **config),
         name='eval_inputs')
 
-    for i in range(config['num_gpus']):     
+    for i in range(config['num_gpus']):
         with tf.device('/gpu:%d' % i):
             with tf.name_scope('dev%d' % i):
                 eval_outputs = forward_pass(
@@ -130,14 +130,15 @@ with tf.name_scope('eval'):
 
 ########################################################################## Start Session
 if __name__ == '__main__':    
-    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))    
-    print('\nLaunch session:')
-    global_step_ = 0
-    log_run()
+    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))
+    log_run()            
+    
     try:        
-        with graph_manager.get_monitored_training_session(**config) as sess:             
+        with graph_manager.get_monitored_training_session(**config) as sess:
             print('\nStart training:')
             start_time = time.time()
+            global_step_ = 0
+            
             try:
                 while 1:                       
                     # Train

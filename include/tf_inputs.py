@@ -120,6 +120,7 @@ def get_tf_dataset(tfrecords_file,
                    with_classes=False,
                    num_classes=None,
                    batch_size=1,
+                   drop_remainder=False,
                    num_epochs=1,
                    image_size=1024,
                    image_folder='',
@@ -248,7 +249,7 @@ def get_tf_dataset(tfrecords_file,
         if num_epochs > 1:
             dataset = dataset.repeat(num_epochs)
         # Batch
-        dataset = dataset.batch(batch_size * num_devices)
+        dataset = dataset.batch(batch_size * num_devices, drop_remainder=drop_remainder)
         if prefetch_capacity > 0: 
             dataset = dataset.prefetch(prefetch_capacity)
             
@@ -260,7 +261,7 @@ def get_tf_dataset(tfrecords_file,
         else:
             iterator = dataset.make_one_shot_iterator()    
             iterator_init = None
-        
+
     ## Trim max number of boxes
     batch = iterator.get_next()
     if trim_num_boxes:
@@ -282,9 +283,8 @@ def get_tf_dataset(tfrecords_file,
         
     inputs = [{} for _ in range(num_devices)]
     for key, value in batch.items():
-        for i, split_value in enumerate(tf.split(value, slice_dims)):
-            inputs[i][key] = split_value
-            
+        for i, split_value in enumerate(tf.split(value, slice_dims, axis=0)):
+            inputs[i][key] = split_value            
               
     ## Verbose log
     if verbose == 2:
@@ -322,8 +322,7 @@ def filter_threshold(predicted_boxes, predicted_scores, confidence_threshold=-1.
     return predicted_boxes, predicted_scores
 
 
-def extract_groups(inputs, 
-                   predicted_boxes,
+def extract_groups(predicted_boxes,
                    predicted_scores,
                    predicted_group_flags=None,
                    predicted_offsets=None,
@@ -334,7 +333,6 @@ def extract_groups(inputs,
     """ Extract crops from the outputs of intermediate stage.
     
     Args:
-        inputs: Inputs dictionnary of stage s
         predicted_boxes: A (batch_size, num_cells, num_cells, num_boxes, 4) array
         predicted_scores: A (batch_size, num_cells, num_cells, num_boxes, 1) array
         predicted_group_flags: A (batch_size, num_cells, num_cells, num_boxes, 1) array
@@ -400,7 +398,7 @@ def extract_groups(inputs,
         # Non-Maximum Suppression
         if nms_threshold < 1.0:
             batch_size = get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
-            current_batch = tf.shape(inputs['image'])[0]
+            current_batch = tf.shape(predicted_boxes)[0]
             with tf.name_scope('nms'):
                 nms_boxes = []
                 nms_boxes_confidences = []
