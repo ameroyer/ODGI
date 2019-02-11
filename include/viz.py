@@ -7,7 +7,6 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from .configuration import get_defaults
 from .utils import flatten_percell_output
 
 
@@ -52,7 +51,7 @@ def draw_bounding_boxes(image, bbs):
         if r == 3:
             return tf.image.draw_bounding_boxes(image, tf.gather(bbs, [1, 0, 3, 2], axis=-1))
         else:
-            bbs_ = tf_utils.flatten_percell_output(bbs)
+            bbs_ = flatten_percell_output(bbs)
             return tf.image.draw_bounding_boxes(image, tf.gather(bbs_, [1, 0, 3, 2], axis=-1))
 
 
@@ -179,7 +178,8 @@ def add_image_summaries(inputs, outputs, num_summaries, display_inputs=True,
 def add_text_summaries(configuration, family='configuration'):
     """ Add text summary for the experiment configuration and the list of classes in the dataset.
     """
-    config = defaults_dict.copy()
+    from .configuration import _defaults_dict
+    config = _defaults_dict.copy()
     config.update(configuration)
     summary_str = tf.convert_to_tensor('###Configuration \n\t'  + '\n\t'.join(
         ['"%s" = %s' % (key.upper(), config[key]) for key in sorted(config.keys()) 
@@ -202,12 +202,19 @@ def display_loss(global_step_, full_loss_, start_time, iter_size, num_samples):
         iter_size: Number of samples run per step
         num_samples: Total number of samples in the dataset
     """
+    # time
     elapsed_time = time.time() - start_time
+    elapsed_hours, rest = divmod(elapsed_time, 3600)
+    elapsed_minutes, _ = divmod(rest, 60)
+    t = '%02d:%02d' % (elapsed_days, elapsed_hours, elapsed_minutes)
+    # epoch
     epoch = (global_step_ * iter_size) // num_samples + 1
+    # losses
     if isinstance(full_loss_, (list,)):
         l = ', '.join('loss %d = %.5f' % (i + 1, x) for i, x in enumerate(full_loss_)) 
         assert not np.isnan(np.sum(full_loss_)), 'loss has NaN values'
     else:
         l = 'loss = %.5f' % full_loss_
         assert not np.isnan(full_loss_), 'loss has NaN values'
-    print('  > Step %d (epoch %d): %s' % (global_step_, epoch, l))
+    # print
+    print('  > [%s] Step %d (epoch %d): %s' % (t, global_step_, epoch, l))

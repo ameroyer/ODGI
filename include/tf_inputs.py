@@ -121,8 +121,9 @@ def get_tf_dataset(tfrecords_file,
                    num_classes=None,
                    batch_size=1,
                    num_epochs=1,
-                   image_size=448,
+                   image_size=1024,
                    image_folder='',
+                   trim_num_boxes=False,
                    data_augmentation_threshold=0.5,
                    num_devices=1,
                    num_threads=4,
@@ -264,11 +265,13 @@ def get_tf_dataset(tfrecords_file,
     inputs = [0] * num_devices
     with tf.name_scope('data_augmentation'):
         for i in range(num_devices):
-            # slice
             batch = iterator.get_next()
-            max_num_bbs = tf.reduce_max(batch['num_boxes'])
-            batch['bounding_boxes'] = batch['bounding_boxes'][:, :max_num_bbs, :]
-            batch['obj_i_mask_bbs'] = batch['obj_i_mask_bbs'][:, :, :, :, :max_num_bbs]
+            # trim to max number of boxes for training
+            # -> faster loss computations
+            if trim_num_boxes:
+                max_num_bbs = tf.reduce_max(batch['num_boxes'])
+                batch['bounding_boxes'] = batch['bounding_boxes'][:, :max_num_bbs, :]
+                batch['obj_i_mask_bbs'] = batch['obj_i_mask_bbs'][:, :, :, :, :max_num_bbs]
             # data augmentation
             if data_augmentation_threshold > 0.:
                 inputs[i] = apply_data_augmentation(batch, data_augmentation_threshold)      

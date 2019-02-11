@@ -145,11 +145,13 @@ def get_inputs(mode='train',
     if mode == 'train':
         shuffle_buffer, data_augmentation_threshold, num_epochs = get_defaults(
             kwargs, ['shuffle_buffer', 'data_augmentation_threshold', 'num_epochs'], verbose=verbose)
+        trim_num_boxes = True
         make_initializable_iterator = False
     elif mode in ['val', 'test']:  
         shuffle_buffer = 1
         num_epochs = 1
         data_augmentation_threshold = 0.
+        trim_num_boxes = False
         make_initializable_iterator = True
     else:
         raise NotImplementedError("Unknown mode for `get_inputs`:", mode)
@@ -171,6 +173,7 @@ def get_inputs(mode='train',
         num_epochs=num_epochs,
         image_size=image_size,
         image_folder=image_folder,
+        trim_num_boxes=trim_num_boxes,
         data_augmentation_threshold=data_augmentation_threshold,
         grid_offsets=grid_offsets,
         num_devices=num_devices,

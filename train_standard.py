@@ -23,11 +23,11 @@ parser = argparse.ArgumentParser(description='Standard Object Detection.')
 configuration.build_base_parser(parser)
 args = parser.parse_args()
 
-print('Standard detection - %s, Input size %d\n' % (args.data, args.size)) 
+print('Standard detection - %s, Input size %d\n' % (args.data, args.image_size)) 
 base_config = configuration.build_base_config_from_args(args, verbose=args.verbose)
 
 config = base_config.copy()
-config['image_size'] = args.size
+config['image_size'] = args.image_size
 config['exp_name'] += '/%s_standard_%d' % (config['network'],config['image_size'])
 configuration.finalize_grid_offsets(config)
 

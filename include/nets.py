@@ -50,17 +50,16 @@ def get_detection_outputs(activations,
         # For each bounding box, outputs center coordinates, width and height, 
         # confidence, and optional classes probabilities.
         num_outputs = [2, 2, 1, num_classes]
-        with tf.name_scope('conv_out'):
-            kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
-            out = tf.layers.conv2d(activations, 
-                                   num_boxes * sum(num_outputs),
-                                   [1, 1], 
-                                   strides=[1, 1],
-                                   padding='valid',
-                                   activation=None,
-                                   kernel_initializer=kernel_initializer,
-                                   name='fc_out')
-            out = tf.stack(tf.split(out, num_boxes, axis=-1), axis=-2)   
+        kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
+        out = tf.layers.conv2d(activations, 
+                               num_boxes * sum(num_outputs),
+                               [1, 1], 
+                               strides=[1, 1],
+                               padding='valid',
+                               activation=None,
+                               kernel_initializer=kernel_initializer,
+                               name='fc_out')
+        out = tf.stack(tf.split(out, num_boxes, axis=-1), axis=-2)   
             
         if verbose:
             print('    Output layer shape *%s*' % out.get_shape())
@@ -142,14 +141,12 @@ def get_detection_outputs_with_groups(activations,
         # confidence, group flag, optional offsets and optional classes probabilities.
         num_outputs = [2, 2, 1, 1, 2 if with_offsets else 0, num_classes]
         kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
-        weights_regularizer = tf.contrib.layers.l2_regularizer(0.0005)
         out = tf.layers.conv2d(activations, sum(num_outputs),
                                [1, 1], 
                                strides=[1, 1],
                                padding='valid',
                                activation=None,
                                kernel_initializer=kernel_initializer,
-                               weights_regularizer=weights_regularizer,
                                name='fc_out')
         out = tf.stack(tf.split(out, 1, axis=-1), axis=-2)            
             
@@ -207,7 +204,7 @@ def tiny_yolo_v2(images,
                  is_training=True,
                  verbose=False,
                  stddev_init=0.1,
-                 weight_decay=0.0005,
+                 weight_decay=0.,
                  normalizer_decay=0.9,
                  **kwargs):
     """ Base tiny-YOLOv2 architecture.
