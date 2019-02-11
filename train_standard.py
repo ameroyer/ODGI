@@ -40,45 +40,12 @@ def log_run():
     global tee, config
     viz.save_tee(config["log_dir"], tee)
 
-
-def forward(images, config, forward_fn, decode_fn, is_training=True, verbose=0):
-    """Forward-pass in the net for standard outputs (no groups).
-
-    Args:
-        inputs: Dictionnary of inputs
-        outputs: Dictionnary of outputs, to be updated
-        configuration`: configuration dictionnary
-        scope_name: Default scope name
-        is_training: Whether the model is in training mode (for batch norm)
-        reuse: whether to reuse the variable scopes
-        verbose: verbosity level
-    """
-    outputs = {}
-    activations = forward_fn(images, is_training=is_training, verbose=verbose, **config)
-    (outputs['shifted_centers'], outputs['log_scales'], 
-     outputs['confidence_scores'], outputs['classification_probs'], 
-     outputs['bounding_boxes'], outputs['detection_scores']) = decode_fn(
-        activations, is_training=is_training, verbose=verbose, **config)
-    keys = list(outputs.keys())
-    for k in keys:
-        if outputs[k] is None:
-            del outputs[k]
-            
-    if verbose == 2:
-        print('\n'.join("    \033[32m%s\033[0m: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
-                        for key, value in outputs.items()))
-    elif verbose == 1:
-        print('\n'.join("    *%s*: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
-                        for key, value in outputs.items()))
-    return outputs
-
-
 ########################################################################## Build the graph
 ### templates
 network = configuration.get_defaults(config, ['network'], verbose=True)[0]
 forward_fn = tf.make_template(network, getattr(nets, network))
 decode_fn = tf.make_template('decode', nets.get_detection_outputs)
-forward_pass = partial(forward, forward_fn=forward_fn, decode_fn=decode_fn)
+forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
 
 with_summaries = config['save_summaries_steps'] is not None    
 if with_summaries:

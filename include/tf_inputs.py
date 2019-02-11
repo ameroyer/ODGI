@@ -248,7 +248,7 @@ def get_tf_dataset(tfrecords_file,
         if num_epochs > 1:
             dataset = dataset.repeat(num_epochs)
         # Batch
-        dataset = dataset.batch(batch_size)
+        dataset = dataset.batch(batch_size * num_devices)
         if prefetch_capacity > 0: 
             dataset = dataset.prefetch(prefetch_capacity)
             
@@ -261,22 +261,30 @@ def get_tf_dataset(tfrecords_file,
             iterator = dataset.make_one_shot_iterator()    
             iterator_init = None
         
+    ## Trim max number of boxes
+    batch = iterator.get_next()
+    if trim_num_boxes:
+        max_num_bbs = tf.reduce_max(batch['num_boxes'])
+        batch['bounding_boxes'] = batch['bounding_boxes'][:, :max_num_bbs, :]
+        batch['obj_i_mask_bbs'] = batch['obj_i_mask_bbs'][:, :, :, :, :max_num_bbs]
+        
     ## Apply data augmentation
-    inputs = [0] * num_devices
     with tf.name_scope('data_augmentation'):
-        for i in range(num_devices):
-            batch = iterator.get_next()
-            # trim to max number of boxes for training
-            # -> faster loss computations
-            if trim_num_boxes:
-                max_num_bbs = tf.reduce_max(batch['num_boxes'])
-                batch['bounding_boxes'] = batch['bounding_boxes'][:, :max_num_bbs, :]
-                batch['obj_i_mask_bbs'] = batch['obj_i_mask_bbs'][:, :, :, :, :max_num_bbs]
-            # data augmentation
-            if data_augmentation_threshold > 0.:
-                inputs[i] = apply_data_augmentation(batch, data_augmentation_threshold)      
-            else:
-                inputs[i] = batch
+        if data_augmentation_threshold > 0.:
+            batch = apply_data_augmentation(batch, data_augmentation_threshold)      
+        
+    ## Split across device
+    slice_dims = [0] * num_devices
+    unpadded_batch = tf.to_int32(tf.shape(batch['im_id'])[0])
+    for i in range(num_devices):
+        slice_dims[i] = tf.maximum(0, tf.minimum(batch_size, unpadded_batch))
+        unpadded_batch -= batch_size
+        
+    inputs = [{} for _ in range(num_devices)]
+    for key, value in batch.items():
+        for i, split_value in enumerate(tf.split(value, slice_dims)):
+            inputs[i][key] = split_value
+            
               
     ## Verbose log
     if verbose == 2:

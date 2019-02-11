@@ -5,10 +5,35 @@ import tensorflow.contrib.slim as slim
 from .configuration import get_defaults
            
     
-#########################################
-#          Format Outputs               #
-#########################################
+def forward(images, config, forward_fn, decode_fn, is_training=True, verbose=0):
+    """Forward-pass in the net for standard outputs (no groups).
+
+    Args:
+        inputs: Dictionnary of inputs
+        outputs: Dictionnary of outputs, to be updated
+        configuration`: configuration dictionnary
+        forward_fn: one of the backbone network.
+        decode_fn: one of the decoding functions (either with or without groups)
+        is_training: Whether the model is in training mode (for batch norm)
+        verbose: verbosity level
+    """
+    embeddings = forward_fn(images, is_training=is_training, verbose=verbose, **config)
+    outputs = { k: v for (k, v) in decode_fn(
+        embeddings, is_training=is_training, verbose=verbose, **config)
+               if v is not None}
+            
+    if verbose == 2:
+        print('\n'.join("    \033[32m%s\033[0m: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
+                        for key, value in outputs.items()))
+    elif verbose == 1:
+        print('\n'.join("    *%s*: shape=%s, dtype=%s" % (key, value.get_shape().as_list(), value.dtype) 
+                        for key, value in outputs.items()))
+    return outputs
+   
     
+#########################################
+#          Decoding Functions           #
+#########################################
 def get_detection_outputs(activations,
                           is_training=False,
                           verbose=False,
@@ -88,12 +113,12 @@ def get_detection_outputs(activations,
             detection_scores *= out[3]
             
     ## Return
-    return (out[0] if is_training else None, 
-            out[1] if is_training else None,
-            out[2],
-            out[3] if with_classification else None, 
-            bounding_boxes, 
-            detection_scores)            
+    return (('shifted_centers', out[0] if is_training else None), 
+            ('log_scales', out[1] if is_training else None),
+            ('confidence_scores', out[2]),
+            ('classification_probs', out[3] if with_classification else None), 
+            ('bounding_boxes', bounding_boxes), 
+            ('detection_scores', detection_scores))        
             
             
 def get_detection_outputs_with_groups(activations,
@@ -174,12 +199,12 @@ def get_detection_outputs_with_groups(activations,
         out[2] = tf.nn.sigmoid(out[2], name='confidences_out')
         detection_scores = out[2]
         
-    with tf.name_scope('format_log_scales'):
+    with tf.name_scope('format_group_flags'):
         out[3] = tf.identity(out[3], name='flags_logits_out')
         
     with tf.name_scope('format_offsets'):
         if with_offsets:
-            out[3] = tf.nn.sigmoid(out[4], name='offsets_out')
+            out[4] = tf.nn.sigmoid(out[4], name='offsets_out')
             
     with tf.name_scope('format_class_probabilities'):
         if with_classification:
@@ -187,14 +212,14 @@ def get_detection_outputs_with_groups(activations,
             detection_scores *= out[5]
             
     ## Return
-    return (out[0] if is_training else None, 
-            out[1] if is_training else None,
-            out[2],
-            out[3],
-            out[4] if with_offsets else None,
-            out[5] if with_classification else None, 
-            bounding_boxes, 
-            detection_scores)
+    return (('shifted_centers', out[0] if is_training else None), 
+            ('log_scales', out[1] if is_training else None),
+            ('confidence_scores', out[2]),
+            ('group_classification_logits', out[3]),
+            ('offsets', out[4] if with_offsets else None),
+            ('classification_probs', out[5] if with_classification else None), 
+            ('bounding_boxes', bounding_boxes), 
+            ('detection_scores', detection_scores))
     
     
 #########################################
@@ -204,7 +229,7 @@ def tiny_yolo_v2(images,
                  is_training=True,
                  verbose=False,
                  stddev_init=0.1,
-                 weight_decay=0.,
+                 weight_decay=0.0005,
                  normalizer_decay=0.9,
                  **kwargs):
     """ Base tiny-YOLOv2 architecture.

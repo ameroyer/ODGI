@@ -206,7 +206,7 @@ def display_loss(global_step_, full_loss_, start_time, iter_size, num_samples):
     elapsed_time = time.time() - start_time
     elapsed_hours, rest = divmod(elapsed_time, 3600)
     elapsed_minutes, _ = divmod(rest, 60)
-    t = '%02d:%02d' % (elapsed_days, elapsed_hours, elapsed_minutes)
+    t = '%02d:%02d' % (elapsed_hours, elapsed_minutes)
     # epoch
     epoch = (global_step_ * iter_size) // num_samples + 1
     # losses
