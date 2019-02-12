@@ -7,7 +7,7 @@ def get_standard_loss(inputs,
                       outputs,
                       is_chief=True,
                       verbose=False,
-                      base_name="net",
+                      loss_base_name="net",
                       epsilon=1e-8,
                       num_cells=None,
                       **kwargs):
@@ -133,18 +133,18 @@ def get_standard_loss(inputs,
         is_assigned_predictor = tf.to_float(tf.reduce_sum(obj_ij_mask, axis=-2) > 0.)
         outputs["target_bounding_boxes"] = outputs["bounding_boxes"] * is_assigned_predictor
         
-    return [('%s_centers_localization_loss' % base_name, centers_localization_loss),
-            ('%s_scales_localization_loss' % base_name, scales_localization_loss),
-            ('%s_confidence_obj_loss' % base_name, confidence_loss_obj),
-            ('%s_confidence_noobj_loss' % base_name, confidence_loss_noobj),
-            ('%s_classification_loss' % base_name, classification_loss)]
+    return [('%s_centers_localization_loss' % loss_base_name, centers_localization_loss),
+            ('%s_scales_localization_loss' % loss_base_name, scales_localization_loss),
+            ('%s_confidence_obj_loss' % loss_base_name, confidence_loss_obj),
+            ('%s_confidence_noobj_loss' % loss_base_name, confidence_loss_noobj),
+            ('%s_classification_loss' % loss_base_name, classification_loss)]
 
 
 def get_odgi_loss(inputs, 
                   outputs,
                   is_chief=True,
                   verbose=False,
-                  base_name="net",
+                  loss_base_name="net",
                   epsilon=1e-8,
                   num_cells=None,
                   **kwargs):
@@ -174,7 +174,6 @@ def get_odgi_loss(inputs,
         'centers_localization_loss_weight', 'scales_localization_loss_weight', 
         'confidence_loss_weight', 'noobj_confidence_loss_weight'], verbose=verbose)
     assert num_cells is not None
-    assert target_conf_fn in ['iou', 'upper_iou', 'intersection_ratio', 'coords_sims']
     
     # obj_i_mask: (batch, num_cells, num_cells, 1, num_gt), indicates presence of a box in a cell
     obj_i_mask = inputs['obj_i_mask_bbs']
@@ -303,10 +302,10 @@ def get_odgi_loss(inputs,
         outputs["target_bounding_boxes_rescaled"] = tf.concat([mins, maxs], axis=-1) * non_empty_cell_mask              
                 
         
-    return [('%s_centers_localization_loss' % base_name, centers_localization_loss),
-            ('%s_scales_localization_loss' % base_name, scales_localization_loss),
-            ('%s_confidence_obj_loss' % base_name, confidence_loss_obj),
-            ('%s_confidence_noobj_loss' % base_name, confidence_loss_noobj),
-            ('%s_group_classification_loss' % base_name, group_classification_loss),
-            ('%s_classification_loss' % base_name, classification_loss),
-            ('%s_offsets_loss' % base_name, offsets_loss)]
+    return [('%s_centers_localization_loss' % loss_base_name, centers_localization_loss),
+            ('%s_scales_localization_loss' % loss_base_name, scales_localization_loss),
+            ('%s_confidence_obj_loss' % loss_base_name, confidence_loss_obj),
+            ('%s_confidence_noobj_loss' % loss_base_name, confidence_loss_noobj),
+            ('%s_group_classification_loss' % loss_base_name, group_classification_loss),
+            ('%s_classification_loss' % loss_base_name, classification_loss),
+            ('%s_offsets_loss' % loss_base_name, offsets_loss)]

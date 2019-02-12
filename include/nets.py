@@ -135,7 +135,6 @@ def get_detection_outputs_with_groups(activations,
         
     Kwargs:
         with_classification: whether to predict class output.
-        with_group_flags: whether to predict group flags.
         num_classes: number of classes to predict.
         num_boxes: number of boxes to predict per cells
         
@@ -151,8 +150,8 @@ def get_detection_outputs_with_groups(activations,
     """
     # Kwargs    
     assert grid_offsets is not None    
-    with_classification, with_group_flags, with_offsets = get_defaults(
-        kwargs, ['with_classification', 'with_group_flags', 'with_offsets'], verbose=verbose)  
+    with_classification, with_offsets = get_defaults(
+        kwargs, ['with_classification', 'with_offsets'], verbose=verbose)  
     if with_classification:
         num_classes = get_defaults(kwargs, ['num_classes'], verbose=verbose)[0]   
         assert num_classes > 1

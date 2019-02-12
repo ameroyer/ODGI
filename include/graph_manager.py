@@ -145,14 +145,12 @@ def get_inputs(mode='train',
     if mode == 'train':
         shuffle_buffer, data_augmentation_threshold, num_epochs = get_defaults(
             kwargs, ['shuffle_buffer', 'data_augmentation_threshold', 'num_epochs'], verbose=verbose)
-        trim_num_boxes = True
         drop_remainder = True
         make_initializable_iterator = False
     elif mode in ['val', 'test']:  
         shuffle_buffer = 1
         num_epochs = 1
         data_augmentation_threshold = 0.
-        trim_num_boxes = False
         drop_remainder = False
         make_initializable_iterator = True
     else:
@@ -176,7 +174,6 @@ def get_inputs(mode='train',
         num_epochs=num_epochs,
         image_size=image_size,
         image_folder=image_folder,
-        trim_num_boxes=trim_num_boxes,
         data_augmentation_threshold=data_augmentation_threshold,
         grid_offsets=grid_offsets,
         num_devices=num_devices,
@@ -320,8 +317,11 @@ def get_total_loss(splits=[''], collection='outputs', with_summaries=True, verbo
         losses.append((full_loss, train_vars, split))
         if verbose == 2:
             print('    in %s scope:' % (split if split else "global"))
-            print('\n'.join(["        *%s*: %s tensors" % (x, len(tf.get_collection(x)))  
-                             for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]))
+            if len(loss_collections):
+                print('\n'.join(["        *%s*: %s tensors" % (x, len(tf.get_collection(x)))
+                                 for x in loss_collections]))
+            else:
+                print('        \033[31mWarning:\033[0m No losses found with base name', split)
             print('        Trainable variables: [%s]' % ', '.join(list(map(lambda x: x.name, train_vars))))
     return losses
 

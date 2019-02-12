@@ -124,7 +124,6 @@ def get_tf_dataset(tfrecords_file,
                    num_epochs=1,
                    image_size=1024,
                    image_folder='',
-                   trim_num_boxes=False,
                    data_augmentation_threshold=0.5,
                    num_devices=1,
                    num_threads=4,
@@ -262,12 +261,7 @@ def get_tf_dataset(tfrecords_file,
             iterator = dataset.make_one_shot_iterator()    
             iterator_init = None
 
-    ## Trim max number of boxes
     batch = iterator.get_next()
-    if trim_num_boxes:
-        max_num_bbs = tf.reduce_max(batch['num_boxes'])
-        batch['bounding_boxes'] = batch['bounding_boxes'][:, :max_num_bbs, :]
-        batch['obj_i_mask_bbs'] = batch['obj_i_mask_bbs'][:, :, :, :, :max_num_bbs]
         
     ## Apply data augmentation
     with tf.name_scope('data_augmentation'):
@@ -358,7 +352,7 @@ def extract_groups(predicted_boxes,
     else:
         raise ValueError('Unknown mode', mode)
     if verbose:        
-        print('  > extracting %d crops' % num_outputs)
+        print('    extracting %d crops' % num_outputs)
         
     ## Flatten
     # predicted_score: (batch, num_boxes, 1)
@@ -553,13 +547,15 @@ def get_next_stage_inputs(inputs,
                 obj_i_mask = tf.expand_dims(tf.to_float(inters > 0.) , axis=-2)
                 new_inputs['obj_i_mask_bbs'] = obj_i_mask
         
-    # Enqueue the new inputs during training, or pass the output directly to the next stage at test time
+    # During training: enqueue the inputs
     if use_queue:
         assert batch_size is not None
         filter_valid = tf.logical_and(crop_boxes[..., 2] > crop_boxes[..., 0], crop_boxes[..., 3] > crop_boxes[..., 1] )
         filter_valid = tf.reshape(filter_valid, (-1,))
+        # TODO maybe_batch is deprecated
         out_ = tf.train.maybe_batch(
             new_inputs, filter_valid, batch_size, num_threads=num_threads, enqueue_many=True, capacity=capacity)
+    # During inference: process crops deterministically
     else:
         out_ = new_inputs    
     
