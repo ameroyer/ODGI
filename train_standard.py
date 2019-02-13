@@ -60,7 +60,7 @@ with tf.name_scope('train'):
 
     for i in range(config['num_gpus']):        
         with tf.device('/gpu:%d' % i):  
-            with tf.name_scope('dev_%d' % i):
+            with tf.name_scope('dev%d' % i):
                 verbose = args.verbose * (i == 0)
                 if verbose > 0:
                     print((' > %s' if verbose == 1 else ' \033[31m> %s\033[0m') % network)
@@ -73,7 +73,7 @@ with tf.name_scope('train'):
                     print((' > %s' if verbose == 1 else ' \033[31m> %s\033[0m') % 'Collecting losses')
                 with tf.name_scope('losses'):
                     graph_manager.add_losses_to_graph(
-                        loss_fn, inputs[i], outputs, config, is_chief=i == 0, verbose=verbose)
+                        loss_utils.get_standard_loss, inputs[i], outputs, config, is_chief=i == 0, verbose=verbose)
                 with tf.name_scope('summaries'):
                     if i == 0 and with_summaries:
                         print(' > summaries:')
