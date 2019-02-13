@@ -300,8 +300,8 @@ def get_total_loss(splits=[''], collection='outputs', with_summaries=True, verbo
                 base_name = key.split('_', 1)[0]
                 tf.summary.scalar(key, loss, collections=[collection], family='train_%s' % base_name)
 
-        ## Add regularization loss if any
-        reg_losses = tf.losses.get_regularization_losses()
+        ## Add regularization loss if any              
+        reg_losses = tf.losses.get_regularization_losses(scope='train/dev0/%s' % split)
         if len(reg_losses):
             regularization_loss = tf.add_n(reg_losses)
             full_loss += regularization_loss
@@ -316,13 +316,14 @@ def get_total_loss(splits=[''], collection='outputs', with_summaries=True, verbo
         train_vars = tf.trainable_variables(scope=split)
         losses.append((full_loss, train_vars, split))
         if verbose == 2:
-            print('    in %s scope:' % (split if split else "global"))
+            print(' > \033[33min %s scope:\033[0m' % (split if split else "global"))
+            print('    ', len(reg_losses), 'regularization losses found')
             if len(loss_collections):
-                print('\n'.join(["        *%s*: %s tensors" % (x, len(tf.get_collection(x)))
+                print('\n'.join(["     *%s*: %s tensors" % (x, len(tf.get_collection(x)))
                                  for x in loss_collections]))
             else:
-                print('        \033[31mWarning:\033[0m No losses found with base name', split)
-            print('        Trainable variables: [%s]' % ', '.join(list(map(lambda x: x.name, train_vars))))
+                print('     \033[31mWarning:\033[0m No losses found with base name', split)
+            print('     Trainable variables: [%s]' % ', '.join(list(map(lambda x: x.name, train_vars))))
     return losses
 
 
@@ -349,7 +350,7 @@ def get_train_op(full_losses,
     if verbose == 1:
         print(' > Build train operation')
     elif verbose == 2:
-        print(' \033[31m> Build train operation\033[0m')
+        print(' \033[33m> Build train operation\033[0m')
         
     # Master global step
     global_step = tf.train.get_or_create_global_step()    
