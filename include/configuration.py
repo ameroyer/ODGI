@@ -45,7 +45,7 @@ _defaults_dict = {
     "test_patch_confidence_threshold": 0.25,               # Only keep boxes above this threshold for patch extraction
     "test_patch_strong_confidence_threshold": 0.75,        # boxes considered 'single' and above this threshold -> no patch
     # Summary and Outputs
-    "base_log_dir": "./log",                               # Base log directory
+    "base_log_dir": "./run_logs",                          # Base log directory
     "max_to_keep": 1,                                      # maximum number of checkpoints to keep
     "save_checkpoint_steps": 2000,                         # Save checkpoints at the given frequency (in seconds)
     "summary_confidence_thresholds": [0.5],                # Plot output boxes cut at the given thresholds  
