@@ -217,7 +217,9 @@ with tf.name_scope('eval'):
     eval_split_placehoder = tf.placeholder_with_default(True, (), 'choose_eval_split')
     ### TODO-start
     # tf.reshape operations in `stage_transition` do not handle case of 0-dims Tensors 
-    # that may happen when splitting the inputs tensors across devices
+    # that may happen when splitting the inputs tensors across devices.
+    # To avoid these cases, we run evaluation on one device
+    # Note: Thsi is not a problem during training as drop_remainder is turned on
     base_config['num_gpus'] = 1
     stage1_config['num_gpus'] = 1
     ### TODO-end
