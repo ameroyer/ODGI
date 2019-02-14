@@ -215,6 +215,12 @@ with tf.name_scope('train'):
 ############################### Eval
 with tf.name_scope('eval'):  
     eval_split_placehoder = tf.placeholder_with_default(True, (), 'choose_eval_split')
+    ### TODO-start
+    # tf.reshape operations in `stage_transition` do not handle case of 0-dims Tensors 
+    # that may happen when splitting the inputs tensors across devices
+    base_config['num_gpus'] = 1
+    stage1_config['num_gpus'] = 1
+    ### TODO-end
                   
     eval_inputs, eval_initializer = tf.cond(
         eval_split_placehoder,
