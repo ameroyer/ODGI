@@ -76,7 +76,6 @@ def get_detection_outputs(activations,
         # confidence, and optional classes probabilities.
         num_outputs = [2, 2, 1, num_classes]
         kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
-        #kernel_regularizer = tf.contrib.layers.l2_regularizer(0.0005)
         out = tf.layers.conv2d(activations, 
                                num_boxes * sum(num_outputs),
                                [1, 1], 
@@ -84,7 +83,6 @@ def get_detection_outputs(activations,
                                padding='valid',
                                activation=None,
                                kernel_initializer=kernel_initializer,
-                               #kernel_regularizer=kernel_regularizer,
                                name='fc_out')
         out = tf.stack(tf.split(out, num_boxes, axis=-1), axis=-2)   
             
@@ -167,14 +165,12 @@ def get_detection_outputs_with_groups(activations,
         # confidence, group flag, optional offsets and optional classes probabilities.
         num_outputs = [2, 2, 1, 1, 2 if with_offsets else 0, num_classes]
         kernel_initializer = tf.truncated_normal_initializer(stddev=0.1)
-        #kernel_regularizer = tf.contrib.layers.l2_regularizer(0.0005)
         out = tf.layers.conv2d(activations, sum(num_outputs),
                                [1, 1], 
                                strides=[1, 1],
                                padding='valid',
                                activation=None,
                                kernel_initializer=kernel_initializer,
-                               #kernel_regularizer=kernel_regularizer,
                                name='fc_out')
         out = tf.stack(tf.split(out, 1, axis=-1), axis=-2)            
             

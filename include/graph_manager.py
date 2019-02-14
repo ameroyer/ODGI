@@ -440,6 +440,8 @@ def run_eval(sess,
     
     Args:
         sess: Current session
+        eval_split_placeholder: Placeholder to choose between val and test split
+        eval_initializer: Initializer for the dataset iterator
         eval_outputs: Tensor outputs to be parsed. See `eval_utils` functions.
         mode: Whether to run on the validation or test split
         global_step_: Current global step, for display purpose
