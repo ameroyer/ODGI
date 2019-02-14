@@ -58,13 +58,16 @@ stage1_config['with_offsets'] = True
 configuration.finalize_grid_offsets(stage1_config)
 
 # stage 2 architecture
-stage2_config['weight_decay'] = 0. # turn-off weight decay in the second stage
 stage2_config['network'] = args.stage2_network
 stage2_config['previous_batch_size'] = stage1_config['batch_size'] 
 if args.stage2_batch_size is not None:
     stage2_config['batch_size'] = args.stage2_batch_size
 else:
     stage2_config['batch_size'] = stage1_config['batch_size'] 
+# other architecture choices
+if stage2_config['network'] == 'tiny_yolo_v2':
+    # turn-off weight decay in the second stage of yolo/tiny-tolo settings gives better results
+    stage2_config['weight_decay'] = 0. 
 configuration.finalize_grid_offsets(stage2_config)
 
         
