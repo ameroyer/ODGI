@@ -25,6 +25,8 @@ parser.add_argument('--stage2_batch_size', type=int, help= 'Fixed batch size.')
 parser.add_argument('--stage2_image_size', type=int, help= 'Image size for the second stage.')
 parser.add_argument('--stage2_network', type=str, default="tiny_yolo_v2",
                     help='Architecture for the second stage.', choices=['tiny_yolo_v2', 'yolo_v2'])
+parser.add_argument('--stage2_starting_epoch', default=0, type=int,
+                    help='Start training stage 2 after the given number of epochs.')
 args = parser.parse_args()
 if args.stage2_image_size is None:
     args.stage2_image_size = args.image_size // 2
@@ -42,8 +44,6 @@ print('    Log directory', os.path.abspath(base_config["log_dir"]))
 def log_run():        
     global tee, base_config
     viz.save_tee(base_config["log_dir"], tee)
-    
-
 ########################################################################## Stage configuration
 stage1_config = base_config.copy()
 stage2_config = base_config.copy()
@@ -58,6 +58,7 @@ stage1_config['with_offsets'] = True
 configuration.finalize_grid_offsets(stage1_config)
 
 # stage 2 architecture
+stage2_config['weight_decay'] = 0. # turn-off weight decay in the second stage
 stage2_config['network'] = args.stage2_network
 stage2_config['previous_batch_size'] = stage1_config['batch_size'] 
 if args.stage2_batch_size is not None:
@@ -66,7 +67,7 @@ else:
     stage2_config['batch_size'] = stage1_config['batch_size'] 
 configuration.finalize_grid_offsets(stage2_config)
 
-    
+        
 ### templates for each stage
 stages = []
 stages_configs = [stage1_config, stage2_config]
@@ -86,8 +87,12 @@ for i, config in enumerate(stages_configs):
         
     forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
     stages.append((base_name, network_name, forward_pass, config, loss_fn))
+    
     with open(os.path.join(base_config["log_dir"], '%s_config.pkl' % base_name), 'wb') as f:
         pickle.dump(config, f)
+    if with_summaries:
+        with tf.name_scope('%s_config_summary' % base_name):
+            viz.add_text_summaries(config) 
         
 
 ########################################################################## Build the graph      
@@ -210,6 +215,7 @@ with tf.name_scope('train'):
 ############################### Eval
 with tf.name_scope('eval'):  
     eval_split_placehoder = tf.placeholder_with_default(True, (), 'choose_eval_split')
+                  
     eval_inputs, eval_initializer = tf.cond(
         eval_split_placehoder,
         true_fn=lambda: graph_manager.get_inputs(mode='test', verbose=False, **stages[0][3]),
@@ -272,11 +278,25 @@ if __name__ == '__main__':
             print('\nStart training:')
             start_time = time.time()
             global_step_ = 0
+            train_stage2 = False
             
             try:
-                while 1:                       
-                    # Train
-                    global_step_, full_loss_, _, _ = sess.run([global_step, full_loss, train_stage1_op, train_stage2_op])
+                while 1:
+                    # Determine whether to start training second stage
+                    if not train_stage2:
+                        num_epochs = global_step_ // base_config["train_num_iters_per_epoch"]
+                        if num_epochs >= args.stage2_starting_epoch:
+                            print(('   Epoch %d: %s' if verbose == 1 else '\033[33m   Epoch %d: %s\033[0m') % (
+                                num_epochs, 'start training stage 2'))
+                            train_stage2 = True
+                            
+                    # Train       
+                    if train_stage2:
+                        global_step_, full_loss_, _, _ = sess.run([
+                            global_step, full_loss, train_stage1_op, train_stage2_op])
+                    else:
+                        global_step_, full_loss_, _ = sess.run([
+                            global_step, full_loss[:-1], train_stage1_op])
 
                     # Display
                     if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
