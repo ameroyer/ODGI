@@ -144,7 +144,7 @@ if __name__ == '__main__':
                     global_step_, full_loss_, _ = sess.run([global_step, full_loss, train_op])
 
                     # Display
-                    if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
+                    if (global_step_ - 1) % args.display_loss_every_n_steps == 0:
                         viz.display_loss(global_step_, full_loss_, start_time,
                                          config["train_num_samples_per_iter"], 
                                          config["train_num_samples"])
