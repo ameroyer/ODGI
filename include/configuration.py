@@ -12,7 +12,7 @@ _defaults_dict = {
     # Inputs
     "batch_size": 12,                                     
     "image_size": 1024,                                    # Input Image Size
-    "shuffle_buffer": 2000,                                # Shuffle buffer size
+    "shuffle_buffer": 10000,                               # Shuffle buffer size
     "data_augmentation_threshold": 0.5,                    # Data augmentation (flip left/right) ratio
     "num_threads": 4,                                      # Number of parallel readers for the dataset map operation
     "prefetch_capacity": 1,                                # prefetch capacity for the dataset object
