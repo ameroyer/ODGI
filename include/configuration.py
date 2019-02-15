@@ -125,7 +125,8 @@ def load_metadata(filename):
 def build_base_config_from_args(args, verbose=0):
     """Build the base configuration from the command line arguments"""    
     global _defaults_dict
-    ## Set dataset
+    
+    ## Set initial configuration based on dataset
     configuration = {}
     if args.data.startswith('vedai'):
         configuration['setting'] = args.data
@@ -134,6 +135,11 @@ def build_base_config_from_args(args, verbose=0):
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = _defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'vedai'
+        # [Final inference] Cross-validated hyperparameters for ODGI 512-256
+        configuration['test_num_crops'] = 3
+        configuration['test_patch_nms_threshold'] = 0.25
+        configuration['test_patch_confidence_threshold'] = 0.1
+        configuration['test_patch_strong_confidence_threshold'] = 0.8
     elif args.data == 'sdd':
         configuration['setting'] = 'sdd'
         configuration['exp_name'] = 'sdd'
@@ -141,7 +147,7 @@ def build_base_config_from_args(args, verbose=0):
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = _defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'sdd'
-        # hyperparameter
+        # [Final inference] Cross-validated hyperparameters for ODGI 512-256
         configuration['test_num_crops'] = 6
         configuration['test_patch_nms_threshold'] = 0.25
         configuration['test_patch_confidence_threshold'] = 0.1
@@ -181,8 +187,8 @@ def build_base_config_from_args(args, verbose=0):
     for split in ['train', 'val', 'test']:
         configuration['%s_num_samples' % split] = configuration['%s_num_samples' % split]
         configuration['%s_num_samples_per_iter' % split] = configuration['batch_size'] * configuration['num_gpus']
-        configuration['%s_num_iters_per_epoch' % split] = np.ceil(configuration['%s_num_samples' % split] /
-                                                                  configuration['%s_num_samples_per_iter' % split])
+        configuration['%s_num_iters_per_epoch' % split] = int(np.ceil(
+            configuration['%s_num_samples' % split] / configuration['%s_num_samples_per_iter' % split]))
         print('%d %s samples (%d iters per epoch)' % (
             configuration['%s_num_samples' % split], split, configuration['%s_num_iters_per_epoch' % split]))
         
