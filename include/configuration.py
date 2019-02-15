@@ -94,7 +94,7 @@ def build_base_parser(parser):
     parser.add_argument('--batch_size', type=int, default=12, help='Batch size')
     parser.add_argument('--learning_rate', type=float, default=1e-3, help='Learning rate')
     parser.add_argument('--num_epochs', type=int, help='Number of training epochs')
-    parser.add_argument('--display_loss_very_n_steps', type=int, default=250, help='Print the loss at every given step')
+    parser.add_argument('--display_loss_every_n_steps', type=int, default=250, help='Print the loss at every given step')
     parser.add_argument('--save_evaluation_steps', type=int, help='Evaluate validation set at every given step')
     parser.add_argument('--save_summaries_steps', type=int, help='Save summaries tensorboards at every given step')
     parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
@@ -141,10 +141,21 @@ def build_base_config_from_args(args, verbose=0):
         configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
         configuration['num_epochs'] = _defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
         configuration['image_format'] = 'sdd'
-        if args.network == 'yolov2':
-            configuration['train_num_crops'] = 6
+        # hyperparameter
+        configuration['test_num_crops'] = 6
+        configuration['test_patch_nms_threshold'] = 0.25
+        configuration['test_patch_confidence_threshold'] = 0.1
+        configuration['test_patch_strong_confidence_threshold'] = 0.6
     else:
         raise ValueError("unknown data", args.data)
+    
+    ## ODGI: Choose number of crops during training as to max capacity of the device
+    if args.network == 'tiny_yolo_v2':
+        configuration['train_num_crops'] = 10
+    elif args.network == 'yolo_v2':
+        configuration['train_num_crops'] = 6
+    elif args.network == 'mobilenet':
+        configuration['train_num_crops'] = 10
     
     ## Metadata
     tfrecords_path = 'Data/metadata_%s.txt'
