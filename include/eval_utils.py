@@ -184,12 +184,12 @@ def detect_eval(output_file_path, **kwargs):
             elif '-pred-' in header:
                 # check that we've parsed the associated ground-truth already
                 im_id, class_index = header.split('-pred-')
-                assert current_image_id == im_id          
-                aux = content.split('\t')       
+                assert current_image_id == im_id             
                 # skip images without gorund-truth or predictions, (0 precision)
-                if gt_boxes is None or len(aux) == 1:
+                if gt_boxes is None:
                     continue       
-                # otherwise, normally parse boxes
+                # otherwise, normally parse boxes  
+                aux = content.split('\t')  
                 pred_boxes = np.array([list(map(float, box.split(',')[:4])) for box in aux[1:] if int(box[-1])], dtype=np.float32)
                 
                 ## Match current best predictions to ground-truth
