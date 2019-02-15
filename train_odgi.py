@@ -63,11 +63,7 @@ stage2_config['previous_batch_size'] = stage1_config['batch_size']
 if args.stage2_batch_size is not None:
     stage2_config['batch_size'] = args.stage2_batch_size
 else:
-    stage2_config['batch_size'] = stage1_config['batch_size'] 
-# other architecture choices
-if stage2_config['network'] == 'tiny_yolo_v2':
-    # turn-off weight decay in the second stage of yolo/tiny-tolo settings gives better results
-    stage2_config['weight_decay'] = 0. 
+    stage2_config['batch_size'] = stage1_config['batch_size']
 configuration.finalize_grid_offsets(stage2_config)
 
         
@@ -310,7 +306,7 @@ if __name__ == '__main__':
                             global_step, full_loss[:-1], train_stage1_op])
 
                     # Display
-                    if (global_step_ - 1) % args.display_loss_very_n_steps == 0:
+                    if (global_step_ - 1) % args.display_loss_every_n_steps == 0:
                         viz.display_loss(global_step_, full_loss_, start_time,
                                          base_config["train_num_samples_per_iter"], 
                                          base_config["train_num_samples"])
