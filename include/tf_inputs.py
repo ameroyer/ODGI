@@ -335,18 +335,20 @@ def extract_groups(predicted_boxes,
             (ie groups or unprecise individual)
         
     Kwargs:
-        {train, test}_patch_confidence_threshold: Minimum confidene threshold to qualify for refinement
+        {train, test}_patch_confidence_threshold: Minimum confidence threshold to qualify for refinement
         patch_nms_threshold: NMS threshold
         {train, test}_num_crops: Number of crops to extract
         test_patch_strong_confidence_threshold: high confidence threshold
+        previous_batch_size: Batch size of the previous stage (for which `predicted boxes` where output). Needs 
+            to be statistically known for the NMS loop.
         
     #Returns:
         Extracted crops and their confidence scores
     """
-    if mode == 'train':
+    if mode == 'train': # train time
         (confidence_threshold, nms_threshold, num_outputs) = get_defaults(
             kwargs, ['train_patch_confidence_threshold', 'train_patch_nms_threshold', 'train_num_crops'], verbose=verbose)
-    elif mode in ['val', 'test']:
+    elif mode in ['val', 'test']: # inference
         (confidence_threshold, nms_threshold, num_outputs) = get_defaults(
             kwargs, ['test_patch_confidence_threshold', 'test_patch_nms_threshold', 'test_num_crops'], verbose=verbose)
     else:
@@ -365,6 +367,7 @@ def extract_groups(predicted_boxes,
     kept_out_filter = tf.zeros(tf.shape(predicted_scores)) # default
     with tf.name_scope('filter_groups'):
         # At test time, we keep out individual confidences with high confidence
+        # we save these `shortcut` boxes in the `kept_out_filter` Tensor
         if mode in ['test', 'val']:
             strong_confidence_threshold = get_defaults(
                 kwargs, ['test_patch_strong_confidence_threshold'], verbose=verbose)[0]
@@ -389,9 +392,9 @@ def extract_groups(predicted_boxes,
     # crop_boxes_confidences: (batch, num_crops)
     predicted_scores = tf.squeeze(predicted_scores, axis=-1)
     if num_outputs > 0:    
-        # Non-Maximum Suppression
+        # Non-Maximum Suppression: outputs the top `num_outputs` boxes after NMS
         if nms_threshold < 1.0:
-            batch_size = get_defaults(kwargs, ['batch_size'], verbose=verbose)[0]
+            batch_size = get_defaults(kwargs, ['previous_batch_size'], verbose=verbose)[0]
             current_batch = tf.shape(predicted_boxes)[0]
             with tf.name_scope('nms'):
                 nms_boxes = []
@@ -415,7 +418,7 @@ def extract_groups(predicted_boxes,
                 predicted_scores = tf.stack(nms_boxes_confidences, axis=0) 
                 predicted_scores = tf.slice(predicted_scores, (0, 0), (current_batch, -1))
                 predicted_scores = tf.reshape(predicted_scores, (-1, num_outputs))
-        # No NMS
+        # No NMS: Outputs `num_outputs` boxes with the best confidence scores
         else:
             predicted_scores, top_indices = tf.nn.top_k(predicted_scores, k=num_outputs)
             batch_indices = tf.range(tf.shape(predicted_boxes)[0])

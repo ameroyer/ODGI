@@ -21,8 +21,9 @@ tee = viz.Tee()
 ########################################################################## Configuration
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 configuration.build_base_parser(parser)
-parser.add_argument('--stage2_batch_size', type=int, help= 'Fixed batch size.')
-parser.add_argument('--stage2_image_size', type=int, help= 'Image size for the second stage.')
+parser.add_argument('--stage2_batch_size', type=int, help=('If given, use fixed batch size.'
+    'Otherwise, use the stage 1 batch_size * num_crops'))
+parser.add_argument('--stage2_image_size', type=int, help='Image size for the second stage.')
 parser.add_argument('--stage2_network', type=str, default="tiny_yolo_v2",
                     help='Architecture for the second stage.', choices=['tiny_yolo_v2', 'yolo_v2'])
 parser.add_argument('--stage2_starting_epoch', default=0, type=int,
@@ -60,10 +61,7 @@ configuration.finalize_grid_offsets(stage1_config)
 # stage 2 architecture
 stage2_config['network'] = args.stage2_network
 stage2_config['previous_batch_size'] = stage1_config['batch_size'] 
-if args.stage2_batch_size is not None:
-    stage2_config['batch_size'] = args.stage2_batch_size
-else:
-    stage2_config['batch_size'] = stage1_config['batch_size']
+stage2_config['batch_size'] = args.stage2_batch_size
 configuration.finalize_grid_offsets(stage2_config)
 
         
