@@ -192,8 +192,7 @@ def get_detection_outputs_with_groups(activations,
         
     with tf.name_scope('format_log_scales'):
         out[1] -= tf.log(num_cells)
-        
-        
+                
     with tf.name_scope('format_confidence_scores'):
         out[2] = tf.nn.sigmoid(out[2], name='confidences_out')
         detection_scores = out[2]
@@ -228,7 +227,7 @@ def tiny_yolo_v2(images,
                  is_training=True,
                  verbose=False,
                  stddev_init=0.1,
-                 weight_decay=0.0005,
+                 weight_decay=0.,
                  normalizer_decay=0.9,
                  **kwargs):
     """ Base tiny-YOLOv2 architecture.
@@ -296,11 +295,10 @@ def tiny_yolo_v2(images,
                     
 def yolo_v2(images,
             stddev_init=0.1,
-            weight_decay=0.0005,
+            weight_decay=0.,
             normalizer_decay=0.9,
             is_training=True,
-            verbose=False,
-            
+            verbose=False,            
             **kwargs):
     """ Base YOLOv2 architecture
     Based on https://github.com/pjreddie/darknet/blob/master/cfg/yolov2.cfg
