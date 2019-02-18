@@ -375,11 +375,10 @@ def get_train_op(full_losses,
     elif optimizer == 'ADAM':
         beta1 = get_defaults(kwargs, ['beta1'], verbose=verbose)[0]
         get_optimizer_op = lambda learning_rate=learning_rate, beta1=beta1: tf.train.AdamOptimizer(
-            learning_rate=learning_rate, beta1=beta1, epsilon=1e-4)
+            learning_rate=learning_rate, beta1=beta1, epsilon=1e-8)
     else:
         raise NotImplementedError(optimizer_type)
-    
-    # Train op for each split
+        
     train_ops = []
     for full_loss, var_list, scope in full_losses:
         update_ops = [x for x in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if scope in x.name]
