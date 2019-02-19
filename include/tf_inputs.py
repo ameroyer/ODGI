@@ -248,7 +248,11 @@ def get_tf_dataset(tfrecords_file,
         if num_epochs > 1:
             dataset = dataset.repeat(num_epochs)
         # Batch
-        dataset = dataset.batch(batch_size * num_devices, drop_remainder=drop_remainder)
+        if tf.__version__ == '1.4.0':
+            dataset = dataset.batch(batch_size * num_devices)
+        else:
+            dataset = dataset.batch(batch_size * num_devices, drop_remainder=drop_remainder)
+        # Prefetch
         if prefetch_capacity > 0: 
             dataset = dataset.prefetch(prefetch_capacity)
             
