@@ -164,6 +164,7 @@ with tf.name_scope('train'):
                 verbose = args.verbose * (i == 0)
                 stage_inputs = inputs[i]
                 
+                ### Main graph #######
                 for s, (name, network_name, forward_pass, stage_config, loss_fn) in enumerate(stages):
                     ### Transition from next stage
                     if s > 0:
@@ -193,6 +194,7 @@ with tf.name_scope('train'):
                         print((' > %s' if verbose == 1 else ' \033[33m> %s\033[0m') % 'Adding summaries')
                         graph_manager.add_summaries(
                             stage_inputs, stage_outputs, mode='train', family="train_%s" % name, **stage_config)
+                #######################
 
     # Training Objective
     print('\nLosses:')
@@ -213,14 +215,14 @@ with tf.name_scope('train'):
 ############################### Eval
 with tf.name_scope('eval'):  
     eval_split_placehoder = tf.placeholder_with_default(True, (), 'choose_eval_split')
-    ### TODO-start
+    ### TODO (multi-GPU evaluation)
     # tf.reshape operations in `stage_transition` do not handle case of 0-dims Tensors 
     # that may happen when splitting the inputs tensors across devices.
     # To avoid these cases, we run evaluation on one device
     # Note: Thsi is not a problem during training as drop_remainder is turned on
     base_config['num_gpus'] = 1
     stage1_config['num_gpus'] = 1
-    ### TODO-end
+    ### TODO
                   
     eval_inputs, eval_initializer = tf.cond(
         eval_split_placehoder,
@@ -236,7 +238,7 @@ with tf.name_scope('eval'):
                 tf.add_to_collection('inference_num_boxes', eval_inputs[i]['num_boxes'])
                 tf.add_to_collection('inference_gt_bbs', eval_inputs[i]['bounding_boxes'])
                 
-                for s, (name, _, forward_pass, stage_config, _) in enumerate(stages):
+                for s, (name, _, forward_pass, stage_config, _) in enumerate(stages):                    
                     if s > 0:
                         stage_inputs = stage_transition(
                             stage_inputs, stage_outputs, 'test', stage_config, verbose=verbose)

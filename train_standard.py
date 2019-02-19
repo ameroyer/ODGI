@@ -65,9 +65,11 @@ with tf.name_scope('train'):
                 if verbose > 0:
                     print((' > %s' if verbose == 1 else ' \033[31m> %s\033[0m') % network)
 
+                ### Main graph
                 with tf.name_scope('feed_forward'):
                     outputs = forward_pass(
                         inputs[i]['image'], config, is_training=True, verbose=verbose) 
+                #######################
                                         
                 if verbose > 0:
                     print((' > %s' if verbose == 1 else ' \033[31m> %s\033[0m') % 'Collecting losses')
