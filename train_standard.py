@@ -134,6 +134,9 @@ if __name__ == '__main__':
     
     try:        
         with graph_manager.get_monitored_training_session(**config) as sess:
+            # Initialize from pretrained weights for MobileNet architectures
+            configuration.start_from_pretrained(sess)
+            # Start training
             print('\nStart training:')
             start_time = time.time()
             global_step_ = 0

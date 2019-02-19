@@ -25,7 +25,8 @@ parser.add_argument('--stage2_batch_size', type=int, help=('If given, use fixed 
     'Otherwise, use the stage 1 batch_size * num_crops'))
 parser.add_argument('--stage2_image_size', type=int, help='Image size for the second stage.')
 parser.add_argument('--stage2_network', type=str, default="tiny_yolo_v2",
-                    help='Architecture for the second stage.', choices=['tiny_yolo_v2', 'yolo_v2'])
+                    help='Architecture for the second stage.', choices=[
+                        'tiny_yolo_v2', 'yolo_v2', 'mobilenet_100', 'mobilenet_50', 'mobilenet_35'])
 parser.add_argument('--stage2_starting_epoch', default=0, type=int,
                     help='Start training stage 2 after the given number of epochs.')
 args = parser.parse_args()
@@ -280,6 +281,9 @@ if __name__ == '__main__':
     
     try:        
         with graph_manager.get_monitored_training_session(**base_config) as sess:
+            # Initialize from pretrained weights for MobileNet architectures
+            configuration.start_from_pretrained(sess)
+            # Start training
             print('\nStart training:')
             start_time = time.time()
             global_step_ = 0

@@ -1,5 +1,7 @@
 from collections import defaultdict
+
 import numpy as np
+import tensorflow as tf
 
 _defaults_dict = {
     # Architecture 
@@ -57,6 +59,23 @@ _defaults_dict = {
 }
 
 
+def start_from_pretrained(sess, verbose=False):
+    """Use pretrained weights for training if available. Currently only used to start 
+       MobileNet training from ImageNet pretrained model.
+       Checkpoints from https://github.com/tensorflow/models/tree/master/research/slim/nets/mobilenet"""
+    saver_collections = [x for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_saver')]
+    for collection in saver_collections:
+        _, model, args, _ = collection.rsplit('_', 3)
+        if model == 'mobilenet':
+            saver = tf.get_collection(collection)
+            assert len(saver) == 1
+            depth_multiplier = int(100 * float(args))
+            saver[0].restore(sess, 'mobilenet/mobilenet_%d/mobilenet_v2_%s_224.ckpt' % (
+                depth_multiplier, args))
+            if verbose:
+                print('Restoring "%s" scope weights from ImageNet-pretrained Mobilenet') 
+
+
 def get_defaults(kwargs, args, verbose=0):
     """ Set default for agument not in kwargs and print the default value if chosen
     
@@ -87,7 +106,7 @@ def build_base_parser(parser):
     parser.add_argument('data', type=str, help='Dataset.', choices=[
         'vedai_fold%02d' % i for i in range(1, 11)] + ['sdd'])
     parser.add_argument('--network', type=str, default="tiny_yolo_v2", help='Architecture."',
-                        choices=['tiny_yolo_v2', 'yolo_v2'])
+                        choices=['tiny_yolo_v2', 'yolo_v2', 'mobilenet_100', 'mobilenet_50', 'mobilenet_35'])
     parser.add_argument('--image_size', default=1024, type=int, help='Size of input images')
     parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs workers to use')
     parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
@@ -153,14 +172,17 @@ def build_base_config_from_args(args, verbose=0):
         configuration['test_patch_confidence_threshold'] = 0.1
         configuration['test_patch_strong_confidence_threshold'] = 0.6
     else:
-        raise ValueError("unknown data", args.data)
+        raise ValueError("unknown data", args.data)    
+        
+    ## Network 
+    configuration['network'] = args.network
     
-    ## ODGI: Choose number of crops during training as to max capacity of the device
+    # [ODGI] choose number of crops to maximize GPU memory usage
     if args.network == 'tiny_yolo_v2':
-        configuration['train_num_crops'] = 10
+        configuration['train_num_crops'] = 10 
     elif args.network == 'yolo_v2':
         configuration['train_num_crops'] = 6
-    elif args.network == 'mobilenet':
+    elif args.network.startswith('mobilenet'):
         configuration['train_num_crops'] = 10
     
     ## Metadata
@@ -171,9 +193,6 @@ def build_base_config_from_args(args, verbose=0):
         configuration['num_classes'] = len(configuration['data_classes'])
     assert 'feature_keys' in configuration
     assert 'image_folder' in configuration
-        
-    ## Network 
-    configuration['network'] = args.network
 
     ## GPUs
     configuration['num_gpus'] = args.num_gpus
@@ -219,7 +238,7 @@ def finalize_grid_offsets(configuration, verbose=2):
         configuration['num_cells'] = get_num_cells(image_size, 5)
     elif network == 'yolo_v2':        
         configuration['num_cells'] = get_num_cells(image_size, 5)
-    elif network == 'mobilenet':        
+    elif network.startswith('mobilenet'):        
         configuration['num_cells'] = get_num_cells(image_size, 5)
     else:
         raise NotImplementedError('Unknown network architecture', network)

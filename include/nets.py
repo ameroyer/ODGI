@@ -1,6 +1,15 @@
+import os
+import sys
+from functools import partial
+
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+
+tf_models_path = os.path.expanduser('~/Libs/models/research/slim/')
+if os.path.isdir(tf_models_path):
+    sys.path.append(tf_models_path)
+    from nets.mobilenet import mobilenet_v2
 
 from .configuration import get_defaults
            
@@ -294,11 +303,11 @@ def tiny_yolo_v2(images,
                     
                     
 def yolo_v2(images,
+            is_training=True,
+            verbose=False,   
             stddev_init=0.1,
             weight_decay=0.,
-            normalizer_decay=0.9,
-            is_training=True,
-            verbose=False,            
+            normalizer_decay=0.9,         
             **kwargs):
     """ Base YOLOv2 architecture
     Based on https://github.com/pjreddie/darknet/blob/master/cfg/yolov2.cfg
@@ -376,4 +385,54 @@ def yolo_v2(images,
                     net = slim.conv2d(net, 1024, [3, 3], scope='conv_out')
 
                     # Outputs
-                    return net           
+                    return net    
+                
+
+def mobilenet(images,
+              is_training=True,
+              verbose=False,
+              depth_multiplier=1.0,
+              **kwargs):    
+    """ Base MobileNet architecture
+    Based on https://github.com/tensorflow/models/tree/master/research/slim/nets/mobilenet
+    
+    Args:
+        images: input images in [0., 1.]
+        depth_multiplier: MobileNet depth multiplier.
+        is_training: training bool for batch norm
+        verbose: verbosity level
+        
+    Kwargs:
+        weight_decay: Regularization constant. Defaults to 0.
+        normalizer_decay: Batch norm decay. Defaults to 0.9
+    """
+    del kwargs
+    base_scope = tf.get_variable_scope().name
+    
+    # Input in [0., 1.] -> [-1, 1]
+    with tf.control_dependencies([tf.assert_greater_equal(images, 0.)]):
+        with tf.control_dependencies([tf.assert_less_equal(images, 1.)]):
+            net = (images - 0.5) * 2.   
+            
+    # Mobilenet
+    with tf.contrib.slim.arg_scope(mobilenet_v2.training_scope(is_training=is_training)):
+        if depth_multiplier == 1.0:
+            net, _ = mobilenet_v2.mobilenet(net, base_only=True)
+        elif depth_multiplier == 0.5:
+            net, _ = mobilenet_v2.mobilenet_v2_050(net, base_only=True)
+        elif depth_multiplier == 0.35:
+            net, _ = mobilenet_v2.mobilenet_v2_035(net, base_only=True)
+    
+    # Add a saver to restore Imagenet-pretrained weights
+    saver_collection = '%s_mobilenet_%s_saver' % (base_scope, depth_multiplier)
+    savers = tf.get_collection(saver_collection)
+    if len(savers) == 0:
+        var_list = {x.op.name.replace('%s/' % base_scope, ''): x
+                    for x in tf.global_variables(scope=base_scope)}
+        saver = tf.train.Saver(var_list=var_list)
+        tf.add_to_collection(saver_collection, saver)
+    return net
+
+mobilenet_100 = partial(mobilenet, depth_multiplier=1.0)
+mobilenet_50 = partial(mobilenet, depth_multiplier=0.5)
+mobilenet_35 = partial(mobilenet, depth_multiplier=0.35)
