@@ -7,6 +7,7 @@ import time
 from functools import partial
 
 import tensorflow as tf
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 from include import configuration
 from include import eval_utils
@@ -14,9 +15,6 @@ from include import graph_manager
 from include import nets
 from include import viz
 from train_odgi import stage_transition, format_final_boxes
-
-import logging
-logging.getLogger('tensorflow').setLevel(logging.INFO)
 
 """Perform hyperparameter sweep for the patch extraction stage for a pre-trained 
 two stage ODGI model"""
@@ -38,7 +36,7 @@ test_patch_nms_threshold_sweep = [0.25, 0.5, 0.75]
 test_patch_confidence_threshold_sweep  = [0., 0.1, 0.2, 0.3, 0.4]
 test_patch_strong_confidence_threshold_sweep = [0.6, 0.7, 0.8, 0.9, 1.0]
 
-test_num_crops_sweep = [6, 1]                                
+test_num_crops_sweep = [1, 6]                                
 test_patch_nms_threshold_sweep = [0.25]                      
 test_patch_confidence_threshold_sweep  = [0.1]
 test_patch_strong_confidence_threshold_sweep = [0.6]
@@ -81,11 +79,10 @@ with tf.Graph().as_default() as graph:
     test_patch_strong_confidence_threshold_placeholder = tf.placeholder(tf.float32, shape=())
 
     # Set-up config
-    stages[0][-1]["test_num_crops"] = test_num_crops_sweep[-1]     # always extract test_num_crops... 
-    stages[1][-1]["test_num_crops_slice"] = test_num_crops_placeholder   # ...but only use `test_num_crops_slice` in practice  
-    stages[0][-1]["test_patch_nms_threshold"] = test_patch_nms_threshold_placeholder                
-    stages[0][-1]["test_patch_confidence_threshold"] = test_patch_confidence_threshold_placeholder
-    stages[0][-1]["test_patch_strong_confidence_threshold"] = test_patch_strong_confidence_threshold_placeholder
+    stages[1][-1]["test_num_crops"] = test_num_crops_placeholder 
+    stages[1][-1]["test_patch_nms_threshold"] = test_patch_nms_threshold_placeholder                
+    stages[1][-1]["test_patch_confidence_threshold"] = test_patch_confidence_threshold_placeholder
+    stages[1][-1]["test_patch_strong_confidence_threshold"] = test_patch_strong_confidence_threshold_placeholder
 
     # Inputs
     eval_split_placehoder = tf.placeholder_with_default(True, (), 'choose_eval_split')                  

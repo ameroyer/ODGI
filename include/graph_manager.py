@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+
+import numpy as np
 import tensorflow as tf
 
 from .configuration import get_defaults
@@ -434,7 +436,9 @@ def run_eval(sess,
              eval_outputs, 
              mode, 
              results_path,
-             configuration):
+             configuration,
+             additional_feed_dict=None,
+             verbose=True):
     """Run evaluation in a given session
     
     Args:
@@ -447,11 +451,14 @@ def run_eval(sess,
         results_path: Path to a file where to log results
     """
     assert mode in ['val', 'test']
-    feed_dict = {eval_split_placehoder: mode == 'test'}
     with open(results_path, 'w') as f:
         f.write('%s results at step %d\n' % (mode, global_step_))
+        
+    feed_dict = {eval_split_placehoder: mode == 'test'}
+    if additional_feed_dict is not None:
+        feed_dict.update(additional_feed_dict)
+        
     sess.run(eval_initializer, feed_dict=feed_dict)
-    
     try:
         while 1:   
             out_ = sess.run(eval_outputs,  feed_dict=feed_dict)
@@ -460,6 +467,8 @@ def run_eval(sess,
         pass
     
     eval_aps, eval_aps_thresholds, num_images = eval_utils.detect_eval(results_path, **configuration)
-    print('\revaluated %d %s images at step %d:' % (num_images, mode, global_step_), ' - '.join(
-        'map@%.2f = %.5f' % (thresh, sum(x[t] for x in eval_aps.values()) / len(eval_aps))
-        for t, thresh in enumerate(eval_aps_thresholds)))
+    mean_aps = np.sum([x for x in eval_aps.values()], axis=0) / len(eval_aps)
+    if verbose:
+        print('evaluated %d %s images at step %d:' % (num_images, mode, global_step_), ' - '.join(
+            'map@%.2f = %.5f' % (thresh, mean_aps[t]) for t, thresh in enumerate(eval_aps_thresholds)))
+    return mean_aps, eval_aps_thresholds, num_images
