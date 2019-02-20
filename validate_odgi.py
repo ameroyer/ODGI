@@ -36,11 +36,6 @@ test_patch_nms_threshold_sweep = [0.25, 0.5, 0.75]
 test_patch_confidence_threshold_sweep  = [0., 0.1, 0.2, 0.3, 0.4]
 test_patch_strong_confidence_threshold_sweep = [0.6, 0.7, 0.8, 0.9, 1.0]
 
-test_num_crops_sweep = [1, 6]                                
-test_patch_nms_threshold_sweep = [0.25]                      
-test_patch_confidence_threshold_sweep  = [0.1]
-test_patch_strong_confidence_threshold_sweep = [0.6]
-
 # Save best hyper-parameters for each number of crops
 best_val_map = {k: 0. for k in test_num_crops_sweep}
 best_test_patch_nms_threshold = {k: None for k in test_num_crops_sweep}
