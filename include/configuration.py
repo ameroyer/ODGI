@@ -172,7 +172,7 @@ def build_base_config_from_args(args, verbose=0):
         configuration['test_patch_confidence_threshold'] = 0.1
         configuration['test_patch_strong_confidence_threshold'] = 0.6
     else:
-        raise ValueError("unknown data", args.data)    
+        raise ValueError("Unknown dataset", args.data)    
         
     ## Network 
     configuration['network'] = args.network
