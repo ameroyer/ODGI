@@ -395,9 +395,9 @@ def extract_groups(predicted_boxes,
     # crop_boxes: (batch, num_crops, 4)
     # crop_boxes_confidences: (batch, num_crops)
     predicted_scores = tf.squeeze(predicted_scores, axis=-1)
-    if num_outputs > 0:    
+    if isinstance(num_outputs, tf.Tensor) or num_outputs > 0:    
         # Non-Maximum Suppression: outputs the top `num_outputs` boxes after NMS
-        if nms_threshold < 1.0:
+        if (isinstance(nms_threshold, tf.Tensor) or nms_threshold < 1.0) or (isinstance(num_outputs, tf.Tensor)):
             batch_size = get_defaults(kwargs, ['previous_batch_size'], verbose=verbose)[0]
             current_batch = tf.shape(predicted_boxes)[0]
             with tf.name_scope('nms'):
@@ -423,6 +423,7 @@ def extract_groups(predicted_boxes,
                 predicted_scores = tf.slice(predicted_scores, (0, 0), (current_batch, -1))
                 predicted_scores = tf.reshape(predicted_scores, (-1, num_outputs))
         # No NMS: Outputs `num_outputs` boxes with the best confidence scores
+        # num_outputs need to be defined for tf.nn.top_k
         else:
             predicted_scores, top_indices = tf.nn.top_k(predicted_scores, k=num_outputs)
             batch_indices = tf.range(tf.shape(predicted_boxes)[0])
@@ -443,6 +444,7 @@ def tile_and_reshape(t, num_crops):
     t = tf.expand_dims(t, axis=1)
     tile_pattern = [1] * len(t.get_shape())
     tile_pattern[1] = num_crops
+    tile_pattern = tf.stack(tile_pattern, axis=0)
     t = tf.tile(t, tile_pattern)
     assert not None in new_shape
     t = tf.reshape(t, new_shape)
@@ -482,7 +484,7 @@ def get_next_stage_inputs(inputs,
         verbose: verbosity        
     """
     assert 0. <= intersection_ratio_threshold < 1.
-    num_crops = crop_boxes.get_shape()[1].value   
+    num_crops = tf.shape(crop_boxes)[1]
     new_inputs = {}
     
     # new_im_id: (batch_size * num_crops,)

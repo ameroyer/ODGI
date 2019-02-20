@@ -47,21 +47,26 @@ def format_final_boxes(final_stage_outputs, crop_boxes):
         final_stage_outputs: Output dictionnary of the last stage (stage 2)
         crop_boxes: Crops extracted from stage 1
     """
-    num_crops = crop_boxes.get_shape()[1].value
-    num_boxes = final_stage_outputs['bounding_boxes'].get_shape()[-2].value
-    num_cells = final_stage_outputs['bounding_boxes'].get_shape()[-2].value
+    num_crops = tf.shape(crop_boxes)[1]
+    num_boxes = final_stage_outputs['bounding_boxes'].get_shape()[3].value
+    num_cells = final_stage_outputs['bounding_boxes'].get_shape()[1].value
     
     # reshape
     with tf.name_scope('reshape_outputs'):
         # outputs: (stage1_batch * num_crops, num_cell, num_cell, num_boxes, ...)
         # to: (stage1_batch, num_cell, num_cell, num_boxes * num_crops, ...)
-        for key, value in final_stage_outputs.items():            
-            shape = tf.shape(value)
-            batch_shape = tf.stack([-1, num_crops])            
-            new_shape = tf.concat([batch_shape, shape[1:]], axis=0)
+        for key, value in final_stage_outputs.items():   
+            # reshape to (batch_size, num_crops, ...)
+            original_shape = tf.shape(value)       
+            num_dims = len(value.get_shape().as_list())
+            new_shape = tf.concat([tf.stack([-1, num_crops]), original_shape[1:]], axis=0)
             batches = tf.reshape(value, new_shape)
-            batches = tf.concat(tf.unstack(batches, num=num_crops, axis=1), axis=3)
-            final_stage_outputs[key] = tf.stack(batches, axis=0)        
+            # transpose to (batch_size, num_cells, num_cells, num_crops, num_boxes, ...)
+            transpose_axis = [0, 2, 3, 1] + list(range(4, num_dims + 1))
+            batches = tf.transpose(batches, transpose_axis)
+            # reshape to (batch_size, num_cells, num_cells, num_crops * num_boxes, ...)
+            new_shape = tf.concat([tf.stack([-1, num_cells, num_cells, num_crops * num_boxes]), new_shape[5:]], axis=0)
+            final_stage_outputs[key] = tf.reshape(batches, new_shape)  
     
     # rescale
     with tf.name_scope('rescale_bounding_boxes'):
