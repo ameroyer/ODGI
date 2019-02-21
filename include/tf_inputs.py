@@ -23,6 +23,9 @@ def load_image(im_id, image_size, image_folder, image_format):
     elif image_format == 'sdd':     # STANFORD DRONE DATASET
         filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=8) + '.jpeg'
         img_type = 'jpg'
+    elif image_format == 'mscoco':    # MSCOCO-2017
+        filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=12) + '.jpg'
+        img_type = 'jpg'
     else:
         raise NotImplementedError("Unrecognized image format `%s`" % image_format)
 

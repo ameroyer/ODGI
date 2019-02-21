@@ -164,9 +164,17 @@ def get_inputs(mode='train',
         raise NotImplementedError("Unknown mode for `get_inputs`:", mode)
         
     try:
-        image_folder = image_folder % mode
+        image_folder = image_folder % mode        
     except TypeError:
         pass
+    
+    ### Handle the MSCOCO-case: no test split
+    if image_format == 'mscoco':
+        if mode in ['train', 'val']:
+            image_folder = os.path.join(image_folder, 'train2017')
+        else:
+            image_folder = os.path.join(image_folder, 'val2017')
+    ### Handle the MSCOCO-case: no test split
         
     return tf_inputs.get_tf_dataset(
         tfrecords_path,    
