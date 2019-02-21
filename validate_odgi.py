@@ -177,11 +177,10 @@ with tf.Graph().as_default() as graph:
 
                             
         ########################################################################## Output test resutls for best config
-        for test_num_crops in test_num_crops_sweep: 
-            
+        for test_num_crops in test_num_crops_sweep:            
             test_patch_nms_threshold = best_test_patch_nms_threshold[test_num_crops]
             test_patch_confidence_threshold = best_test_patch_confidence_threshold[test_num_crops]
-            test_patch_strong_confidence = best_test_patch_strong_confidence_threshold[test_num_crops]
+            test_patch_strong_confidence_threshold = best_test_patch_strong_confidence_threshold[test_num_crops]
 
             # Print best parameters
             print('\nBest hyperparameters for %d crops: (val = %.4f)' % (test_num_crops, best_val_map[test_num_crops]))
