@@ -8,6 +8,7 @@ _defaults_dict = {
     "network": 'tiny_yolo_v2',                             # Backbone
     "num_boxes": 1,                                        # Number of boxes per cell to predict
     "with_groups": False,                                  # if True, use grouped instances
+    "grouping_method": "intersect",
     "with_offsets": False,                                 # If True, and with_groups is True, use learned offsets
     "offsets_margin": 0.025,                               # Additional margins to train the offsets
     "with_classification": False,                          # If True, output class scores
@@ -145,29 +146,33 @@ def build_base_config_from_args(args, verbose=0):
     """Build the base configuration from the command line arguments"""    
     global _defaults_dict
     
-    ## Set initial configuration based on dataset
     configuration = {}
+    configuration['save_summaries_steps'] = args.save_summaries_steps 
+    configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
+    configuration['num_epochs'] = _defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
+    configuration['setting'] = args.data
+    configuration['exp_name'] = args.data
+    configuration['image_format'] = args.data
+    
+    ## Set configuration based on dataset
     if args.data.startswith('vedai'):
-        configuration['setting'] = args.data
-        configuration['exp_name'] = args.data
-        configuration['save_summaries_steps'] = args.save_summaries_steps
-        configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = _defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
-        configuration['image_format'] = 'vedai'
+        configuration['grouping_method'] = 'intersect'
         # [Final inference] Cross-validated hyperparameters for ODGI 512-256
         configuration['test_num_crops'] = 3
         configuration['test_patch_nms_threshold'] = 0.25
         configuration['test_patch_confidence_threshold'] = 0.1
         configuration['test_patch_strong_confidence_threshold'] = 0.8
     elif args.data == 'sdd':
-        configuration['setting'] = 'sdd'
-        configuration['exp_name'] = 'sdd'
-        configuration['save_summaries_steps'] = args.save_summaries_steps 
-        configuration['save_evaluation_steps'] = 500 if args.save_evaluation_steps is None else args.save_evaluation_steps
-        configuration['num_epochs'] = _defaults_dict['num_epochs'] if args.num_epochs is None else args.num_epochs
-        configuration['image_format'] = 'sdd'
+        configuration['grouping_method'] = 'intersect'
         # [Final inference] Cross-validated hyperparameters for ODGI 512-256
         configuration['test_num_crops'] = 6
+        configuration['test_patch_nms_threshold'] = 0.25
+        configuration['test_patch_confidence_threshold'] = 0.1
+        configuration['test_patch_strong_confidence_threshold'] = 0.6
+    elif args.data == 'mscoco':
+        configuration['grouping_method'] = 'intersect_with_density'
+        # [Final inference] Cross-validated hyperparameters for ODGI 512-256
+        configuration['test_num_crops'] = 5
         configuration['test_patch_nms_threshold'] = 0.25
         configuration['test_patch_confidence_threshold'] = 0.1
         configuration['test_patch_strong_confidence_threshold'] = 0.6

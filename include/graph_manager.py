@@ -138,9 +138,10 @@ def get_inputs(mode='train',
     ### Kwargs
     assert '%s_tfrecords' % mode in kwargs
     assert '%s_max_num_bbs' % mode in kwargs
-    (num_threads, prefetch_capacity, batch_size, num_devices, with_groups, with_classes) = get_defaults(
+    (num_threads, prefetch_capacity, batch_size, num_devices, 
+     with_groups, grouping_method, with_classes) = get_defaults(
         kwargs, ['num_threads', 'prefetch_capacity', 'batch_size', 'num_gpus', 
-                 'with_groups', 'with_classification'], verbose=verbose)
+                 'grouping_method', 'with_groups', 'with_classification'], verbose=verbose)
     num_classes = get_defaults(kwargs, ['num_classes'], verbose=verbose)[0] if with_classes else None
     tfrecords_path = kwargs['%s_tfrecords' % mode]
     max_num_bbs = kwargs['%s_max_num_bbs' % mode]
@@ -182,6 +183,7 @@ def get_inputs(mode='train',
         image_format,
         max_num_bbs,
         with_groups=with_groups,
+        grouping_method=grouping_method,
         with_classes=with_classes,
         num_classes=num_classes,
         batch_size=batch_size,
