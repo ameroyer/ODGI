@@ -51,6 +51,7 @@ if not odgi_mode:
     decode_fn = tf.make_template('decode', nets.get_detection_outputs)
     forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
     imsize = config['image_size']
+    config['batch_size'] = 1
 else:
     stages = []
     for i, base_name in enumerate(['stage1', 'stage2']):
@@ -68,6 +69,8 @@ else:
         forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
         stages.append((base_name, network_name, forward_pass, config))
     imsize = stages[0][-1]['image_size']
+    stages[0][-1]['batch_size'] = 1
+    stages[1][-1]['previous_batch_size'] = 1
     
     
 ########################################################################## Build the graph
