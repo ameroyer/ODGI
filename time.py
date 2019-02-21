@@ -2,7 +2,10 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 import argparse
+import pickle
 import time
+from functools import partial
+
 try:
     from scipy.misc import imread, imresize
     def load_and_resize(image_path, imsize):
@@ -16,145 +19,118 @@ except ImportError:
         return np.array(img)
 
 import tensorflow as tf
-print("Tensorflow version", tf.__version__)
 
-import defaults
-import eval_utils
-import graph_manager
-import viz
-import odgi_graph
-import standard_graph
+from include import configuration
+from include import eval_utils
+from include import graph_manager
+from include import nets
+from include import viz
+from train_odgi import stage_transition, format_final_boxes
 
-tee = viz.Tee(filename='time_log.txt')  
+
 ########################################################################## Base Config
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
-parser.add_argument('--device', type=str, default='cpu', help='GPU or CPU')
-parser.add_argument('--gpu_mem_frac', type=float, default=1., help='Memory fraction to use for each GPU')
+parser.add_argument('--num_iters', type=int, default=500, help='Number of iterations')
+parser.add_argument('--test_num_crops', type=int, help='Number of crops to extract for ODGI')
+parser.add_argument('--device', type=str, default='cpu', help='Device', choices=['cpu', 'gpu'])
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
 args = parser.parse_args()
-assert args.device in ['cpu', 'gpu']
 
-########################################################################## Infer configuration from log dir name
-# Data 
-aux = os.path.dirname(os.path.dirname(os.path.normpath(args.log_dir)))
-data = os.path.split(aux)[1]
-configuration = {}
-if data.startswith('vedai'):
-    configuration['setting'] = data
-    configuration['image_suffix'] = '_co.png'
-elif data == 'sdd':
-    configuration['setting'] = 'sdd'
-    configuration['image_suffix'] = '.jpeg'
-elif data == 'dota':
-    configuration['setting'] = 'dota'
-    configuration['image_suffix'] = '.jpg'
+tee = viz.Tee(filename='timing_experiments_%s_log.txt' % args.device)  
+
+
+########################################################################## Load Configuration
+odgi_mode = 'odgi' in os.path.split(os.path.dirname(os.path.normpath(args.log_dir)))[1]
+
+if not odgi_mode:
+    with open(os.path.join(args.log_dir, 'config.pkl'), 'rb') as f:
+        config = pickle.load(f)
+    network = configuration.get_defaults(config, ['network'], verbose=0)[0]
+    forward_fn = tf.make_template(network, getattr(nets, network))
+    decode_fn = tf.make_template('decode', nets.get_detection_outputs)
+    forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
+    imsize = config['image_size']
 else:
-    raise ValueError("unknown data", data)
+    stages = []
+    for i, base_name in enumerate(['stage1', 'stage2']):
+        with open(os.path.join(args.log_dir, '%s_config.pkl' % base_name), 'rb') as f:
+            config = pickle.load(f)
+        if args.test_num_crops is not None:
+            config['test_num_crops'] = args.test_num_crops
+        network_name = configuration.get_defaults(config, ['network'], verbose=0)[0]
+        ## Templates
+        forward_fn = tf.make_template('%s/%s' % (base_name, network_name), getattr(nets, network_name)) 
+        if i == 0:
+            decode_fn = tf.make_template('%s/decode' % base_name, nets.get_detection_outputs_with_groups)
+        else:
+            decode_fn = tf.make_template('%s/decode' % base_name, nets.get_detection_outputs)
+        forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
+        stages.append((base_name, network_name, forward_pass, config))
+    imsize = stages[0][-1]['image_size']
     
-# Metadata
-tfrecords_path = 'Data/metadata_%s.txt'
-metadata = defaults.load_metadata(tfrecords_path % configuration['setting'])
-configuration.update(metadata)
-
-# Architecture
-aux = os.path.split(os.path.dirname(os.path.normpath(args.log_dir)))[1]
-aux = aux.split('_')
-configuration['network'] = aux[0]
-configuration['gpu_mem_frac'] = args.gpu_mem_frac
-configuration['same_network'] = False
-mode = aux[1]
-imsize = int(aux[2])
-
-with tf.Graph().as_default() as graph:
-    ########################### ODGI
-    if mode == 'odgi':
-        assert len(aux) in [4, 5]
-        stage1_configuration = configuration.copy()
-        stage2_configuration = configuration.copy()
-
-        # Read images one by one for timing purposes
-        stage1_configuration['batch_size'] = 1
-        stage2_configuration['batch_size'] = None 
-
-        # Image sizes
-        stage1_configuration['image_size'] = int(aux[2])
-        stage2_configuration['image_size'] = int(aux[3])
-        if len(aux) == 5:
-            assert aux[-1] == 'same'
-            configuration['same_network'] = True
-
-        # Group flags
-        stage1_configuration['base_name'] = 'stage1'
-        stage1_configuration['with_groups'] = True
-        stage1_configuration['with_group_flags'] = True
-        stage1_configuration['with_offsets'] = True
-        graph_manager.finalize_grid_offsets(stage1_configuration)
-        stage2_configuration['previous_batch_size'] = stage1_configuration['batch_size'] 
-        stage2_configuration['base_name'] = 'stage2'
-        graph_manager.finalize_grid_offsets(stage2_configuration)
-
-        # Graph
-        image = tf.placeholder(tf.uint8, [imsize, imsize, 3]) 
+    
+########################################################################## Build the graph
+with tf.Graph().as_default():
+    with tf.device('/%s:0' % args.device):
+        image = tf.placeholder(tf.uint8, [imsize, imsize, 3])
         processed_image = tf.image.convert_image_dtype(image, tf.float32)
         processed_image = tf.expand_dims(processed_image, axis=0)
         eval_inputs = {'image': processed_image}
-        with tf.device('/%s:0' % args.device):
-            eval_s1_outputs = odgi_graph.eval_pass_intermediate_stage(
-                eval_inputs, stage1_configuration, reuse=False, verbose=False) 
-            eval_s2_inputs = odgi_graph.feed_pass(
-                eval_inputs, eval_s1_outputs, stage2_configuration, mode='test', verbose=False)
-            eval_s2_outputs = odgi_graph.eval_pass_final_stage(
-                eval_s2_inputs, eval_inputs,  eval_s1_outputs, stage2_configuration, reuse=False, verbose=False)                    
-            outputs = [eval_s2_outputs['bounding_boxes'],
-                       eval_s2_outputs['detection_scores'],
-                       eval_s1_outputs['bounding_boxes'],
-                       eval_s1_outputs['detection_scores'],
-                       eval_s1_outputs['kept_out_filter']]
-                    
-    ########################### Standard
-    elif mode == 'standard':
-        assert len(aux) == 3
-        standard_configuration = configuration.copy()
-        standard_configuration['batch_size'] = 1
-        standard_configuration['base_name'] = configuration['network']
-        standard_configuration['image_size'] = int(aux[2])
-        graph_manager.finalize_grid_offsets(standard_configuration)
-        imsize = standard_configuration['image_size']
-                     
-        image = tf.placeholder(tf.uint8, [imsize, imsize, 3])   
-        processed_image = tf.image.convert_image_dtype(image, tf.float32)       
-        processed_image = tf.expand_dims(processed_image, axis=0)  
-        eval_inputs = {'image': processed_image}
-        with tf.device('/%s:0' % args.device):
-            eval_outputs = standard_graph.eval_pass(eval_inputs, standard_configuration, reuse=False, verbose=False)
-            outputs = [eval_outputs['bounding_boxes'],
-                       eval_outputs['detection_scores']]
+        
+        #### STANDARD
+        if not odgi_mode:
+            outputs = forward_pass(eval_inputs['image'], config, is_training=False, verbose=0)
+            outputs = [outputs['bounding_boxes'], outputs['detection_scores']]
+        #### ODGI
+        else:
+            stage_inputs = eval_inputs
+            for s, (name, _, forward_pass, stage_config) in enumerate(stages):                    
+                if s > 0:
+                    stage_inputs = stage_transition(
+                        stage_inputs, stage_outputs, 'test', stage_config, verbose=0)
+                # stage 1
+                if s == 1:
+                    stage1_pred_bbs = stage_outputs['bounding_boxes']
+                    stage1_pred_confidences = stage_outputs['detection_scores']
+                    stage1_kept_out_boxes = stage_outputs['kept_out_filter']
+                    crop_boxes = stage_outputs['crop_boxes']
 
-    else:
-        raise ValueError('Unkown mode', mode)
-                               
-
+                stage_outputs = forward_pass(
+                    stage_inputs['image'], stage_config, is_training=False, verbose=0)
+                # stage 2 (final)
+                if s == 1:                    
+                    stage_outputs = format_final_boxes(stage_outputs, crop_boxes)
+                    stage2_pred_bbs = stage_outputs['bounding_boxes']
+                    stage2_pred_confidences = stage_outputs['detection_scores']
+            # final outputs        
+            outputs = [stage2_pred_bbs, stage2_pred_confidences, stage1_pred_bbs, 
+                       stage1_pred_confidences, stage1_kept_out_boxes]
+            
+    total_parameters = 0
+    for variable in tf.trainable_variables():
+        variable_parameters = 1
+        for dim in variable.get_shape():
+            variable_parameters *= dim.value
+        total_parameters += variable_parameters
+        
+    print('number of parameters', total_parameters) 
+    print('total graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
     ########################################################################## Start Session
-    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6)) 
-    print('\nLaunch session from %s:' % args.log_dir)
+    print('Launch session from %s' % args.log_dir)
 
-    if args.device == 'gpu':
-        gpu_mem_frac = graph_manager.get_defaults(configuration, ['gpu_mem_frac'], verbose=args.verbose)[0]    
-        config = tf.ConfigProto(
-            gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=gpu_mem_frac), allow_soft_placement=True)
+    if args.device == 'gpu': 
+        config = tf.ConfigProto(allow_soft_placement=True)
         session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir, config=config)
     else:
         session_creator = tf.train.ChiefSessionCreator(checkpoint_dir=args.log_dir)
 
-    num_samples = 0
     loading_time = 0.
     run_time = 0.
     with tf.train.MonitoredSession(session_creator=session_creator) as sess:
-        images = [os.path.join(configuration['image_folder'], x) for x in os.listdir(configuration['image_folder'])
-                  if x.endswith(configuration['image_suffix'])]
         try:
-            for image_path in images:
+            image_path = './timing_image.png'
+            for i in range(args.num_iters):
                 # load
                 start_time = time.time()
                 read_img = load_and_resize(image_path, imsize)
@@ -165,16 +141,17 @@ with tf.Graph().as_default() as graph:
                 end_time = time.time()                
                 loading_time += load_time - start_time
                 run_time += end_time - load_time
-                num_samples += 1
                 if args.verbose == 2:
-                    print('\r Step %d' % num_samples, end='') 
+                    print('\r Step %d/%d' % (i + 1, args.num_iters), end='') 
         except tf.errors.OutOfRangeError:
             pass
-        print()
-        print('Evaluated %d samples' % num_samples)
+        if args.verbose == 2:
+            print('\rEvaluated %d samples' % args.num_iters)
+        else:
+            print('Evaluated %d samples' % args.num_iters)
         # Timing 
-        loading_time /= num_samples
-        run_time /= num_samples
+        loading_time /= args.num_iters
+        run_time /= args.num_iters
         print('Timings:')
         print('   Avg. Loading Time:', loading_time)
         print('   Avg. Feed forward:', run_time)
