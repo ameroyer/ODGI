@@ -105,7 +105,7 @@ def get_defaults(kwargs, args, verbose=0):
 def build_base_parser(parser):
     """Base parser for common line arguments"""
     parser.add_argument('data', type=str, help='Dataset.', choices=[
-        'vedai_fold%02d' % i for i in range(1, 11)] + ['sdd'])
+        'vedai_fold%02d' % i for i in range(1, 11)] + ['sdd', 'mscoco'])
     parser.add_argument('--network', type=str, default="tiny_yolo_v2", help='Architecture."',
                         choices=['tiny_yolo_v2', 'yolo_v2', 'mobilenet_100', 'mobilenet_50', 'mobilenet_35'])
     parser.add_argument('--image_size', default=1024, type=int, help='Size of input images')
