@@ -1,390 +1,0 @@
-Tensorflow version 1.10.1
-ODGI - sdd, Input size 128
-
-9163 train samples (382 iters)
-3281 test samples (274 iters)
-
-Config:
-   [96mbatch_size:[0m 12
-   [96mdata_classes:[0m ['Biker', 'Bus', 'Car', 'Cart', 'Pedestrian', 'Skater']
-   [96mexp_name:[0m sdd
-   [96mfeature_keys:[0m ['im_id', 'num_boxes', 'bounding_boxes', 'classes']
-   [96mgpu_mem_frac:[0m 1.0
-   [96mimage_folder:[0m /nfs/scistore12/chlgrp/aroyer/Datasets/sdd_images/
-   [96mimage_format:[0m sdd
-   [96mlearning_rate:[0m 0.001
-   [96mnetwork:[0m tiny-yolov2
-   [96mnum_classes:[0m 6
-   [96mnum_epochs:[0m 100
-   [96mnum_gpus:[0m 2
-   [96msave_evaluation_steps:[0m 500
-   [96msave_summaries_steps:[0m None
-   [96msetting:[0m sdd
-   [96mtest_max_num_bbs:[0m 100
-   [96mtest_num_iters_per_epoch:[0m 274
-   [96mtest_num_samples:[0m 3281
-   [96mtest_num_samples_per_iter:[0m 12
-   [96mtest_tfrecords:[0m Data/sdd_test
-   [96mtrain_max_num_bbs:[0m 100
-   [96mtrain_num_iters_per_epoch:[0m 382
-   [96mtrain_num_samples:[0m 9163
-   [96mtrain_num_samples_per_iter:[0m 24
-   [96mtrain_tfrecords:[0m Data/sdd_train
-   [96mval_max_num_bbs:[0m 100
-   [96mval_num_samples:[0m 651
-   [96mval_tfrecords:[0m Data/sdd_val
-   using grid size [4 4]
-   using grid size [2 2]
-
-Graph:
-    with default `num_threads` = 8
-    with default `prefetch_capacity` = 1
-    with default `with_classification` = False
-    with default `shuffle_buffer` = 2000
-    with default `data_augmentation_threshold` = 0.5
- [31m> load_inputs[0m
-    [32mim_id[0m: shape=[None], dtype=<dtype: 'int32'>
-    [32mimage[0m: shape=[None, 128, 128, 3], dtype=<dtype: 'float32'>
-    [32mnum_boxes[0m: shape=[None], dtype=<dtype: 'int32'>
-    [32mbounding_boxes[0m: shape=[None, 100, 4], dtype=<dtype: 'float32'>
-    [32mobj_i_mask_bbs[0m: shape=[None, 4, 4, 1, 100], dtype=<dtype: 'float32'>
-    [32mgroup_bounding_boxes_per_cell[0m: shape=[None, 4, 4, 1, 4], dtype=<dtype: 'float32'>
-    [32mnum_group_boxes[0m: shape=[None], dtype=<dtype: 'int32'>
-    [32mgroup_flags[0m: shape=[None, 4, 4, 1, 1], dtype=<dtype: 'float32'>
-    [32mis_flipped[0m: shape=[None], dtype=<dtype: 'float32'>
- [31m> stage1[0m
-    with default `weight_decay` = 0.0
-    with default `normalizer_decay` = 0.9
-    with default `with_classification` = False
-    Output layer shape *(?, 4, 4, 1, 8)*
-    with default `train_patch_confidence_threshold` = 0.0
-    with default `train_patch_nms_threshold` = 1.0
-    with default `train_num_crops` = 10
-  > extracting 10 crops
-    with default `target_conf_fn` = iou
-    with default `centers_localization_loss_weight` = 1.0
-    with default `scales_localization_loss_weight` = 1.0
-    with default `confidence_loss_weight` = 5.0
-    with default `noobj_confidence_loss_weight` = 1.0
-    with default `group_classification_loss_weight` = 1.0
-    with default `offsets_loss_weight` = 1.0
-    with default `offsets_margin` = 0.025
-    [32m*shifted_centers*[0m: shape=[None, 4, 4, 1, 2], dtype=<dtype: 'float32'>
-    [32m*log_scales*[0m: shape=[None, 4, 4, 1, 2], dtype=<dtype: 'float32'>
-    [32m*confidence_scores*[0m: shape=[None, 4, 4, 1, 1], dtype=<dtype: 'float32'>
-    [32m*offsets*[0m: shape=[None, 4, 4, 1, 2], dtype=<dtype: 'float32'>
-    [32m*group_classification_logits*[0m: shape=[None, 4, 4, 1, 1], dtype=<dtype: 'float32'>
-    [32m*bounding_boxes*[0m: shape=[None, 4, 4, 1, 4], dtype=<dtype: 'float32'>
-    [32m*detection_scores*[0m: shape=[None, 4, 4, 1, 1], dtype=<dtype: 'float32'>
-    [32m*crop_boxes*[0m: shape=[None, 10, 4], dtype=<dtype: 'float32'>
-    [32m*target_bounding_boxes*[0m: shape=[None, 4, 4, 1, 4], dtype=<dtype: 'float32'>
-    [32m*target_bounding_boxes_rescaled*[0m: shape=[None, 4, 4, 1, 4], dtype=<dtype: 'float32'>
- > create stage 2 inputs:
-    with default `patch_intersection_ratio_threshold` = 0.33
-    with default `shuffle_buffer` = 2000
-    with default `num_threads` = 8
-    *im_id*: shape=[None], dtype=<dtype: 'int32'>
-    *image*: shape=[None, 64, 64, 3], dtype=<dtype: 'float32'>
-    *bounding_boxes*: shape=[None, 100, 4], dtype=<dtype: 'float32'>
-    *num_boxes*: shape=[None], dtype=<dtype: 'int32'>
-    *obj_i_mask_bbs*: shape=[None, 2, 2, 1, 100], dtype=<dtype: 'float32'>
- [31m> stage2[0m
-    with default `weight_decay` = 0.0
-    with default `normalizer_decay` = 0.9
-    with default `with_classification` = False
-    with default `with_group_flags` = False
-    with default `with_offsets` = False
-    Output layer shape *(?, 2, 2, 1, 5)*
-    with default `target_conf_fn` = iou
-    with default `assignment_reward_fn` = iou
-    with default `centers_localization_loss_weight` = 1.0
-    with default `scales_localization_loss_weight` = 1.0
-    with default `confidence_loss_weight` = 5.0
-    with default `noobj_confidence_loss_weight` = 1.0
-    [32m*shifted_centers*[0m: shape=[None, 2, 2, 1, 2], dtype=<dtype: 'float32'>
-    [32m*log_scales*[0m: shape=[None, 2, 2, 1, 2], dtype=<dtype: 'float32'>
-    [32m*confidence_scores*[0m: shape=[None, 2, 2, 1, 1], dtype=<dtype: 'float32'>
-    [32m*bounding_boxes*[0m: shape=[None, 2, 2, 1, 4], dtype=<dtype: 'float32'>
-    [32m*detection_scores*[0m: shape=[None, 2, 2, 1, 1], dtype=<dtype: 'float32'>
-    [32m*target_bounding_boxes*[0m: shape=[None, 2, 2, 1, 4], dtype=<dtype: 'float32'>
-
-Losses:
- [31m> Collecting losses[0m (scopes: stage1, stage2)
-
-    Scope stage1
-        *stage1_centers_localization_loss*: 2 tensors
-        *stage1_scales_localization_loss*: 2 tensors
-        *stage1_confidence_obj_loss*: 2 tensors
-        *stage1_confidence_noobj_loss*: 2 tensors
-        *stage1_group_classification_loss*: 2 tensors
-        *stage1_classification_loss*: 2 tensors
-        *stage1_offsets_loss*: 2 tensors
-        *stage2_centers_localization_loss*: 2 tensors
-        *stage2_scales_localization_loss*: 2 tensors
-        *stage2_confidence_obj_loss*: 2 tensors
-        *stage2_confidence_noobj_loss*: 2 tensors
-        *stage2_classification_loss*: 2 tensors
-        stage1/tinyyolov2_net/conv1/weights:0, stage1/tinyyolov2_net/conv1/BatchNorm/beta:0, stage1/tinyyolov2_net/conv2/weights:0, stage1/tinyyolov2_net/conv2/BatchNorm/beta:0, stage1/tinyyolov2_net/conv3/weights:0, stage1/tinyyolov2_net/conv3/BatchNorm/beta:0, stage1/tinyyolov2_net/conv4/weights:0, stage1/tinyyolov2_net/conv4/BatchNorm/beta:0, stage1/tinyyolov2_net/conv5/weights:0, stage1/tinyyolov2_net/conv5/BatchNorm/beta:0, stage1/tinyyolov2_net/conv6/weights:0, stage1/tinyyolov2_net/conv6/BatchNorm/beta:0, stage1/tinyyolov2_net/conv7/weights:0, stage1/tinyyolov2_net/conv7/BatchNorm/beta:0, stage1/tinyyolov2_net/conv_out_2/weights:0, stage1/tinyyolov2_net/conv_out_2/BatchNorm/beta:0, stage1/yolov2_odgi_out/out_conv/kernel:0, stage1/yolov2_odgi_out/out_conv/bias:0
-
-    Scope stage2
-        *stage1_centers_localization_loss*: 2 tensors
-        *stage1_scales_localization_loss*: 2 tensors
-        *stage1_confidence_obj_loss*: 2 tensors
-        *stage1_confidence_noobj_loss*: 2 tensors
-        *stage1_group_classification_loss*: 2 tensors
-        *stage1_classification_loss*: 2 tensors
-        *stage1_offsets_loss*: 2 tensors
-        *stage2_centers_localization_loss*: 2 tensors
-        *stage2_scales_localization_loss*: 2 tensors
-        *stage2_confidence_obj_loss*: 2 tensors
-        *stage2_confidence_noobj_loss*: 2 tensors
-        *stage2_classification_loss*: 2 tensors
-        stage2/tinyyolov2_net/conv1/weights:0, stage2/tinyyolov2_net/conv1/BatchNorm/beta:0, stage2/tinyyolov2_net/conv2/weights:0, stage2/tinyyolov2_net/conv2/BatchNorm/beta:0, stage2/tinyyolov2_net/conv3/weights:0, stage2/tinyyolov2_net/conv3/BatchNorm/beta:0, stage2/tinyyolov2_net/conv4/weights:0, stage2/tinyyolov2_net/conv4/BatchNorm/beta:0, stage2/tinyyolov2_net/conv5/weights:0, stage2/tinyyolov2_net/conv5/BatchNorm/beta:0, stage2/tinyyolov2_net/conv6/weights:0, stage2/tinyyolov2_net/conv6/BatchNorm/beta:0, stage2/tinyyolov2_net/conv7/weights:0, stage2/tinyyolov2_net/conv7/BatchNorm/beta:0, stage2/tinyyolov2_net/conv_out_2/weights:0, stage2/tinyyolov2_net/conv_out_2/BatchNorm/beta:0, stage2/yolov2_odgi_out/out_conv/kernel:0, stage2/yolov2_odgi_out/out_conv/bias:0
- [31m> Build train operation[0m
-    with default `optimizer` = ADAM
-    Using optimizer ADAM with learning rate 1.00e-03
-    with default `beta1` = 0.9
-    64 update operations found
-
-total graph size: 0.97 MB
-    with default `base_log_dir` = ./log
-    Log directory /nfs/scistore12/chlgrp/aroyer/Jupyter/ODGI/log/sdd/tiny-yolov2_odgi_128_64/10-05_10-26
-
-Launch session:
-    with default `max_to_keep` = 1
-    with default `save_checkpoint_steps` = 2000
-    [31mWarning:[0m No summaries found in collection "outputs"
-    [31mWarning:[0m No summaries found in collection "config"
-    saving checkpoint in [36m./log/sdd/tiny-yolov2_odgi_128_64/10-05_10-26[0m
-
-Start training:
-  > Step 1 (epoch 1): loss 1 = 8.34554, loss 2 = 10.02335
-  > Step 251 (epoch 1): loss 1 = 1.15663, loss 2 = 6.08995
-val eval at step 500: map@0.50 = 0.00006 - map@0.75 = 0.00000
-  > Step 501 (epoch 2): loss 1 = 1.26216, loss 2 = 6.60834
-  > Step 751 (epoch 2): loss 1 = 1.17349, loss 2 = 9.19101
-val eval at step 1000: map@0.50 = 0.00027 - map@0.75 = 0.00000
-  > Step 1001 (epoch 3): loss 1 = 1.21261, loss 2 = 0.32417
-  > Step 1251 (epoch 4): loss 1 = 0.97688, loss 2 = 0.32984
-val eval at step 1500: map@0.50 = 0.00157 - map@0.75 = 0.00009
-  > Step 1501 (epoch 4): loss 1 = 1.13317, loss 2 = 0.31354
-  > Step 1751 (epoch 5): loss 1 = 0.96269, loss 2 = 0.26145
-val eval at step 2000: map@0.50 = 0.00610 - map@0.75 = 0.00028
-  > Step 2001 (epoch 6): loss 1 = 0.99620, loss 2 = 0.27912
-  > Step 2251 (epoch 6): loss 1 = 1.09081, loss 2 = 0.30603
-val eval at step 2500: map@0.50 = 0.00313 - map@0.75 = 0.00024
-  > Step 2501 (epoch 7): loss 1 = 1.09134, loss 2 = 0.35147
-  > Step 2751 (epoch 8): loss 1 = 0.96758, loss 2 = 0.28597
-val eval at step 3000: map@0.50 = 0.01132 - map@0.75 = 0.00092
-  > Step 3001 (epoch 8): loss 1 = 0.93831, loss 2 = 0.30435
-  > Step 3251 (epoch 9): loss 1 = 1.00174, loss 2 = 0.34071
-val eval at step 3500: map@0.50 = 0.00660 - map@0.75 = 0.00028
-  > Step 3501 (epoch 10): loss 1 = 0.97045, loss 2 = 0.27180
-  > Step 3751 (epoch 10): loss 1 = 0.77751, loss 2 = 0.32423
-val eval at step 4000: map@0.50 = 0.00621 - map@0.75 = 0.00122
-  > Step 4001 (epoch 11): loss 1 = 0.79496, loss 2 = 0.30790
-  > Step 4251 (epoch 12): loss 1 = 1.10840, loss 2 = 0.32502
-val eval at step 4500: map@0.50 = 0.01893 - map@0.75 = 0.00262
-  > Step 4501 (epoch 12): loss 1 = 0.82244, loss 2 = 0.29924
-  > Step 4751 (epoch 13): loss 1 = 0.79902, loss 2 = 0.28616
-val eval at step 5000: map@0.50 = 0.01780 - map@0.75 = 0.00088
-  > Step 5001 (epoch 14): loss 1 = 0.80909, loss 2 = 0.26978
-  > Step 5251 (epoch 14): loss 1 = 0.82684, loss 2 = 0.28059
-val eval at step 5500: map@0.50 = 0.01942 - map@0.75 = 0.00131
-  > Step 5501 (epoch 15): loss 1 = 0.68191, loss 2 = 0.28737
-  > Step 5751 (epoch 16): loss 1 = 0.92173, loss 2 = 0.30400
-val eval at step 6000: map@0.50 = 0.02172 - map@0.75 = 0.00176
-  > Step 6001 (epoch 16): loss 1 = 0.68536, loss 2 = 0.29289
-  > Step 6251 (epoch 17): loss 1 = 0.85037, loss 2 = 0.33389
-val eval at step 6500: map@0.50 = 0.00887 - map@0.75 = 0.00028
-  > Step 6501 (epoch 18): loss 1 = 1.01971, loss 2 = 0.29702
-  > Step 6751 (epoch 18): loss 1 = 0.75571, loss 2 = 0.30839
-val eval at step 7000: map@0.50 = 0.02253 - map@0.75 = 0.00050
-  > Step 7001 (epoch 19): loss 1 = 0.77408, loss 2 = 0.26606
-  > Step 7251 (epoch 19): loss 1 = 0.76744, loss 2 = 0.28881
-val eval at step 7500: map@0.50 = 0.02560 - map@0.75 = 0.00309
-  > Step 7501 (epoch 20): loss 1 = 0.79848, loss 2 = 0.28573
-  > Step 7751 (epoch 21): loss 1 = 0.63071, loss 2 = 0.28042
-val eval at step 8000: map@0.50 = 0.02241 - map@0.75 = 0.00118
-  > Step 8001 (epoch 21): loss 1 = 0.73283, loss 2 = 0.28236
-  > Step 8251 (epoch 22): loss 1 = 0.66136, loss 2 = 0.30719
-val eval at step 8500: map@0.50 = 0.02320 - map@0.75 = 0.00111
-  > Step 8501 (epoch 23): loss 1 = 0.53835, loss 2 = 0.24771
-  > Step 8751 (epoch 23): loss 1 = 0.66507, loss 2 = 0.25830
-val eval at step 9000: map@0.50 = 0.03052 - map@0.75 = 0.00198
-  > Step 9001 (epoch 24): loss 1 = 0.57334, loss 2 = 0.31284
-  > Step 9251 (epoch 25): loss 1 = 0.60611, loss 2 = 0.28230
-val eval at step 9500: map@0.50 = 0.00992 - map@0.75 = 0.00074
-  > Step 9501 (epoch 25): loss 1 = 0.51278, loss 2 = 0.28334
-  > Step 9751 (epoch 26): loss 1 = 0.52453, loss 2 = 0.28989
-val eval at step 10000: map@0.50 = 0.03001 - map@0.75 = 0.00246
-  > Step 10001 (epoch 27): loss 1 = 0.53660, loss 2 = 0.25107
-  > Step 10251 (epoch 27): loss 1 = 0.44021, loss 2 = 0.28356
-val eval at step 10500: map@0.50 = 0.02455 - map@0.75 = 0.00272
-  > Step 10501 (epoch 28): loss 1 = 0.39971, loss 2 = 0.28056
-  > Step 10751 (epoch 29): loss 1 = 0.54571, loss 2 = 0.27780
-val eval at step 11000: map@0.50 = 0.02592 - map@0.75 = 0.00366
-  > Step 11001 (epoch 29): loss 1 = 0.37585, loss 2 = 0.27943
-  > Step 11251 (epoch 30): loss 1 = 0.37916, loss 2 = 0.26587
-val eval at step 11500: map@0.50 = 0.03244 - map@0.75 = 0.00366
-  > Step 11501 (epoch 31): loss 1 = 0.51802, loss 2 = 0.29908
-  > Step 11751 (epoch 31): loss 1 = 0.39546, loss 2 = 0.26955
-val eval at step 12000: map@0.50 = 0.02472 - map@0.75 = 0.00259
-  > Step 12001 (epoch 32): loss 1 = 0.32372, loss 2 = 0.28655
-  > Step 12251 (epoch 33): loss 1 = 0.47769, loss 2 = 0.29647
-val eval at step 12500: map@0.50 = 0.01916 - map@0.75 = 0.00172
-  > Step 12501 (epoch 33): loss 1 = 0.34880, loss 2 = 0.29046
-  > Step 12751 (epoch 34): loss 1 = 0.35003, loss 2 = 0.26891
-val eval at step 13000: map@0.50 = 0.01455 - map@0.75 = 0.00198
-  > Step 13001 (epoch 35): loss 1 = 0.40835, loss 2 = 0.32135
-  > Step 13251 (epoch 35): loss 1 = 0.45299, loss 2 = 0.30241
-val eval at step 13500: map@0.50 = 0.03493 - map@0.75 = 0.00334
-  > Step 13501 (epoch 36): loss 1 = 0.30373, loss 2 = 0.27557
-  > Step 13751 (epoch 37): loss 1 = 0.32876, loss 2 = 0.26710
-val eval at step 14000: map@0.50 = 0.02770 - map@0.75 = 0.00388
-  > Step 14001 (epoch 37): loss 1 = 0.27613, loss 2 = 0.30396
-  > Step 14251 (epoch 38): loss 1 = 0.36915, loss 2 = 0.30445
-val eval at step 14500: map@0.50 = 0.03782 - map@0.75 = 0.00599
-  > Step 14501 (epoch 38): loss 1 = 0.36058, loss 2 = 0.29359
-  > Step 14751 (epoch 39): loss 1 = 0.32307, loss 2 = 0.27388
-val eval at step 15000: map@0.50 = 0.02529 - map@0.75 = 0.00224
-  > Step 15001 (epoch 40): loss 1 = 0.36735, loss 2 = 0.31144
-  > Step 15251 (epoch 40): loss 1 = 0.33778, loss 2 = 0.29583
-val eval at step 15500: map@0.50 = 0.01981 - map@0.75 = 0.00093
-  > Step 15501 (epoch 41): loss 1 = 0.30576, loss 2 = 0.25882
-  > Step 15751 (epoch 42): loss 1 = 0.30592, loss 2 = 0.24535
-val eval at step 16000: map@0.50 = 0.02756 - map@0.75 = 0.00283
-  > Step 16001 (epoch 42): loss 1 = 0.30678, loss 2 = 0.27672
-  > Step 16251 (epoch 43): loss 1 = 0.29450, loss 2 = 0.27818
-val eval at step 16500: map@0.50 = 0.01111 - map@0.75 = 0.00053
-  > Step 16501 (epoch 44): loss 1 = 0.34695, loss 2 = 0.25371
-  > Step 16751 (epoch 44): loss 1 = 0.31492, loss 2 = 0.28876
-val eval at step 17000: map@0.50 = 0.04522 - map@0.75 = 0.00609
-  > Step 17001 (epoch 45): loss 1 = 0.32695, loss 2 = 0.27406
-  > Step 17251 (epoch 46): loss 1 = 0.27540, loss 2 = 0.27067
-val eval at step 17500: map@0.50 = 0.01814 - map@0.75 = 0.00203
-  > Step 17501 (epoch 46): loss 1 = 0.24560, loss 2 = 0.28584
-  > Step 17751 (epoch 47): loss 1 = 0.26427, loss 2 = 0.26228
-val eval at step 18000: map@0.50 = 0.04040 - map@0.75 = 0.00396
-  > Step 18001 (epoch 48): loss 1 = 0.35040, loss 2 = 0.25467
-  > Step 18251 (epoch 48): loss 1 = 0.32743, loss 2 = 0.25472
-val eval at step 18500: map@0.50 = 0.03040 - map@0.75 = 0.00428
-  > Step 18501 (epoch 49): loss 1 = 0.20985, loss 2 = 0.25423
-  > Step 18751 (epoch 50): loss 1 = 0.30706, loss 2 = 0.29184
-val eval at step 19000: map@0.50 = 0.03932 - map@0.75 = 0.00471
-  > Step 19001 (epoch 50): loss 1 = 0.32523, loss 2 = 0.25667
-  > Step 19251 (epoch 51): loss 1 = 0.22483, loss 2 = 0.26376
-val eval at step 19500: map@0.50 = 0.04028 - map@0.75 = 0.00498
-  > Step 19501 (epoch 52): loss 1 = 0.21296, loss 2 = 0.27563
-  > Step 19751 (epoch 52): loss 1 = 0.27217, loss 2 = 0.28002
-val eval at step 20000: map@0.50 = 0.03171 - map@0.75 = 0.00366
-  > Step 20001 (epoch 53): loss 1 = 0.31598, loss 2 = 0.25725
-  > Step 20251 (epoch 54): loss 1 = 0.26432, loss 2 = 0.29103
-val eval at step 20500: map@0.50 = 0.04554 - map@0.75 = 0.00727
-  > Step 20501 (epoch 54): loss 1 = 0.31933, loss 2 = 0.32116
-  > Step 20751 (epoch 55): loss 1 = 0.30422, loss 2 = 0.26624
-val eval at step 21000: map@0.50 = 0.04517 - map@0.75 = 0.00721
-  > Step 21001 (epoch 56): loss 1 = 0.24835, loss 2 = 0.26330
-  > Step 21251 (epoch 56): loss 1 = 0.19812, loss 2 = 0.25782
-val eval at step 21500: map@0.50 = 0.04295 - map@0.75 = 0.00661
-  > Step 21501 (epoch 57): loss 1 = 0.27988, loss 2 = 0.26012
-  > Step 21751 (epoch 57): loss 1 = 0.21886, loss 2 = 0.26432
-val eval at step 22000: map@0.50 = 0.03531 - map@0.75 = 0.00436
-  > Step 22001 (epoch 58): loss 1 = 0.20569, loss 2 = 0.27258
-  > Step 22251 (epoch 59): loss 1 = 0.27514, loss 2 = 0.23557
-val eval at step 22500: map@0.50 = 0.04868 - map@0.75 = 0.00558
-  > Step 22501 (epoch 59): loss 1 = 0.22597, loss 2 = 0.24542
-  > Step 22751 (epoch 60): loss 1 = 0.21851, loss 2 = 0.27208
-val eval at step 23000: map@0.50 = 0.05117 - map@0.75 = 0.00635
-  > Step 23001 (epoch 61): loss 1 = 0.23788, loss 2 = 0.26438
-  > Step 23251 (epoch 61): loss 1 = 0.25339, loss 2 = 0.27531
-val eval at step 23500: map@0.50 = 0.04416 - map@0.75 = 0.00509
-  > Step 23501 (epoch 62): loss 1 = 0.17651, loss 2 = 0.28273
-  > Step 23751 (epoch 63): loss 1 = 0.23888, loss 2 = 0.25797
-val eval at step 24000: map@0.50 = 0.03841 - map@0.75 = 0.00595
-  > Step 24001 (epoch 63): loss 1 = 0.18247, loss 2 = 0.24178
-  > Step 24251 (epoch 64): loss 1 = 0.18149, loss 2 = 0.25509
-val eval at step 24500: map@0.50 = 0.05033 - map@0.75 = 0.00668
-  > Step 24501 (epoch 65): loss 1 = 0.22357, loss 2 = 0.24974
-  > Step 24751 (epoch 65): loss 1 = 0.22515, loss 2 = 0.26247
-val eval at step 25000: map@0.50 = 0.04843 - map@0.75 = 0.00738
-  > Step 25001 (epoch 66): loss 1 = 0.18697, loss 2 = 0.27922
-  > Step 25251 (epoch 67): loss 1 = 0.35588, loss 2 = 0.21895
-val eval at step 25500: map@0.50 = 0.03744 - map@0.75 = 0.00556
-  > Step 25501 (epoch 67): loss 1 = 0.20096, loss 2 = 0.26618
-  > Step 25751 (epoch 68): loss 1 = 0.25251, loss 2 = 0.27864
-val eval at step 26000: map@0.50 = 0.05392 - map@0.75 = 0.00652
-  > Step 26001 (epoch 69): loss 1 = 0.21088, loss 2 = 0.23771
-  > Step 26251 (epoch 69): loss 1 = 0.22125, loss 2 = 0.25855
-val eval at step 26500: map@0.50 = 0.05156 - map@0.75 = 0.00760
-  > Step 26501 (epoch 70): loss 1 = 0.19075, loss 2 = 0.25996
-  > Step 26751 (epoch 71): loss 1 = 0.21319, loss 2 = 0.26728
-val eval at step 27000: map@0.50 = 0.04306 - map@0.75 = 0.00622
-  > Step 27001 (epoch 71): loss 1 = 0.22093, loss 2 = 0.24543
-  > Step 27251 (epoch 72): loss 1 = 0.25972, loss 2 = 0.25370
-val eval at step 27500: map@0.50 = 0.04942 - map@0.75 = 0.00669
-  > Step 27501 (epoch 73): loss 1 = 0.20963, loss 2 = 0.24540
-  > Step 27751 (epoch 73): loss 1 = 0.19051, loss 2 = 0.25665
-val eval at step 28000: map@0.50 = 0.05271 - map@0.75 = 0.00783
-  > Step 28001 (epoch 74): loss 1 = 0.18927, loss 2 = 0.24162
-  > Step 28251 (epoch 74): loss 1 = 0.24377, loss 2 = 0.27324
-val eval at step 28500: map@0.50 = 0.05737 - map@0.75 = 0.00798
-  > Step 28501 (epoch 75): loss 1 = 0.23499, loss 2 = 0.26862
-  > Step 28751 (epoch 76): loss 1 = 0.20680, loss 2 = 0.24944
-val eval at step 29000: map@0.50 = 0.05198 - map@0.75 = 0.00785
-  > Step 29001 (epoch 76): loss 1 = 0.19709, loss 2 = 0.25757
-  > Step 29251 (epoch 77): loss 1 = 0.18892, loss 2 = 0.26724
-val eval at step 29500: map@0.50 = 0.06158 - map@0.75 = 0.01030
-  > Step 29501 (epoch 78): loss 1 = 0.24385, loss 2 = 0.26518
-  > Step 29751 (epoch 78): loss 1 = 0.18617, loss 2 = 0.27180
-val eval at step 30000: map@0.50 = 0.05533 - map@0.75 = 0.00796
-  > Step 30001 (epoch 79): loss 1 = 0.24753, loss 2 = 0.25224
-  > Step 30251 (epoch 80): loss 1 = 0.24657, loss 2 = 0.23447
-val eval at step 30500: map@0.50 = 0.05361 - map@0.75 = 0.00784
-  > Step 30501 (epoch 80): loss 1 = 0.23178, loss 2 = 0.26750
-  > Step 30751 (epoch 81): loss 1 = 0.21555, loss 2 = 0.28244
-val eval at step 31000: map@0.50 = 0.01728 - map@0.75 = 0.00104
-  > Step 31001 (epoch 82): loss 1 = 0.21617, loss 2 = 0.28305
-  > Step 31251 (epoch 82): loss 1 = 0.20199, loss 2 = 0.25330
-val eval at step 31500: map@0.50 = 0.04230 - map@0.75 = 0.00645
-  > Step 31501 (epoch 83): loss 1 = 0.19260, loss 2 = 0.25974
-  > Step 31751 (epoch 84): loss 1 = 0.27698, loss 2 = 0.23681
-val eval at step 32000: map@0.50 = 0.03039 - map@0.75 = 0.00538
-  > Step 32001 (epoch 84): loss 1 = 0.22106, loss 2 = 0.26173
-  > Step 32251 (epoch 85): loss 1 = 0.16277, loss 2 = 0.24071
-val eval at step 32500: map@0.50 = 0.04292 - map@0.75 = 0.00562
-  > Step 32501 (epoch 86): loss 1 = 0.19129, loss 2 = 0.24408
-  > Step 32751 (epoch 86): loss 1 = 0.26804, loss 2 = 0.25636
-val eval at step 33000: map@0.50 = 0.06663 - map@0.75 = 0.00978
-  > Step 33001 (epoch 87): loss 1 = 0.23179, loss 2 = 0.28079
-  > Step 33251 (epoch 88): loss 1 = 0.22206, loss 2 = 0.26979
-val eval at step 33500: map@0.50 = 0.06755 - map@0.75 = 0.01096
-  > Step 33501 (epoch 88): loss 1 = 0.18413, loss 2 = 0.25644
-  > Step 33751 (epoch 89): loss 1 = 0.19463, loss 2 = 0.24057
-val eval at step 34000: map@0.50 = 0.05183 - map@0.75 = 0.00828
-  > Step 34001 (epoch 90): loss 1 = 0.21544, loss 2 = 0.27491
-  > Step 34251 (epoch 90): loss 1 = 0.23645, loss 2 = 0.23136
-val eval at step 34500: map@0.50 = 0.05601 - map@0.75 = 0.01202
-  > Step 34501 (epoch 91): loss 1 = 0.25055, loss 2 = 0.24937
-  > Step 34751 (epoch 92): loss 1 = 0.29551, loss 2 = 0.26181
-val eval at step 35000: map@0.50 = 0.04645 - map@0.75 = 0.00638
-  > Step 35001 (epoch 92): loss 1 = 0.22447, loss 2 = 0.25469
-  > Step 35251 (epoch 93): loss 1 = 0.21485, loss 2 = 0.25241
-val eval at step 35500: map@0.50 = 0.06179 - map@0.75 = 0.00997
-  > Step 35501 (epoch 93): loss 1 = 0.18521, loss 2 = 0.22361
-  > Step 35751 (epoch 94): loss 1 = 0.21569, loss 2 = 0.26371
-val eval at step 36000: map@0.50 = 0.06119 - map@0.75 = 0.00963
-  > Step 36001 (epoch 95): loss 1 = 0.17784, loss 2 = 0.24027
-  > Step 36251 (epoch 95): loss 1 = 0.18886, loss 2 = 0.25379
-val eval at step 36500: map@0.50 = 0.06828 - map@0.75 = 0.00763
-  > Step 36501 (epoch 96): loss 1 = 0.23570, loss 2 = 0.28746
-  > Step 36751 (epoch 97): loss 1 = 0.21339, loss 2 = 0.25626
-val eval at step 37000: map@0.50 = 0.06438 - map@0.75 = 0.01092
-  > Step 37001 (epoch 97): loss 1 = 0.23463, loss 2 = 0.26069
-  > Step 37251 (epoch 98): loss 1 = 0.18355, loss 2 = 0.24615
-val eval at step 37500: map@0.50 = 0.06997 - map@0.75 = 0.00935
-  > Step 37501 (epoch 99): loss 1 = 0.21748, loss 2 = 0.24772
-  > Step 37751 (epoch 99): loss 1 = 0.18786, loss 2 = 0.25318
-val eval at step 38000: map@0.50 = 0.06756 - map@0.75 = 0.00722
-  > Step 38001 (epoch 100): loss 1 = 0.16825, loss 2 = 0.26195
-test eval at step 38175: map@0.50 = 0.06476 - map@0.75 = 0.00848

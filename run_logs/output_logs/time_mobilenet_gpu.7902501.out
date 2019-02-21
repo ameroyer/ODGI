@@ -1,0 +1,888 @@
+============================================================== Mobilenet_100
+==== 1024x1024
+Tensorflow version 1.12.0
+number of parameters 2230277
+total graph size: 0.07 MB
+Launch session from run_logs/sdd/mobilenet_100_standard_1024/02-19_13-08
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.060574828624725345
+   Avg. Feed forward: 0.02310246229171753
+   Avg. time: 0.08367729091644288
+
+==== 512x512
+Tensorflow version 1.12.0
+number of parameters 2230277
+total graph size: 0.07 MB
+Launch session from run_logs/sdd/mobilenet_100_standard_512/02-19_08-59
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06742097711563111
+   Avg. Feed forward: 0.010980404853820801
+   Avg. time: 0.07840138196945191
+
+==== 256x256
+Tensorflow version 1.12.0
+number of parameters 2230277
+total graph size: 0.06 MB
+Launch session from run_logs/sdd/mobilenet_100_standard_256/02-19_16-44
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06415631532669068
+   Avg. Feed forward: 0.009494122505187988
+   Avg. time: 0.07365043783187866
+
+
+============================================================== Mobilenet_35
+==== 1024x1024
+Tensorflow version 1.12.0
+number of parameters 402533
+total graph size: 0.06 MB
+Launch session from run_logs/sdd/mobilenet_35_standard_1024/02-20_16-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.061349525928497316
+   Avg. Feed forward: 0.013910984992980957
+   Avg. time: 0.07526051092147827
+
+==== 512x512
+Tensorflow version 1.12.0
+number of parameters 402533
+total graph size: 0.06 MB
+Launch session from run_logs/sdd/mobilenet_35_standard_512/02-20_16-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06794305419921876
+   Avg. Feed forward: 0.009810286045074463
+   Avg. time: 0.07775334024429321
+
+==== 256x256
+Tensorflow version 1.12.0
+number of parameters 402533
+total graph size: 0.06 MB
+Launch session from run_logs/sdd/mobilenet_35_standard_256/02-21_10-08
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06479042148590088
+   Avg. Feed forward: 0.009319986343383789
+   Avg. time: 0.07411040782928466
+
+
+============================================================== ODGI Mobilenet_100_35
+==== 512x256
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06806076574325562
+   Avg. Feed forward: 0.01967641019821167
+   Avg. time: 0.0877371759414673
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06781463479995728
+   Avg. Feed forward: 0.020200833797454833
+   Avg. time: 0.0880154685974121
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0680210542678833
+   Avg. Feed forward: 0.019759520053863524
+   Avg. time: 0.08778057432174682
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06795548248291015
+   Avg. Feed forward: 0.020099760055541992
+   Avg. time: 0.08805524253845215
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06771272039413452
+   Avg. Feed forward: 0.020189257621765138
+   Avg. time: 0.08790197801589966
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06760451364517212
+   Avg. Feed forward: 0.019893041610717775
+   Avg. time: 0.0874975552558899
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0678567304611206
+   Avg. Feed forward: 0.020019558906555174
+   Avg. time: 0.08787628936767578
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06782360315322876
+   Avg. Feed forward: 0.01984447956085205
+   Avg. time: 0.0876680827140808
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06761725854873657
+   Avg. Feed forward: 0.020206241607666015
+   Avg. time: 0.08782350015640258
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_256/02-19_20-17
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06851425313949586
+   Avg. Feed forward: 0.020717278957366945
+   Avg. time: 0.0892315320968628
+
+==== 512x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06825417327880859
+   Avg. Feed forward: 0.019587450981140137
+   Avg. time: 0.08784162425994872
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06780266332626343
+   Avg. Feed forward: 0.01994426679611206
+   Avg. time: 0.0877469301223755
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06796670770645141
+   Avg. Feed forward: 0.019656121253967287
+   Avg. time: 0.0876228289604187
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06853739643096923
+   Avg. Feed forward: 0.019957709789276124
+   Avg. time: 0.08849510622024535
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06840361833572388
+   Avg. Feed forward: 0.020163920402526854
+   Avg. time: 0.08856753873825074
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0683542194366455
+   Avg. Feed forward: 0.02019159984588623
+   Avg. time: 0.08854581928253173
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06821758699417114
+   Avg. Feed forward: 0.019997954845428465
+   Avg. time: 0.0882155418395996
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06850459098815918
+   Avg. Feed forward: 0.019995519161224364
+   Avg. time: 0.08850011014938355
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.067968111038208
+   Avg. Feed forward: 0.02051558256149292
+   Avg. time: 0.08848369359970093
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06845545530319214
+   Avg. Feed forward: 0.020067293167114256
+   Avg. time: 0.08852274847030639
+
+==== 512x64
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06929626512527466
+   Avg. Feed forward: 0.020113932132720946
+   Avg. time: 0.08941019725799561
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06796917390823365
+   Avg. Feed forward: 0.020401055812835692
+   Avg. time: 0.08837022972106934
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06724782228469849
+   Avg. Feed forward: 0.019839154720306396
+   Avg. time: 0.08708697700500488
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06723827934265136
+   Avg. Feed forward: 0.01962273645401001
+   Avg. time: 0.08686101579666138
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06737023448944092
+   Avg. Feed forward: 0.019569692134857177
+   Avg. time: 0.0869399266242981
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06694511461257935
+   Avg. Feed forward: 0.01950439739227295
+   Avg. time: 0.08644951200485229
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06803270959854125
+   Avg. Feed forward: 0.019592437744140625
+   Avg. time: 0.08762514734268188
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06826471138000488
+   Avg. Feed forward: 0.020149760246276856
+   Avg. time: 0.08841447162628174
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06687268114089966
+   Avg. Feed forward: 0.01851863145828247
+   Avg. time: 0.08539131259918213
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06700795221328736
+   Avg. Feed forward: 0.01840528392791748
+   Avg. time: 0.08541323614120483
+
+==== 256x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06373134136199951
+   Avg. Feed forward: 0.0172151198387146
+   Avg. time: 0.08094646120071411
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06376958847045898
+   Avg. Feed forward: 0.01750059986114502
+   Avg. time: 0.081270188331604
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06416392087936401
+   Avg. Feed forward: 0.017513717651367187
+   Avg. time: 0.0816776385307312
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0638570785522461
+   Avg. Feed forward: 0.017946399688720704
+   Avg. time: 0.0818034782409668
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06370537805557251
+   Avg. Feed forward: 0.017342868328094483
+   Avg. time: 0.08104824638366699
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06376798105239868
+   Avg. Feed forward: 0.017622702598571776
+   Avg. time: 0.08139068365097046
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06371119785308837
+   Avg. Feed forward: 0.01812124538421631
+   Avg. time: 0.08183244323730468
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06387211561203003
+   Avg. Feed forward: 0.01725847625732422
+   Avg. time: 0.08113059186935426
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06401764011383057
+   Avg. Feed forward: 0.017746188640594483
+   Avg. time: 0.08176382875442506
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 2636653
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_100_odgi_256_128/02-20_10-54
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06395486974716187
+   Avg. Feed forward: 0.017832698345184327
+   Avg. time: 0.08178756809234619
+
+
+============================================================== ODGI Mobilenet_35_35
+==== 512x256
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.066760835647583
+   Avg. Feed forward: 0.017518285751342774
+   Avg. time: 0.08427912139892578
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06698091888427735
+   Avg. Feed forward: 0.017573497295379638
+   Avg. time: 0.08455441617965698
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06681823539733887
+   Avg. Feed forward: 0.01793927526473999
+   Avg. time: 0.08475751066207887
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06709351062774659
+   Avg. Feed forward: 0.017430403232574464
+   Avg. time: 0.08452391386032104
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06661635637283325
+   Avg. Feed forward: 0.017883372783660888
+   Avg. time: 0.08449972915649415
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06672293519973754
+   Avg. Feed forward: 0.01783172798156738
+   Avg. time: 0.08455466318130492
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06663743448257446
+   Avg. Feed forward: 0.017639311790466308
+   Avg. time: 0.08427674627304077
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06657008552551269
+   Avg. Feed forward: 0.017764214992523192
+   Avg. time: 0.08433430051803588
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06656307554244995
+   Avg. Feed forward: 0.018002007007598877
+   Avg. time: 0.08456508255004883
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_256/02-20_10-55
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06664957761764527
+   Avg. Feed forward: 0.018720859050750733
+   Avg. time: 0.085370436668396
+
+==== 512x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06639349842071533
+   Avg. Feed forward: 0.017201587677001952
+   Avg. time: 0.08359508609771729
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06686648273468018
+   Avg. Feed forward: 0.017344793796539307
+   Avg. time: 0.08421127653121949
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0664805006980896
+   Avg. Feed forward: 0.017351250171661378
+   Avg. time: 0.08383175086975098
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06577492189407348
+   Avg. Feed forward: 0.017095638751983642
+   Avg. time: 0.08287056064605712
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06590305423736573
+   Avg. Feed forward: 0.01722452974319458
+   Avg. time: 0.0831275839805603
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06596429252624511
+   Avg. Feed forward: 0.01745296859741211
+   Avg. time: 0.08341726112365722
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06603146839141846
+   Avg. Feed forward: 0.017110635280609132
+   Avg. time: 0.0831421036720276
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0664512529373169
+   Avg. Feed forward: 0.017639976024627687
+   Avg. time: 0.08409122896194458
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06700736427307129
+   Avg. Feed forward: 0.017501429557800294
+   Avg. time: 0.08450879383087158
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_128/02-20_11-51
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06724119710922241
+   Avg. Feed forward: 0.01762881374359131
+   Avg. time: 0.08487001085281372
+
+==== 512x64
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0669550313949585
+   Avg. Feed forward: 0.01757754898071289
+   Avg. time: 0.08453258037567138
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0670805196762085
+   Avg. Feed forward: 0.017635998249053954
+   Avg. time: 0.08471651792526246
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06682835912704468
+   Avg. Feed forward: 0.01744230556488037
+   Avg. time: 0.08427066469192505
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06682611751556397
+   Avg. Feed forward: 0.017753104686737062
+   Avg. time: 0.08457922220230103
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06707575130462647
+   Avg. Feed forward: 0.0175128173828125
+   Avg. time: 0.08458856868743897
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06695322942733764
+   Avg. Feed forward: 0.01767659330368042
+   Avg. time: 0.08462982273101806
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06698232507705688
+   Avg. Feed forward: 0.017956804275512696
+   Avg. time: 0.08493912935256959
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06705217695236206
+   Avg. Feed forward: 0.0172309513092041
+   Avg. time: 0.08428312826156616
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0669020276069641
+   Avg. Feed forward: 0.017631706714630126
+   Avg. time: 0.08453373432159424
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_512_64/02-21_10-11
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06683319902420044
+   Avg. Feed forward: 0.017735015869140624
+   Avg. time: 0.08456821489334107
+
+==== 256x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06366726303100587
+   Avg. Feed forward: 0.01767862272262573
+   Avg. time: 0.0813458857536316
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06377475070953369
+   Avg. Feed forward: 0.01742937707901001
+   Avg. time: 0.08120412778854369
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06367203807830811
+   Avg. Feed forward: 0.017331443786621093
+   Avg. time: 0.0810034818649292
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06391801595687867
+   Avg. Feed forward: 0.01752038049697876
+   Avg. time: 0.08143839645385742
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06367970895767212
+   Avg. Feed forward: 0.017360069751739503
+   Avg. time: 0.08103977870941162
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06394320011138915
+   Avg. Feed forward: 0.01739570426940918
+   Avg. time: 0.08133890438079833
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06389282274246216
+   Avg. Feed forward: 0.017339662075042724
+   Avg. time: 0.08123248481750489
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06378356790542603
+   Avg. Feed forward: 0.016919053077697754
+   Avg. time: 0.08070262098312378
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0636764006614685
+   Avg. Feed forward: 0.01781388187408447
+   Avg. time: 0.08149028253555297
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 808909
+total graph size: 0.14 MB
+Launch session from run_logs/sdd/mobilenet_35_odgi_256_128/02-20_10-56
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06394435834884643
+   Avg. Feed forward: 0.017810182094573974
+   Avg. time: 0.0817545404434204

@@ -1,0 +1,273 @@
+Tensorflow version 1.12.0
+Standard detection - sdd, Input size 256
+
+9163 train samples (287 iters per epoch)
+651 val samples (21 iters per epoch)
+3281 test samples (103 iters per epoch)
+
+Config:
+   [96mbatch_size:[0m 8
+   [96mdata_classes:[0m ['Biker', 'Bus', 'Car', 'Cart', 'Pedestrian', 'Skater']
+   [96mexp_name:[0m sdd
+   [96mfeature_keys:[0m ['im_id', 'num_boxes', 'bounding_boxes', 'classes']
+   [96mgpu_mem_frac:[0m 1.0
+   [96mimage_folder:[0m /nfs/scistore12/chlgrp/aroyer/Datasets/sdd_images/
+   [96mimage_format:[0m sdd
+   [96mlearning_rate:[0m 0.0002
+   [96mnetwork:[0m mobilenet_100
+   [96mnum_classes:[0m 6
+   [96mnum_epochs:[0m 100
+   [96mnum_gpus:[0m 4
+   [96msave_evaluation_steps:[0m 500
+   [96msave_summaries_steps:[0m None
+   [96msetting:[0m sdd
+   [96mtest_max_num_bbs:[0m 100
+   [96mtest_num_crops:[0m 6
+   [96mtest_num_iters_per_epoch:[0m 103
+   [96mtest_num_samples:[0m 3281
+   [96mtest_num_samples_per_iter:[0m 32
+   [96mtest_patch_confidence_threshold:[0m 0.1
+   [96mtest_patch_nms_threshold:[0m 0.25
+   [96mtest_patch_strong_confidence_threshold:[0m 0.6
+   [96mtest_tfrecords:[0m Data/sdd_test
+   [96mtrain_max_num_bbs:[0m 100
+   [96mtrain_num_crops:[0m 10
+   [96mtrain_num_iters_per_epoch:[0m 287
+   [96mtrain_num_samples:[0m 9163
+   [96mtrain_num_samples_per_iter:[0m 32
+   [96mtrain_tfrecords:[0m Data/sdd_train
+   [96mval_max_num_bbs:[0m 100
+   [96mval_num_iters_per_epoch:[0m 21
+   [96mval_num_samples:[0m 651
+   [96mval_num_samples_per_iter:[0m 32
+   [96mval_tfrecords:[0m Data/sdd_val
+   using grid size [8 8]
+    with default `base_log_dir` = ./run_logs
+    Log directory /nfs/scistore12/chlgrp/aroyer/Jupyter/ODGI/run_logs/sdd/mobilenet_100_standard_256/02-19_16-44
+
+Train Graph:
+    with default `num_threads` = 4
+    with default `prefetch_capacity` = 1
+    with default `with_groups` = False
+    with default `with_classification` = False
+    with default `shuffle_buffer` = 10000
+    with default `data_augmentation_threshold` = 0.5
+ [31m> load_inputs[0m
+    [32mis_flipped[0m: shape=[8], dtype=<dtype: 'float32'>
+    [32mnum_boxes[0m: shape=[8], dtype=<dtype: 'int32'>
+    [32mim_id[0m: shape=[8], dtype=<dtype: 'int32'>
+    [32mbounding_boxes[0m: shape=[8, 100, 4], dtype=<dtype: 'float32'>
+    [32mimage[0m: shape=[8, 256, 256, 3], dtype=<dtype: 'float32'>
+    [32mobj_i_mask_bbs[0m: shape=[8, 8, 8, 1, 100], dtype=<dtype: 'float32'>
+ [31m> mobilenet_100[0m
+    with default `num_boxes` = 1
+    with default `with_classification` = False
+    Output layer shape *(8, 8, 8, 1, 5)*
+    [32mlog_scales[0m: shape=[8, 8, 8, 1, 2], dtype=<dtype: 'float32'>
+    [32mconfidence_scores[0m: shape=[8, 8, 8, 1, 1], dtype=<dtype: 'float32'>
+    [32mdetection_scores[0m: shape=[8, 8, 8, 1, 1], dtype=<dtype: 'float32'>
+    [32mbounding_boxes[0m: shape=[8, 8, 8, 1, 4], dtype=<dtype: 'float32'>
+    [32mshifted_centers[0m: shape=[8, 8, 8, 1, 2], dtype=<dtype: 'float32'>
+ [31m> Collecting losses[0m
+    with default `centers_localization_loss_weight` = 1.0
+    with default `scales_localization_loss_weight` = 1.0
+    with default `confidence_loss_weight` = 5.0
+    with default `noobj_confidence_loss_weight` = 1.0
+ > [33min global scope:[0m
+     35 regularization losses found
+     *net_classification_loss*: 4 tensors
+     *net_scales_localization_loss*: 4 tensors
+     *net_confidence_obj_loss*: 4 tensors
+     *net_confidence_noobj_loss*: 4 tensors
+     *net_centers_localization_loss*: 4 tensors
+     Trainable variables: [mobilenet_100/MobilenetV2/Conv/weights:0, mobilenet_100/MobilenetV2/Conv/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/Conv/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_1/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_1/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_1/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_1/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_1/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_1/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_1/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_1/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_1/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_2/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_2/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_2/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_2/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_2/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_2/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_2/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_2/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_2/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_3/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_3/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_3/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_3/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_3/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_3/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_3/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_3/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_3/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_4/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_4/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_4/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_4/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_4/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_4/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_4/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_4/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_4/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_5/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_5/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_5/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_5/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_5/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_5/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_5/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_5/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_5/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_6/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_6/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_6/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_6/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_6/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_6/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_6/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_6/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_6/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_7/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_7/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_7/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_7/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_7/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_7/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_7/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_7/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_7/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_8/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_8/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_8/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_8/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_8/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_8/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_8/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_8/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_8/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_9/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_9/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_9/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_9/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_9/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_9/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_9/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_9/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_9/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_10/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_10/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_10/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_10/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_10/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_10/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_10/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_10/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_10/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_11/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_11/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_11/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_11/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_11/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_11/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_11/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_11/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_11/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_12/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_12/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_12/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_12/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_12/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_12/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_12/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_12/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_12/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_13/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_13/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_13/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_13/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_13/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_13/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_13/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_13/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_13/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_14/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_14/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_14/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_14/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_14/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_14/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_14/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_14/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_14/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_15/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_15/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_15/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_15/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_15/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_15/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_15/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_15/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_15/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_16/expand/weights:0, mobilenet_100/MobilenetV2/expanded_conv_16/expand/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_16/expand/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_16/depthwise/depthwise_weights:0, mobilenet_100/MobilenetV2/expanded_conv_16/depthwise/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_16/depthwise/BatchNorm/beta:0, mobilenet_100/MobilenetV2/expanded_conv_16/project/weights:0, mobilenet_100/MobilenetV2/expanded_conv_16/project/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/expanded_conv_16/project/BatchNorm/beta:0, mobilenet_100/MobilenetV2/Conv_1/weights:0, mobilenet_100/MobilenetV2/Conv_1/BatchNorm/gamma:0, mobilenet_100/MobilenetV2/Conv_1/BatchNorm/beta:0, decode/fc_out/kernel:0, decode/fc_out/bias:0]
+
+Train op:
+ [33m> Build train operation[0m
+    with default `optimizer` = ADAM
+    Using optimizer ADAM with learning rate 2.00e-04
+    with default `beta1` = 0.9
+    416 update operations found in global scope
+
+total graph size: 9.30 MB
+    with default `max_to_keep` = 1
+    with default `save_checkpoint_steps` = 2000
+    [31mWarning:[0m No summaries found in collection "outputs"
+    [31mWarning:[0m No summaries found in collection "config"
+    saving checkpoint in [36m./run_logs/sdd/mobilenet_100_standard_256/02-19_16-44[0m
+
+Start training:
+  > [00:00] Step 1 (epoch 1): loss = 31.17551
+  > [00:02] Step 251 (epoch 1): loss = 0.63247
+evaluated 635 val images at step 500: map@0.50 = 0.00232 - map@0.75 = 0.00003
+  > [00:04] Step 501 (epoch 2): loss = 0.44216
+  > [00:06] Step 751 (epoch 3): loss = 0.40268
+evaluated 635 val images at step 1000: map@0.50 = 0.00216 - map@0.75 = 0.00005
+  > [00:08] Step 1001 (epoch 4): loss = 0.37834
+  > [00:10] Step 1251 (epoch 5): loss = 0.37687
+evaluated 635 val images at step 1500: map@0.50 = 0.00282 - map@0.75 = 0.00022
+  > [00:12] Step 1501 (epoch 6): loss = 0.35431
+  > [00:14] Step 1751 (epoch 7): loss = 0.34948
+evaluated 635 val images at step 2000: map@0.50 = 0.00569 - map@0.75 = 0.00016
+  > [00:16] Step 2001 (epoch 7): loss = 0.36903
+  > [00:18] Step 2251 (epoch 8): loss = 0.36013
+evaluated 635 val images at step 2500: map@0.50 = 0.00929 - map@0.75 = 0.00047
+  > [00:20] Step 2501 (epoch 9): loss = 0.36451
+  > [00:22] Step 2751 (epoch 10): loss = 0.34130
+evaluated 635 val images at step 3000: map@0.50 = 0.01005 - map@0.75 = 0.00028
+  > [00:24] Step 3001 (epoch 11): loss = 0.32857
+  > [00:25] Step 3251 (epoch 12): loss = 0.33513
+evaluated 635 val images at step 3500: map@0.50 = 0.01208 - map@0.75 = 0.00188
+  > [00:27] Step 3501 (epoch 13): loss = 0.33181
+  > [00:29] Step 3751 (epoch 14): loss = 0.33586
+evaluated 635 val images at step 4000: map@0.50 = 0.01218 - map@0.75 = 0.00030
+  > [00:31] Step 4001 (epoch 14): loss = 0.33227
+  > [00:33] Step 4251 (epoch 15): loss = 0.32761
+evaluated 635 val images at step 4500: map@0.50 = 0.01024 - map@0.75 = 0.00098
+  > [00:35] Step 4501 (epoch 16): loss = 0.34741
+  > [00:37] Step 4751 (epoch 17): loss = 0.34607
+evaluated 635 val images at step 5000: map@0.50 = 0.01485 - map@0.75 = 0.00073
+  > [00:39] Step 5001 (epoch 18): loss = 0.34844
+  > [00:41] Step 5251 (epoch 19): loss = 0.34496
+evaluated 635 val images at step 5500: map@0.50 = 0.01382 - map@0.75 = 0.00066
+  > [00:43] Step 5501 (epoch 20): loss = 0.31386
+  > [00:45] Step 5751 (epoch 21): loss = 0.33112
+evaluated 635 val images at step 6000: map@0.50 = 0.01937 - map@0.75 = 0.00127
+  > [00:47] Step 6001 (epoch 21): loss = 0.31591
+  > [00:49] Step 6251 (epoch 22): loss = 0.32607
+evaluated 635 val images at step 6500: map@0.50 = 0.02034 - map@0.75 = 0.00110
+  > [00:51] Step 6501 (epoch 23): loss = 0.31944
+  > [00:52] Step 6751 (epoch 24): loss = 0.33677
+evaluated 635 val images at step 7000: map@0.50 = 0.01937 - map@0.75 = 0.00193
+  > [00:54] Step 7001 (epoch 25): loss = 0.30723
+  > [00:56] Step 7251 (epoch 26): loss = 0.32369
+evaluated 635 val images at step 7500: map@0.50 = 0.01611 - map@0.75 = 0.00077
+  > [00:58] Step 7501 (epoch 27): loss = 0.34210
+  > [01:00] Step 7751 (epoch 28): loss = 0.33624
+evaluated 635 val images at step 8000: map@0.50 = 0.03250 - map@0.75 = 0.00264
+  > [01:02] Step 8001 (epoch 28): loss = 0.36109
+  > [01:04] Step 8251 (epoch 29): loss = 0.34451
+evaluated 635 val images at step 8500: map@0.50 = 0.03393 - map@0.75 = 0.00321
+  > [01:06] Step 8501 (epoch 30): loss = 0.36958
+  > [01:08] Step 8751 (epoch 31): loss = 0.30959
+evaluated 635 val images at step 9000: map@0.50 = 0.04037 - map@0.75 = 0.00385
+  > [01:10] Step 9001 (epoch 32): loss = 0.34788
+  > [01:12] Step 9251 (epoch 33): loss = 0.33362
+evaluated 635 val images at step 9500: map@0.50 = 0.03900 - map@0.75 = 0.00402
+  > [01:14] Step 9501 (epoch 34): loss = 0.35582
+  > [01:16] Step 9751 (epoch 35): loss = 0.33652
+evaluated 635 val images at step 10000: map@0.50 = 0.04609 - map@0.75 = 0.00441
+  > [01:18] Step 10001 (epoch 35): loss = 0.32594
+  > [01:19] Step 10251 (epoch 36): loss = 0.34605
+evaluated 635 val images at step 10500: map@0.50 = 0.05444 - map@0.75 = 0.00493
+  > [01:21] Step 10501 (epoch 37): loss = 0.30801
+  > [01:23] Step 10751 (epoch 38): loss = 0.33751
+evaluated 635 val images at step 11000: map@0.50 = 0.05399 - map@0.75 = 0.00381
+  > [01:25] Step 11001 (epoch 39): loss = 0.34528
+  > [01:27] Step 11251 (epoch 40): loss = 0.30240
+evaluated 635 val images at step 11500: map@0.50 = 0.04943 - map@0.75 = 0.00454
+  > [01:29] Step 11501 (epoch 41): loss = 0.31784
+  > [01:31] Step 11751 (epoch 42): loss = 0.31282
+evaluated 635 val images at step 12000: map@0.50 = 0.05975 - map@0.75 = 0.00865
+  > [01:33] Step 12001 (epoch 42): loss = 0.33092
+  > [01:35] Step 12251 (epoch 43): loss = 0.32427
+evaluated 635 val images at step 12500: map@0.50 = 0.06067 - map@0.75 = 0.00402
+  > [01:37] Step 12501 (epoch 44): loss = 0.29567
+  > [01:39] Step 12751 (epoch 45): loss = 0.30116
+evaluated 635 val images at step 13000: map@0.50 = 0.05924 - map@0.75 = 0.00523
+  > [01:41] Step 13001 (epoch 46): loss = 0.30430
+  > [01:42] Step 13251 (epoch 47): loss = 0.31257
+evaluated 635 val images at step 13500: map@0.50 = 0.07504 - map@0.75 = 0.00701
+  > [01:44] Step 13501 (epoch 48): loss = 0.31561
+  > [01:46] Step 13751 (epoch 49): loss = 0.28976
+evaluated 635 val images at step 14000: map@0.50 = 0.07667 - map@0.75 = 0.00715
+  > [01:48] Step 14001 (epoch 49): loss = 0.32657
+  > [01:50] Step 14251 (epoch 50): loss = 0.31046
+evaluated 635 val images at step 14500: map@0.50 = 0.06250 - map@0.75 = 0.00700
+  > [01:52] Step 14501 (epoch 51): loss = 0.31883
+  > [01:54] Step 14751 (epoch 52): loss = 0.30822
+evaluated 635 val images at step 15000: map@0.50 = 0.07083 - map@0.75 = 0.00692
+  > [01:56] Step 15001 (epoch 53): loss = 0.32246
+  > [01:58] Step 15251 (epoch 54): loss = 0.34564
+evaluated 635 val images at step 15500: map@0.50 = 0.07153 - map@0.75 = 0.00594
+  > [02:00] Step 15501 (epoch 55): loss = 0.28950
+  > [02:02] Step 15751 (epoch 56): loss = 0.30738
+evaluated 635 val images at step 16000: map@0.50 = 0.08214 - map@0.75 = 0.00803
+  > [02:04] Step 16001 (epoch 56): loss = 0.32314
+  > [02:05] Step 16251 (epoch 57): loss = 0.30241
+evaluated 635 val images at step 16500: map@0.50 = 0.07283 - map@0.75 = 0.00664
+  > [02:07] Step 16501 (epoch 58): loss = 0.29175
+  > [02:09] Step 16751 (epoch 59): loss = 0.33564
+evaluated 635 val images at step 17000: map@0.50 = 0.05807 - map@0.75 = 0.00583
+  > [02:11] Step 17001 (epoch 60): loss = 0.28845
+  > [02:13] Step 17251 (epoch 61): loss = 0.28883
+evaluated 635 val images at step 17500: map@0.50 = 0.07994 - map@0.75 = 0.00788
+  > [02:15] Step 17501 (epoch 62): loss = 0.30738
+  > [02:17] Step 17751 (epoch 62): loss = 0.29798
+evaluated 635 val images at step 18000: map@0.50 = 0.05234 - map@0.75 = 0.00373
+  > [02:19] Step 18001 (epoch 63): loss = 0.32572
+  > [02:21] Step 18251 (epoch 64): loss = 0.29081
+evaluated 635 val images at step 18500: map@0.50 = 0.09068 - map@0.75 = 0.00774
+  > [02:23] Step 18501 (epoch 65): loss = 0.27474
+  > [02:25] Step 18751 (epoch 66): loss = 0.31795
+evaluated 635 val images at step 19000: map@0.50 = 0.08731 - map@0.75 = 0.00605
+  > [02:27] Step 19001 (epoch 67): loss = 0.28226
+  > [02:28] Step 19251 (epoch 68): loss = 0.27603
+evaluated 635 val images at step 19500: map@0.50 = 0.08616 - map@0.75 = 0.01000
+  > [02:30] Step 19501 (epoch 69): loss = 0.29415
+  > [02:32] Step 19751 (epoch 69): loss = 0.29662
+evaluated 635 val images at step 20000: map@0.50 = 0.07744 - map@0.75 = 0.00791
+  > [02:34] Step 20001 (epoch 70): loss = 0.28625
+  > [02:36] Step 20251 (epoch 71): loss = 0.27519
+evaluated 635 val images at step 20500: map@0.50 = 0.07922 - map@0.75 = 0.00810
+  > [02:38] Step 20501 (epoch 72): loss = 0.30448
+  > [02:40] Step 20751 (epoch 73): loss = 0.30649
+evaluated 635 val images at step 21000: map@0.50 = 0.07659 - map@0.75 = 0.00440
+  > [02:42] Step 21001 (epoch 74): loss = 0.30035
+  > [02:44] Step 21251 (epoch 75): loss = 0.28066
+evaluated 635 val images at step 21500: map@0.50 = 0.08422 - map@0.75 = 0.00871
+  > [02:46] Step 21501 (epoch 76): loss = 0.28952
+  > [02:48] Step 21751 (epoch 76): loss = 0.30728
+evaluated 635 val images at step 22000: map@0.50 = 0.09238 - map@0.75 = 0.00673
+  > [02:50] Step 22001 (epoch 77): loss = 0.32692
+  > [02:52] Step 22251 (epoch 78): loss = 0.30856
+evaluated 635 val images at step 22500: map@0.50 = 0.09959 - map@0.75 = 0.01284
+  > [02:54] Step 22501 (epoch 79): loss = 0.28636
+  > [02:55] Step 22751 (epoch 80): loss = 0.29724
+evaluated 635 val images at step 23000: map@0.50 = 0.09885 - map@0.75 = 0.01134
+  > [02:57] Step 23001 (epoch 81): loss = 0.27039
+  > [02:59] Step 23251 (epoch 82): loss = 0.28958
+evaluated 635 val images at step 23500: map@0.50 = 0.09668 - map@0.75 = 0.01139
+  > [03:01] Step 23501 (epoch 83): loss = 0.25681
+  > [03:03] Step 23751 (epoch 83): loss = 0.28583
+evaluated 635 val images at step 24000: map@0.50 = 0.09778 - map@0.75 = 0.01095
+  > [03:05] Step 24001 (epoch 84): loss = 0.25196
+  > [03:07] Step 24251 (epoch 85): loss = 0.29563
+evaluated 635 val images at step 24500: map@0.50 = 0.08647 - map@0.75 = 0.00736
+  > [03:09] Step 24501 (epoch 86): loss = 0.28610
+  > [03:11] Step 24751 (epoch 87): loss = 0.28030
+evaluated 635 val images at step 25000: map@0.50 = 0.10896 - map@0.75 = 0.01232
+  > [03:13] Step 25001 (epoch 88): loss = 0.27496
+  > [03:14] Step 25251 (epoch 89): loss = 0.26876
+evaluated 635 val images at step 25500: map@0.50 = 0.07918 - map@0.75 = 0.00527
+  > [03:17] Step 25501 (epoch 90): loss = 0.28035
+  > [03:18] Step 25751 (epoch 90): loss = 0.28322
+evaluated 635 val images at step 26000: map@0.50 = 0.09942 - map@0.75 = 0.01081
+  > [03:20] Step 26001 (epoch 91): loss = 0.28597
+  > [03:22] Step 26251 (epoch 92): loss = 0.28640
+evaluated 635 val images at step 26500: map@0.50 = 0.11047 - map@0.75 = 0.01155
+  > [03:24] Step 26501 (epoch 93): loss = 0.26454
+  > [03:26] Step 26751 (epoch 94): loss = 0.29079
+evaluated 635 val images at step 27000: map@0.50 = 0.08749 - map@0.75 = 0.00760
+  > [03:28] Step 27001 (epoch 95): loss = 0.28692
+  > [03:30] Step 27251 (epoch 96): loss = 0.28165
+evaluated 635 val images at step 27500: map@0.50 = 0.09770 - map@0.75 = 0.01198
+  > [03:32] Step 27501 (epoch 97): loss = 0.29887
+  > [03:34] Step 27751 (epoch 97): loss = 0.30701
+evaluated 635 val images at step 28000: map@0.50 = 0.09152 - map@0.75 = 0.00599
+  > [03:36] Step 28001 (epoch 98): loss = 0.29128
+  > [03:38] Step 28251 (epoch 99): loss = 0.28386
+evaluated 635 val images at step 28500: map@0.50 = 0.10320 - map@0.75 = 0.00809
+  > [03:40] Step 28501 (epoch 100): loss = 0.28841
+evaluated 635 val images at step 28634: map@0.50 = 0.10870 - map@0.75 = 0.00598
+evaluated 3199 test images at step 28634: map@0.50 = 0.10016 - map@0.75 = 0.00857

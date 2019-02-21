@@ -1,0 +1,140 @@
+Tensorflow version 1.12.0
+Standard detection - sdd, Input size 1024
+
+9163 train samples (382 iters per epoch)
+651 val samples (28 iters per epoch)
+3281 test samples (137 iters per epoch)
+
+Config:
+   [96mbatch_size:[0m 12
+   [96mdata_classes:[0m ['Biker', 'Bus', 'Car', 'Cart', 'Pedestrian', 'Skater']
+   [96mexp_name:[0m sdd
+   [96mfeature_keys:[0m ['im_id', 'num_boxes', 'bounding_boxes', 'classes']
+   [96mgpu_mem_frac:[0m 1.0
+   [96mimage_folder:[0m /nfs/scistore12/chlgrp/aroyer/Datasets/sdd_images/
+   [96mimage_format:[0m sdd
+   [96mlearning_rate:[0m 0.001
+   [96mnetwork:[0m tiny_yolo_v2
+   [96mnum_classes:[0m 6
+   [96mnum_epochs:[0m 100
+   [96mnum_gpus:[0m 2
+   [96msave_evaluation_steps:[0m 500
+   [96msave_summaries_steps:[0m None
+   [96msetting:[0m sdd
+   [96mtest_max_num_bbs:[0m 100
+   [96mtest_num_crops:[0m 6
+   [96mtest_num_iters_per_epoch:[0m 137
+   [96mtest_num_samples:[0m 3281
+   [96mtest_num_samples_per_iter:[0m 24
+   [96mtest_patch_confidence_threshold:[0m 0.1
+   [96mtest_patch_nms_threshold:[0m 0.25
+   [96mtest_patch_strong_confidence_threshold:[0m 0.6
+   [96mtest_tfrecords:[0m Data/sdd_test
+   [96mtrain_max_num_bbs:[0m 100
+   [96mtrain_num_crops:[0m 10
+   [96mtrain_num_iters_per_epoch:[0m 382
+   [96mtrain_num_samples:[0m 9163
+   [96mtrain_num_samples_per_iter:[0m 24
+   [96mtrain_tfrecords:[0m Data/sdd_train
+   [96mval_max_num_bbs:[0m 100
+   [96mval_num_iters_per_epoch:[0m 28
+   [96mval_num_samples:[0m 651
+   [96mval_num_samples_per_iter:[0m 24
+   [96mval_tfrecords:[0m Data/sdd_val
+   using grid size [32 32]
+    with default `base_log_dir` = ./run_logs
+    Log directory /nfs/scistore12/chlgrp/aroyer/Jupyter/ODGI/run_logs/sdd/tiny_yolo_v2_standard_1024/02-21_15-09
+
+Train Graph:
+    with default `num_threads` = 4
+    with default `prefetch_capacity` = 1
+    with default `with_groups` = False
+    with default `with_classification` = False
+    with default `shuffle_buffer` = 10000
+    with default `data_augmentation_threshold` = 0.5
+ [31m> load_inputs[0m
+    [32mbounding_boxes[0m: shape=[12, 100, 4], dtype=<dtype: 'float32'>
+    [32mis_flipped[0m: shape=[12], dtype=<dtype: 'float32'>
+    [32mobj_i_mask_bbs[0m: shape=[12, 32, 32, 1, 100], dtype=<dtype: 'float32'>
+    [32mimage[0m: shape=[12, 1024, 1024, 3], dtype=<dtype: 'float32'>
+    [32mnum_boxes[0m: shape=[12], dtype=<dtype: 'int32'>
+    [32mim_id[0m: shape=[12], dtype=<dtype: 'int32'>
+ [31m> tiny_yolo_v2[0m
+    with default `num_boxes` = 1
+    with default `with_classification` = False
+    Output layer shape *(12, 32, 32, 1, 5)*
+    [32mconfidence_scores[0m: shape=[12, 32, 32, 1, 1], dtype=<dtype: 'float32'>
+    [32mdetection_scores[0m: shape=[12, 32, 32, 1, 1], dtype=<dtype: 'float32'>
+    [32mshifted_centers[0m: shape=[12, 32, 32, 1, 2], dtype=<dtype: 'float32'>
+    [32mbounding_boxes[0m: shape=[12, 32, 32, 1, 4], dtype=<dtype: 'float32'>
+    [32mlog_scales[0m: shape=[12, 32, 32, 1, 2], dtype=<dtype: 'float32'>
+ [31m> Collecting losses[0m
+    with default `centers_localization_loss_weight` = 1.0
+    with default `scales_localization_loss_weight` = 1.0
+    with default `confidence_loss_weight` = 5.0
+    with default `noobj_confidence_loss_weight` = 1.0
+ > [33min global scope:[0m
+     0 regularization losses found
+     *net_confidence_noobj_loss*: 2 tensors
+     *net_classification_loss*: 2 tensors
+     *net_confidence_obj_loss*: 2 tensors
+     *net_scales_localization_loss*: 2 tensors
+     *net_centers_localization_loss*: 2 tensors
+     Trainable variables: [tiny_yolo_v2/conv1/weights:0, tiny_yolo_v2/conv1/BatchNorm/beta:0, tiny_yolo_v2/conv2/weights:0, tiny_yolo_v2/conv2/BatchNorm/beta:0, tiny_yolo_v2/conv3/weights:0, tiny_yolo_v2/conv3/BatchNorm/beta:0, tiny_yolo_v2/conv4/weights:0, tiny_yolo_v2/conv4/BatchNorm/beta:0, tiny_yolo_v2/conv5/weights:0, tiny_yolo_v2/conv5/BatchNorm/beta:0, tiny_yolo_v2/conv6/weights:0, tiny_yolo_v2/conv6/BatchNorm/beta:0, tiny_yolo_v2/conv7/weights:0, tiny_yolo_v2/conv7/BatchNorm/beta:0, tiny_yolo_v2/conv_out_2/weights:0, tiny_yolo_v2/conv_out_2/BatchNorm/beta:0, decode/fc_out/kernel:0, decode/fc_out/bias:0]
+
+Train op:
+ [33m> Build train operation[0m
+    with default `optimizer` = ADAM
+    Using optimizer ADAM with learning rate 1.00e-03
+    with default `beta1` = 0.9
+    32 update operations found in global scope
+
+total graph size: 0.24 MB
+    with default `max_to_keep` = 1
+    with default `save_checkpoint_steps` = 2000
+    [31mWarning:[0m No summaries found in collection "outputs"
+    [31mWarning:[0m No summaries found in collection "config"
+    saving checkpoint in [36m./run_logs/sdd/tiny_yolo_v2_standard_1024/02-21_15-09[0m
+
+Start training:
+  > [00:01] Step 1 (epoch 1): loss = 4.35404
+  > [00:05] Step 251 (epoch 1): loss = 0.53703
+evaluated 635 val images at step 500: map@0.50 = 0.09081 - map@0.75 = 0.00527
+  > [00:09] Step 501 (epoch 2): loss = 0.54711
+  > [00:13] Step 751 (epoch 2): loss = 0.44331
+evaluated 635 val images at step 1000: map@0.50 = 0.16049 - map@0.75 = 0.00943
+  > [00:17] Step 1001 (epoch 3): loss = 0.49448
+  > [00:20] Step 1251 (epoch 4): loss = 0.41490
+evaluated 635 val images at step 1500: map@0.50 = 0.18778 - map@0.75 = 0.01267
+  > [00:25] Step 1501 (epoch 4): loss = 0.41829
+  > [00:28] Step 1751 (epoch 5): loss = 0.41851
+evaluated 635 val images at step 2000: map@0.50 = 0.24058 - map@0.75 = 0.02013
+  > [00:33] Step 2001 (epoch 6): loss = 0.37957
+  > [00:36] Step 2251 (epoch 6): loss = 0.38249
+evaluated 635 val images at step 2500: map@0.50 = 0.25848 - map@0.75 = 0.02919
+  > [00:40] Step 2501 (epoch 7): loss = 0.37676
+  > [00:44] Step 2751 (epoch 8): loss = 0.37749
+evaluated 635 val images at step 3000: map@0.50 = 0.25640 - map@0.75 = 0.02364
+  > [00:48] Step 3001 (epoch 8): loss = 0.41869
+  > [00:51] Step 3251 (epoch 9): loss = 0.35421
+evaluated 635 val images at step 3500: map@0.50 = 0.26367 - map@0.75 = 0.03022
+  > [00:56] Step 3501 (epoch 10): loss = 0.49623
+  > [00:59] Step 3751 (epoch 10): loss = 0.36581
+evaluated 635 val images at step 4000: map@0.50 = 0.30594 - map@0.75 = 0.03929
+  > [01:04] Step 4001 (epoch 11): loss = 0.37658
+  > [01:07] Step 4251 (epoch 12): loss = 0.37012
+evaluated 635 val images at step 4500: map@0.50 = 0.30389 - map@0.75 = 0.03030
+  > [01:11] Step 4501 (epoch 12): loss = 0.35839
+  > [01:15] Step 4751 (epoch 13): loss = 0.36346
+evaluated 635 val images at step 5000: map@0.50 = 0.31463 - map@0.75 = 0.03539
+  > [01:19] Step 5001 (epoch 14): loss = 0.34458
+  > [01:22] Step 5251 (epoch 14): loss = 0.40935
+evaluated 635 val images at step 5500: map@0.50 = 0.30334 - map@0.75 = 0.03474
+  > [01:27] Step 5501 (epoch 15): loss = 0.34756
+  > [01:30] Step 5751 (epoch 16): loss = 0.31237
+evaluated 635 val images at step 6000: map@0.50 = 0.30258 - map@0.75 = 0.02565
+  > [01:35] Step 6001 (epoch 16): loss = 0.35923
+  > [01:38] Step 6251 (epoch 17): loss = 0.35836
+evaluated 635 val images at step 6500: map@0.50 = 0.33768 - map@0.75 = 0.04328
+  > [01:43] Step 6501 (epoch 18): loss = 0.35058
+  > [01:46] Step 6751 (epoch 18): loss = 0.31740

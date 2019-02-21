@@ -1,0 +1,200 @@
+Tensorflow version 1.12.0
+ODGI tiny_yolo_v2 - tiny_yolo_v2, Input size 512 - 256
+
+9163 train samples (382 iters per epoch)
+651 val samples (28 iters per epoch)
+3281 test samples (137 iters per epoch)
+
+Config:
+   [96mbatch_size:[0m 12
+   [96mdata_classes:[0m ['Biker', 'Bus', 'Car', 'Cart', 'Pedestrian', 'Skater']
+   [96mexp_name:[0m sdd
+   [96mfeature_keys:[0m ['im_id', 'num_boxes', 'bounding_boxes', 'classes']
+   [96mgpu_mem_frac:[0m 1.0
+   [96mimage_folder:[0m /nfs/scistore12/chlgrp/aroyer/Datasets/sdd_images/
+   [96mimage_format:[0m sdd
+   [96mlearning_rate:[0m 0.001
+   [96mnetwork:[0m tiny_yolo_v2
+   [96mnum_classes:[0m 6
+   [96mnum_epochs:[0m 100
+   [96mnum_gpus:[0m 2
+   [96msave_evaluation_steps:[0m 500
+   [96msave_summaries_steps:[0m None
+   [96msetting:[0m sdd
+   [96mtest_max_num_bbs:[0m 100
+   [96mtest_num_crops:[0m 6
+   [96mtest_num_iters_per_epoch:[0m 137
+   [96mtest_num_samples:[0m 3281
+   [96mtest_num_samples_per_iter:[0m 24
+   [96mtest_patch_confidence_threshold:[0m 0.1
+   [96mtest_patch_nms_threshold:[0m 0.25
+   [96mtest_patch_strong_confidence_threshold:[0m 0.6
+   [96mtest_tfrecords:[0m Data/sdd_test
+   [96mtrain_max_num_bbs:[0m 100
+   [96mtrain_num_crops:[0m 10
+   [96mtrain_num_iters_per_epoch:[0m 382
+   [96mtrain_num_samples:[0m 9163
+   [96mtrain_num_samples_per_iter:[0m 24
+   [96mtrain_tfrecords:[0m Data/sdd_train
+   [96mval_max_num_bbs:[0m 100
+   [96mval_num_iters_per_epoch:[0m 28
+   [96mval_num_samples:[0m 651
+   [96mval_num_samples_per_iter:[0m 24
+   [96mval_tfrecords:[0m Data/sdd_val
+    with default `base_log_dir` = ./run_logs
+    Log directory /nfs/scistore12/chlgrp/aroyer/Jupyter/ODGI/run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+   using grid size [16 16]
+   using grid size [8 8]
+
+Train Graph:
+    with default `num_threads` = 4
+    with default `prefetch_capacity` = 1
+    with default `with_classification` = False
+    with default `shuffle_buffer` = 10000
+    with default `data_augmentation_threshold` = 0.5
+ [31m> load_inputs[0m
+    [32mim_id[0m: shape=[12], dtype=<dtype: 'int32'>
+    [32mnum_boxes[0m: shape=[12], dtype=<dtype: 'int32'>
+    [32mobj_i_mask_bbs[0m: shape=[12, 16, 16, 1, 100], dtype=<dtype: 'float32'>
+    [32mgroup_flags[0m: shape=[12, 16, 16, 1, 1], dtype=<dtype: 'float32'>
+    [32mnum_group_boxes[0m: shape=[12], dtype=<dtype: 'int32'>
+    [32mgroup_bounding_boxes_per_cell[0m: shape=[12, 16, 16, 1, 4], dtype=<dtype: 'float32'>
+    [32mis_flipped[0m: shape=[12], dtype=<dtype: 'float32'>
+    [32mbounding_boxes[0m: shape=[12, 100, 4], dtype=<dtype: 'float32'>
+    [32mimage[0m: shape=[12, 512, 512, 3], dtype=<dtype: 'float32'>
+ [33m> stage1/tiny_yolo_v2[0m
+    with default `with_classification` = False
+    Output layer shape *(12, 16, 16, 1, 8)*
+    [32mgroup_classification_logits[0m: shape=[12, 16, 16, 1, 1], dtype=<dtype: 'float32'>
+    [32mshifted_centers[0m: shape=[12, 16, 16, 1, 2], dtype=<dtype: 'float32'>
+    [32moffsets[0m: shape=[12, 16, 16, 1, 2], dtype=<dtype: 'float32'>
+    [32mdetection_scores[0m: shape=[12, 16, 16, 1, 1], dtype=<dtype: 'float32'>
+    [32mlog_scales[0m: shape=[12, 16, 16, 1, 2], dtype=<dtype: 'float32'>
+    [32mbounding_boxes[0m: shape=[12, 16, 16, 1, 4], dtype=<dtype: 'float32'>
+    [32mconfidence_scores[0m: shape=[12, 16, 16, 1, 1], dtype=<dtype: 'float32'>
+ [33m> Collecting losses[0m
+    with default `centers_localization_loss_weight` = 1.0
+    with default `scales_localization_loss_weight` = 1.0
+    with default `confidence_loss_weight` = 5.0
+    with default `noobj_confidence_loss_weight` = 1.0
+    with default `group_classification_loss_weight` = 1.0
+    with default `offsets_loss_weight` = 1.0
+    with default `offsets_margin` = 0.025
+ [33m> Stage transition[0m
+    with default `train_patch_confidence_threshold` = 0.0
+    with default `train_patch_nms_threshold` = 1.0
+    extracting 10 crops
+    with default `patch_intersection_ratio_threshold` = 0.33
+    with default `shuffle_buffer` = 10000
+    with default `num_threads` = 4
+    *im_id*: shape=[120], dtype=<dtype: 'int32'>
+    *num_boxes*: shape=[120], dtype=<dtype: 'int32'>
+    *obj_i_mask_bbs*: shape=[120, 8, 8, 1, 100], dtype=<dtype: 'float32'>
+    *bounding_boxes*: shape=[120, 100, 4], dtype=<dtype: 'float32'>
+    *image*: shape=[120, 256, 256, 3], dtype=<dtype: 'float32'>
+ [33m> stage2/tiny_yolo_v2[0m
+    with default `num_boxes` = 1
+    with default `with_classification` = False
+    Output layer shape *(120, 8, 8, 1, 5)*
+    [32mdetection_scores[0m: shape=[120, 8, 8, 1, 1], dtype=<dtype: 'float32'>
+    [32mshifted_centers[0m: shape=[120, 8, 8, 1, 2], dtype=<dtype: 'float32'>
+    [32mlog_scales[0m: shape=[120, 8, 8, 1, 2], dtype=<dtype: 'float32'>
+    [32mbounding_boxes[0m: shape=[120, 8, 8, 1, 4], dtype=<dtype: 'float32'>
+    [32mconfidence_scores[0m: shape=[120, 8, 8, 1, 1], dtype=<dtype: 'float32'>
+ [33m> Collecting losses[0m
+    with default `centers_localization_loss_weight` = 1.0
+    with default `scales_localization_loss_weight` = 1.0
+    with default `confidence_loss_weight` = 5.0
+    with default `noobj_confidence_loss_weight` = 1.0
+ [33m> Stage transition[0m
+
+Losses:
+ > [33min stage1 scope:[0m
+     0 regularization losses found
+     *stage1_classification_loss*: 2 tensors
+     *stage1_scales_localization_loss*: 2 tensors
+     *stage1_offsets_loss*: 2 tensors
+     *stage1_confidence_noobj_loss*: 2 tensors
+     *stage1_centers_localization_loss*: 2 tensors
+     *stage1_confidence_obj_loss*: 2 tensors
+     *stage1_group_classification_loss*: 2 tensors
+     Trainable variables: [stage1/tiny_yolo_v2/conv1/weights:0, stage1/tiny_yolo_v2/conv1/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv2/weights:0, stage1/tiny_yolo_v2/conv2/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv3/weights:0, stage1/tiny_yolo_v2/conv3/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv4/weights:0, stage1/tiny_yolo_v2/conv4/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv5/weights:0, stage1/tiny_yolo_v2/conv5/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv6/weights:0, stage1/tiny_yolo_v2/conv6/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv7/weights:0, stage1/tiny_yolo_v2/conv7/BatchNorm/beta:0, stage1/tiny_yolo_v2/conv_out_2/weights:0, stage1/tiny_yolo_v2/conv_out_2/BatchNorm/beta:0, stage1/decode/fc_out/kernel:0, stage1/decode/fc_out/bias:0]
+ > [33min stage2 scope:[0m
+     0 regularization losses found
+     *stage2_confidence_noobj_loss*: 2 tensors
+     *stage2_centers_localization_loss*: 2 tensors
+     *stage2_scales_localization_loss*: 2 tensors
+     *stage2_confidence_obj_loss*: 2 tensors
+     *stage2_classification_loss*: 2 tensors
+     Trainable variables: [stage2/tiny_yolo_v2/conv1/weights:0, stage2/tiny_yolo_v2/conv1/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv2/weights:0, stage2/tiny_yolo_v2/conv2/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv3/weights:0, stage2/tiny_yolo_v2/conv3/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv4/weights:0, stage2/tiny_yolo_v2/conv4/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv5/weights:0, stage2/tiny_yolo_v2/conv5/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv6/weights:0, stage2/tiny_yolo_v2/conv6/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv7/weights:0, stage2/tiny_yolo_v2/conv7/BatchNorm/beta:0, stage2/tiny_yolo_v2/conv_out_2/weights:0, stage2/tiny_yolo_v2/conv_out_2/BatchNorm/beta:0, stage2/decode/fc_out/kernel:0, stage2/decode/fc_out/bias:0]
+ [33m> Build train operation[0m
+    with default `optimizer` = ADAM
+    Using optimizer ADAM with learning rate 1.00e-03
+    with default `beta1` = 0.9
+    32 update operations found in stage1 scope
+    32 update operations found in stage2 scope
+
+total graph size: 0.58 MB
+    with default `max_to_keep` = 1
+    with default `save_checkpoint_steps` = 2000
+    [31mWarning:[0m No summaries found in collection "outputs"
+    [31mWarning:[0m No summaries found in collection "config"
+    saving checkpoint in [36m./run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10[0m
+
+Start training:
+[33m   Epoch 0: start training stage 2[0m
+  > [00:01] Step 1 (epoch 1): loss 1 = 5.30598, loss 2 = 5.36098
+  > [00:04] Step 251 (epoch 1): loss 1 = 0.89171, loss 2 = 0.85645
+evaluated 635 val images at step 500: map@0.50 = 0.07568 - map@0.75 = 0.00522
+  > [00:08] Step 501 (epoch 2): loss 1 = 0.82495, loss 2 = 0.84179
+  > [00:10] Step 751 (epoch 2): loss 1 = 0.81399, loss 2 = 0.96241
+evaluated 635 val images at step 1000: map@0.50 = 0.15560 - map@0.75 = 0.00939
+  > [00:14] Step 1001 (epoch 3): loss 1 = 0.76355, loss 2 = 0.74600
+  > [00:16] Step 1251 (epoch 4): loss 1 = 0.75261, loss 2 = 0.84990
+evaluated 635 val images at step 1500: map@0.50 = 0.18488 - map@0.75 = 0.01457
+  > [00:20] Step 1501 (epoch 4): loss 1 = 0.63071, loss 2 = 0.92713
+  > [00:22] Step 1751 (epoch 5): loss 1 = 0.75931, loss 2 = 0.81723
+evaluated 635 val images at step 2000: map@0.50 = 0.22679 - map@0.75 = 0.01824
+  > [00:26] Step 2001 (epoch 6): loss 1 = 0.69140, loss 2 = 0.95844
+  > [00:28] Step 2251 (epoch 6): loss 1 = 0.69911, loss 2 = 0.71525
+evaluated 635 val images at step 2500: map@0.50 = 0.26063 - map@0.75 = 0.02805
+  > [00:32] Step 2501 (epoch 7): loss 1 = 0.87571, loss 2 = 0.91757
+  > [00:34] Step 2751 (epoch 8): loss 1 = 0.55697, loss 2 = 0.75123
+evaluated 635 val images at step 3000: map@0.50 = 0.26329 - map@0.75 = 0.02901
+  > [00:38] Step 3001 (epoch 8): loss 1 = 0.62336, loss 2 = 0.76326
+  > [00:40] Step 3251 (epoch 9): loss 1 = 0.75707, loss 2 = 0.70152
+evaluated 635 val images at step 3500: map@0.50 = 0.26825 - map@0.75 = 0.02804
+  > [00:44] Step 3501 (epoch 10): loss 1 = 0.64365, loss 2 = 0.75950
+  > [00:46] Step 3751 (epoch 10): loss 1 = 0.65525, loss 2 = 0.77929
+evaluated 635 val images at step 4000: map@0.50 = 0.24917 - map@0.75 = 0.01682
+  > [00:50] Step 4001 (epoch 11): loss 1 = 0.59684, loss 2 = 0.91506
+  > [00:52] Step 4251 (epoch 12): loss 1 = 0.54487, loss 2 = 0.69450
+evaluated 635 val images at step 4500: map@0.50 = 0.31436 - map@0.75 = 0.03742
+  > [00:56] Step 4501 (epoch 12): loss 1 = 0.57063, loss 2 = 1.01120
+  > [00:58] Step 4751 (epoch 13): loss 1 = 0.56562, loss 2 = 0.63551
+evaluated 635 val images at step 5000: map@0.50 = 0.32391 - map@0.75 = 0.03721
+  > [01:02] Step 5001 (epoch 14): loss 1 = 0.68065, loss 2 = 0.70588
+  > [01:04] Step 5251 (epoch 14): loss 1 = 0.58159, loss 2 = 0.81809
+evaluated 635 val images at step 5500: map@0.50 = 0.32746 - map@0.75 = 0.03892
+  > [01:08] Step 5501 (epoch 15): loss 1 = 0.52722, loss 2 = 0.78086
+  > [01:10] Step 5751 (epoch 16): loss 1 = 0.40630, loss 2 = 0.80181
+evaluated 635 val images at step 6000: map@0.50 = 0.32116 - map@0.75 = 0.03331
+  > [01:14] Step 6001 (epoch 16): loss 1 = 0.48675, loss 2 = 0.70557
+  > [01:16] Step 6251 (epoch 17): loss 1 = 0.49083, loss 2 = 0.78169
+evaluated 635 val images at step 6500: map@0.50 = 0.33506 - map@0.75 = 0.04408
+  > [01:20] Step 6501 (epoch 18): loss 1 = 0.51848, loss 2 = 0.74086
+  > [01:22] Step 6751 (epoch 18): loss 1 = 0.46819, loss 2 = 0.68915
+evaluated 635 val images at step 7000: map@0.50 = 0.35305 - map@0.75 = 0.03279
+  > [01:26] Step 7001 (epoch 19): loss 1 = 0.44426, loss 2 = 0.72903
+  > [01:28] Step 7251 (epoch 19): loss 1 = 0.44392, loss 2 = 0.88763
+evaluated 635 val images at step 7500: map@0.50 = 0.34917 - map@0.75 = 0.04327
+  > [01:32] Step 7501 (epoch 20): loss 1 = 0.39107, loss 2 = 0.67615
+  > [01:34] Step 7751 (epoch 21): loss 1 = 0.38903, loss 2 = 0.92810
+evaluated 635 val images at step 8000: map@0.50 = 0.32043 - map@0.75 = 0.03434
+  > [01:38] Step 8001 (epoch 21): loss 1 = 0.43150, loss 2 = 0.69995
+  > [01:40] Step 8251 (epoch 22): loss 1 = 0.39686, loss 2 = 0.72618
+evaluated 635 val images at step 8500: map@0.50 = 0.36508 - map@0.75 = 0.04847
+  > [01:44] Step 8501 (epoch 23): loss 1 = 0.52740, loss 2 = 0.72120
+  > [01:46] Step 8751 (epoch 23): loss 1 = 0.37478, loss 2 = 0.68378
+evaluated 635 val images at step 9000: map@0.50 = 0.36339 - map@0.75 = 0.03772
+  > [01:50] Step 9001 (epoch 24): loss 1 = 0.34382, loss 2 = 0.71180
