@@ -104,6 +104,7 @@ def get_inputs(mode='train',
                image_format=None,
                image_size=-1,
                grid_offsets=None,
+               shuffle_test=False,
                verbose=0,
                **kwargs):
     """ Returns a dataset iterator on the initial input.
@@ -115,6 +116,7 @@ def get_inputs(mode='train',
         image_format: used to infer the dataset and loading format
         image_size: Image size
         grid_offsets: Precomputed grid offsets
+        shuffle_test: Whether to shuffle the dataset at inference. Default is False. Can be true for visualization purposes
         verbose: verbosity
         **kwargs: Additional configuration options, will be queried for:
             {train,test}_tf_records. if mode is train, resp. test.
@@ -150,7 +152,10 @@ def get_inputs(mode='train',
         drop_remainder = True
         make_initializable_iterator = False
     elif mode in ['val', 'test']:  
-        shuffle_buffer = 1
+        if not shuffle_test:
+            shuffle_buffer = 1
+        else:
+            shuffle_buffer = get_defaults(kwargs, ['shuffle_buffer'], verbose=verbose)[0] 
         num_epochs = 1
         data_augmentation_threshold = 0.
         drop_remainder = False
