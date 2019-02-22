@@ -22,9 +22,9 @@ sbatch <<EOT
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:$NUM_GPUS            # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
-#SBATCH --job-name=time_mobilenet_${DEVICE}
-#SBATCH -o ./run_logs/output_logs/time_mobilenet_${DEVICE}.%j.out     # logfile for stdout
-#SBATCH -e ./run_logs/error_logs/time_mobilenet_${DEVICE}.%j.err      # logfile for stderr
+#SBATCH --job-name=time_${MODEL}_${DEVICE}
+#SBATCH -o ./run_logs/output_logs/time_${MODEL}_${DEVICE}.%j.out     # logfile for stdout
+#SBATCH -e ./run_logs/error_logs/time_${MODEL}_${DEVICE}.%j.err      # logfile for stderr
 
 module load cuda/9.0
 module load cudnn
