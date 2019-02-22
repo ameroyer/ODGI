@@ -126,3 +126,320 @@ evaluated 635 val images at step 4000: map@0.50 = 0.32517 - map@0.75 = 0.03638
 evaluated 635 val images at step 4500: map@0.50 = 0.35129 - map@0.75 = 0.03661
   > [01:40] Step 4501 (epoch 8): loss = 0.31489
   > [01:44] Step 4751 (epoch 9): loss = 0.55517
+evaluated 635 val images at step 5000: map@0.50 = 0.32785 - map@0.75 = 0.02760
+  > [01:51] Step 5001 (epoch 9): loss = 0.35524
+  > [01:55] Step 5251 (epoch 10): loss = 0.32481
+evaluated 635 val images at step 5500: map@0.50 = 0.37213 - map@0.75 = 0.04509
+  > [02:01] Step 5501 (epoch 10): loss = 0.30497
+  > [02:06] Step 5751 (epoch 11): loss = 0.28900
+evaluated 635 val images at step 6000: map@0.50 = 0.37319 - map@0.75 = 0.04104
+  > [02:12] Step 6001 (epoch 11): loss = 0.32527
+  > [02:17] Step 6251 (epoch 11): loss = 0.35697
+evaluated 635 val images at step 6500: map@0.50 = 0.34623 - map@0.75 = 0.03757
+  > [02:23] Step 6501 (epoch 12): loss = 0.30017
+  > [02:27] Step 6751 (epoch 12): loss = 0.34958
+evaluated 635 val images at step 7000: map@0.50 = 0.35390 - map@0.75 = 0.03356
+  > [02:34] Step 7001 (epoch 13): loss = 0.33794
+  > [02:38] Step 7251 (epoch 13): loss = 0.31596
+evaluated 635 val images at step 7500: map@0.50 = 0.40166 - map@0.75 = 0.04844
+  > [02:44] Step 7501 (epoch 14): loss = 0.35209
+  > [02:49] Step 7751 (epoch 14): loss = 0.28974
+evaluated 635 val images at step 8000: map@0.50 = 0.33427 - map@0.75 = 0.03001
+  > [02:55] Step 8001 (epoch 14): loss = 0.35707
+  > [03:00] Step 8251 (epoch 15): loss = 0.35839
+evaluated 635 val images at step 8500: map@0.50 = 0.38358 - map@0.75 = 0.04778
+  > [03:06] Step 8501 (epoch 15): loss = 0.32749
+  > [03:10] Step 8751 (epoch 16): loss = 0.31121
+evaluated 635 val images at step 9000: map@0.50 = 0.39711 - map@0.75 = 0.03965
+  > [03:17] Step 9001 (epoch 16): loss = 0.27837
+  > [03:21] Step 9251 (epoch 17): loss = 0.33149
+evaluated 635 val images at step 9500: map@0.50 = 0.40581 - map@0.75 = 0.05227
+  > [03:27] Step 9501 (epoch 17): loss = 0.37328
+  > [03:32] Step 9751 (epoch 18): loss = 0.35619
+evaluated 635 val images at step 10000: map@0.50 = 0.38161 - map@0.75 = 0.04670
+  > [03:38] Step 10001 (epoch 18): loss = 0.32161
+  > [03:43] Step 10251 (epoch 18): loss = 0.31494
+evaluated 635 val images at step 10500: map@0.50 = 0.39835 - map@0.75 = 0.04886
+  > [03:49] Step 10501 (epoch 19): loss = 0.31039
+  > [03:53] Step 10751 (epoch 19): loss = 0.31835
+evaluated 635 val images at step 11000: map@0.50 = 0.39251 - map@0.75 = 0.04639
+  > [03:59] Step 11001 (epoch 20): loss = 0.27047
+  > [04:04] Step 11251 (epoch 20): loss = 0.34166
+evaluated 635 val images at step 11500: map@0.50 = 0.40151 - map@0.75 = 0.05312
+  > [04:10] Step 11501 (epoch 21): loss = 0.27000
+  > [04:15] Step 11751 (epoch 21): loss = 0.30918
+evaluated 635 val images at step 12000: map@0.50 = 0.25837 - map@0.75 = 0.01525
+  > [04:21] Step 12001 (epoch 21): loss = 0.47786
+  > [04:25] Step 12251 (epoch 22): loss = 0.35021
+evaluated 635 val images at step 12500: map@0.50 = 0.33389 - map@0.75 = 0.02930
+  > [04:32] Step 12501 (epoch 22): loss = 0.37489
+  > [04:36] Step 12751 (epoch 23): loss = 0.32884
+evaluated 635 val images at step 13000: map@0.50 = 0.41358 - map@0.75 = 0.04550
+  > [04:42] Step 13001 (epoch 23): loss = 0.37545
+  > [04:47] Step 13251 (epoch 24): loss = 0.49451
+evaluated 635 val images at step 13500: map@0.50 = 0.18884 - map@0.75 = 0.01094
+  > [04:53] Step 13501 (epoch 24): loss = 0.45413
+  > [04:57] Step 13751 (epoch 25): loss = 0.40141
+evaluated 635 val images at step 14000: map@0.50 = 0.26982 - map@0.75 = 0.01677
+  > [05:04] Step 14001 (epoch 25): loss = 0.43559
+  > [05:08] Step 14251 (epoch 25): loss = 0.36930
+evaluated 635 val images at step 14500: map@0.50 = 0.31296 - map@0.75 = 0.02681
+  > [05:14] Step 14501 (epoch 26): loss = 0.49856
+  > [05:19] Step 14751 (epoch 26): loss = 0.32280
+evaluated 635 val images at step 15000: map@0.50 = 0.34360 - map@0.75 = 0.03314
+  > [05:25] Step 15001 (epoch 27): loss = 0.30199
+  > [05:29] Step 15251 (epoch 27): loss = 0.67953
+evaluated 635 val images at step 15500: map@0.50 = 0.37865 - map@0.75 = 0.04406
+  > [05:36] Step 15501 (epoch 28): loss = 0.33052
+  > [05:40] Step 15751 (epoch 28): loss = 0.32405
+evaluated 635 val images at step 16000: map@0.50 = 0.39026 - map@0.75 = 0.05095
+  > [05:46] Step 16001 (epoch 28): loss = 0.36117
+  > [05:51] Step 16251 (epoch 29): loss = 0.29069
+evaluated 635 val images at step 16500: map@0.50 = 0.38652 - map@0.75 = 0.05012
+  > [05:57] Step 16501 (epoch 29): loss = 0.30602
+  > [06:01] Step 16751 (epoch 30): loss = 0.29928
+evaluated 635 val images at step 17000: map@0.50 = 0.40803 - map@0.75 = 0.05231
+  > [06:08] Step 17001 (epoch 30): loss = 0.27038
+  > [06:12] Step 17251 (epoch 31): loss = 0.31832
+evaluated 635 val images at step 17500: map@0.50 = 0.41708 - map@0.75 = 0.04547
+  > [06:18] Step 17501 (epoch 31): loss = 0.30752
+  > [06:23] Step 17751 (epoch 31): loss = 0.34995
+evaluated 635 val images at step 18000: map@0.50 = 0.40031 - map@0.75 = 0.05623
+  > [06:29] Step 18001 (epoch 32): loss = 0.29734
+  > [06:33] Step 18251 (epoch 32): loss = 0.30517
+evaluated 635 val images at step 18500: map@0.50 = 0.40869 - map@0.75 = 0.05876
+  > [06:40] Step 18501 (epoch 33): loss = 0.25641
+  > [06:44] Step 18751 (epoch 33): loss = 0.28147
+evaluated 635 val images at step 19000: map@0.50 = 0.42608 - map@0.75 = 0.06013
+  > [06:50] Step 19001 (epoch 34): loss = 0.29318
+  > [06:55] Step 19251 (epoch 34): loss = 0.25268
+evaluated 635 val images at step 19500: map@0.50 = 0.43656 - map@0.75 = 0.05997
+  > [07:01] Step 19501 (epoch 35): loss = 0.30270
+  > [07:06] Step 19751 (epoch 35): loss = 0.30197
+evaluated 635 val images at step 20000: map@0.50 = 0.43207 - map@0.75 = 0.06145
+  > [07:12] Step 20001 (epoch 35): loss = 0.30503
+  > [07:16] Step 20251 (epoch 36): loss = 0.31704
+evaluated 635 val images at step 20500: map@0.50 = 0.01755 - map@0.75 = 0.00040
+  > [07:22] Step 20501 (epoch 36): loss = 0.60319
+  > [07:27] Step 20751 (epoch 37): loss = 0.57849
+evaluated 635 val images at step 21000: map@0.50 = 0.13878 - map@0.75 = 0.00788
+  > [07:33] Step 21001 (epoch 37): loss = 0.47617
+  > [07:37] Step 21251 (epoch 38): loss = 0.42845
+evaluated 635 val images at step 21500: map@0.50 = 0.18263 - map@0.75 = 0.01276
+  > [07:43] Step 21501 (epoch 38): loss = 0.38426
+  > [07:48] Step 21751 (epoch 38): loss = 0.40102
+evaluated 635 val images at step 22000: map@0.50 = 0.23026 - map@0.75 = 0.02214
+  > [07:54] Step 22001 (epoch 39): loss = 0.40216
+  > [07:58] Step 22251 (epoch 39): loss = 0.41809
+evaluated 635 val images at step 22500: map@0.50 = 0.25352 - map@0.75 = 0.02193
+  > [08:04] Step 22501 (epoch 40): loss = 0.39155
+  > [08:08] Step 22751 (epoch 40): loss = 0.41934
+evaluated 635 val images at step 23000: map@0.50 = 0.27141 - map@0.75 = 0.02639
+  > [08:14] Step 23001 (epoch 41): loss = 0.41772
+  > [08:19] Step 23251 (epoch 41): loss = 0.39917
+evaluated 635 val images at step 23500: map@0.50 = 0.30149 - map@0.75 = 0.03326
+  > [08:25] Step 23501 (epoch 42): loss = 0.36667
+  > [08:29] Step 23751 (epoch 42): loss = 0.31486
+evaluated 635 val images at step 24000: map@0.50 = 0.32167 - map@0.75 = 0.03735
+  > [08:35] Step 24001 (epoch 42): loss = 0.30674
+  > [08:40] Step 24251 (epoch 43): loss = 0.42488
+evaluated 635 val images at step 24500: map@0.50 = 0.34067 - map@0.75 = 0.04157
+  > [08:46] Step 24501 (epoch 43): loss = 0.28061
+  > [08:50] Step 24751 (epoch 44): loss = 0.34477
+evaluated 635 val images at step 25000: map@0.50 = 0.36968 - map@0.75 = 0.04232
+  > [08:56] Step 25001 (epoch 44): loss = 0.32179
+  > [09:00] Step 25251 (epoch 45): loss = 0.38709
+evaluated 635 val images at step 25500: map@0.50 = 0.38325 - map@0.75 = 0.03859
+  > [09:06] Step 25501 (epoch 45): loss = 0.29585
+  > [09:11] Step 25751 (epoch 45): loss = 0.34025
+evaluated 635 val images at step 26000: map@0.50 = 0.40469 - map@0.75 = 0.04780
+  > [09:17] Step 26001 (epoch 46): loss = 0.29354
+  > [09:21] Step 26251 (epoch 46): loss = 0.30100
+evaluated 635 val images at step 26500: map@0.50 = 0.39401 - map@0.75 = 0.04488
+  > [09:27] Step 26501 (epoch 47): loss = 0.30339
+  > [09:31] Step 26751 (epoch 47): loss = 0.30907
+evaluated 635 val images at step 27000: map@0.50 = 0.40621 - map@0.75 = 0.04559
+  > [09:37] Step 27001 (epoch 48): loss = 0.29033
+  > [09:42] Step 27251 (epoch 48): loss = 0.28926
+evaluated 635 val images at step 27500: map@0.50 = 0.40611 - map@0.75 = 0.05071
+  > [09:48] Step 27501 (epoch 49): loss = 0.31855
+  > [09:52] Step 27751 (epoch 49): loss = 0.30845
+evaluated 635 val images at step 28000: map@0.50 = 0.40794 - map@0.75 = 0.05333
+  > [09:58] Step 28001 (epoch 49): loss = 0.28626
+  > [10:03] Step 28251 (epoch 50): loss = 0.26996
+evaluated 635 val images at step 28500: map@0.50 = 0.40644 - map@0.75 = 0.05241
+  > [10:08] Step 28501 (epoch 50): loss = 0.29265
+  > [10:13] Step 28751 (epoch 51): loss = 0.25683
+evaluated 635 val images at step 29000: map@0.50 = 0.41384 - map@0.75 = 0.05100
+  > [10:19] Step 29001 (epoch 51): loss = 0.25497
+  > [10:23] Step 29251 (epoch 52): loss = 0.31594
+evaluated 635 val images at step 29500: map@0.50 = 0.41529 - map@0.75 = 0.05839
+  > [10:29] Step 29501 (epoch 52): loss = 0.27824
+  > [10:33] Step 29751 (epoch 52): loss = 0.27132
+evaluated 635 val images at step 30000: map@0.50 = 0.43805 - map@0.75 = 0.06559
+  > [10:39] Step 30001 (epoch 53): loss = 0.28773
+  > [10:44] Step 30251 (epoch 53): loss = 0.22663
+evaluated 635 val images at step 30500: map@0.50 = 0.39606 - map@0.75 = 0.05132
+  > [10:49] Step 30501 (epoch 54): loss = 0.25715
+  > [10:54] Step 30751 (epoch 54): loss = 0.28512
+evaluated 635 val images at step 31000: map@0.50 = 0.41426 - map@0.75 = 0.05394
+  > [10:59] Step 31001 (epoch 55): loss = 0.32288
+  > [11:04] Step 31251 (epoch 55): loss = 0.27244
+evaluated 635 val images at step 31500: map@0.50 = 0.42194 - map@0.75 = 0.05977
+  > [11:10] Step 31501 (epoch 56): loss = 0.46296
+  > [11:14] Step 31751 (epoch 56): loss = 0.27217
+evaluated 635 val images at step 32000: map@0.50 = 0.42223 - map@0.75 = 0.06084
+  > [11:20] Step 32001 (epoch 56): loss = 0.58530
+  > [11:24] Step 32251 (epoch 57): loss = 0.26022
+evaluated 635 val images at step 32500: map@0.50 = 0.41839 - map@0.75 = 0.06069
+  > [11:30] Step 32501 (epoch 57): loss = 0.28200
+  > [11:34] Step 32751 (epoch 58): loss = 0.24865
+evaluated 635 val images at step 33000: map@0.50 = 0.44183 - map@0.75 = 0.06638
+  > [11:40] Step 33001 (epoch 58): loss = 0.31922
+  > [11:44] Step 33251 (epoch 59): loss = 0.27326
+evaluated 635 val images at step 33500: map@0.50 = 0.42520 - map@0.75 = 0.06324
+  > [11:50] Step 33501 (epoch 59): loss = 0.21749
+  > [11:54] Step 33751 (epoch 59): loss = 0.34589
+evaluated 635 val images at step 34000: map@0.50 = 0.42737 - map@0.75 = 0.06226
+  > [12:00] Step 34001 (epoch 60): loss = 0.22472
+  > [12:05] Step 34251 (epoch 60): loss = 0.30064
+evaluated 635 val images at step 34500: map@0.50 = 0.42229 - map@0.75 = 0.05872
+  > [12:10] Step 34501 (epoch 61): loss = 0.33615
+  > [12:15] Step 34751 (epoch 61): loss = 0.25916
+evaluated 635 val images at step 35000: map@0.50 = 0.42817 - map@0.75 = 0.06200
+  > [12:20] Step 35001 (epoch 62): loss = 0.29462
+  > [12:25] Step 35251 (epoch 62): loss = 0.26739
+evaluated 635 val images at step 35500: map@0.50 = 0.41005 - map@0.75 = 0.06039
+  > [12:31] Step 35501 (epoch 62): loss = 0.28566
+  > [12:35] Step 35751 (epoch 63): loss = 0.26891
+evaluated 635 val images at step 36000: map@0.50 = 0.03775 - map@0.75 = 0.00101
+  > [12:41] Step 36001 (epoch 63): loss = 0.55892
+  > [12:45] Step 36251 (epoch 64): loss = 0.52767
+evaluated 635 val images at step 36500: map@0.50 = 0.19024 - map@0.75 = 0.01476
+  > [12:51] Step 36501 (epoch 64): loss = 0.34823
+  > [12:55] Step 36751 (epoch 65): loss = 0.38545
+evaluated 635 val images at step 37000: map@0.50 = 0.28003 - map@0.75 = 0.02823
+  > [13:01] Step 37001 (epoch 65): loss = 0.43600
+  > [13:05] Step 37251 (epoch 66): loss = 0.32333
+evaluated 635 val images at step 37500: map@0.50 = 0.35134 - map@0.75 = 0.04160
+  > [13:11] Step 37501 (epoch 66): loss = 0.33369
+  > [13:15] Step 37751 (epoch 66): loss = 0.31070
+evaluated 635 val images at step 38000: map@0.50 = 0.39170 - map@0.75 = 0.04715
+  > [13:21] Step 38001 (epoch 67): loss = 0.33794
+  > [13:25] Step 38251 (epoch 67): loss = 0.25272
+evaluated 635 val images at step 38500: map@0.50 = 0.43099 - map@0.75 = 0.06455
+  > [13:31] Step 38501 (epoch 68): loss = 0.28813
+  > [13:35] Step 38751 (epoch 68): loss = 0.30600
+evaluated 635 val images at step 39000: map@0.50 = 0.42487 - map@0.75 = 0.05839
+  > [13:41] Step 39001 (epoch 69): loss = 0.24274
+  > [13:46] Step 39251 (epoch 69): loss = 0.25365
+evaluated 635 val images at step 39500: map@0.50 = 0.43454 - map@0.75 = 0.06155
+  > [13:51] Step 39501 (epoch 69): loss = 0.26749
+  > [13:56] Step 39751 (epoch 70): loss = 0.25743
+evaluated 635 val images at step 40000: map@0.50 = 0.40863 - map@0.75 = 0.06091
+  > [14:02] Step 40001 (epoch 70): loss = 0.26231
+  > [14:06] Step 40251 (epoch 71): loss = 0.24854
+evaluated 635 val images at step 40500: map@0.50 = 0.41570 - map@0.75 = 0.06703
+  > [14:12] Step 40501 (epoch 71): loss = 0.28971
+  > [14:16] Step 40751 (epoch 72): loss = 0.30288
+evaluated 635 val images at step 41000: map@0.50 = 0.43083 - map@0.75 = 0.06712
+  > [14:22] Step 41001 (epoch 72): loss = 0.27785
+  > [14:26] Step 41251 (epoch 73): loss = 0.26593
+evaluated 635 val images at step 41500: map@0.50 = 0.41524 - map@0.75 = 0.06757
+  > [14:32] Step 41501 (epoch 73): loss = 0.25056
+  > [14:36] Step 41751 (epoch 73): loss = 0.29719
+evaluated 635 val images at step 42000: map@0.50 = 0.41777 - map@0.75 = 0.06963
+  > [14:42] Step 42001 (epoch 74): loss = 0.31599
+  > [14:46] Step 42251 (epoch 74): loss = 0.33206
+evaluated 635 val images at step 42500: map@0.50 = 0.42843 - map@0.75 = 0.06621
+  > [14:52] Step 42501 (epoch 75): loss = 0.24449
+  > [14:56] Step 42751 (epoch 75): loss = 0.27342
+evaluated 635 val images at step 43000: map@0.50 = 0.43321 - map@0.75 = 0.06715
+  > [15:02] Step 43001 (epoch 76): loss = 0.22109
+  > [15:06] Step 43251 (epoch 76): loss = 0.29387
+evaluated 635 val images at step 43500: map@0.50 = 0.41379 - map@0.75 = 0.06929
+  > [15:12] Step 43501 (epoch 76): loss = 0.26808
+  > [15:17] Step 43751 (epoch 77): loss = 0.24674
+evaluated 635 val images at step 44000: map@0.50 = 0.43688 - map@0.75 = 0.07036
+  > [15:22] Step 44001 (epoch 77): loss = 0.25864
+  > [15:27] Step 44251 (epoch 78): loss = 0.24557
+evaluated 635 val images at step 44500: map@0.50 = 0.40816 - map@0.75 = 0.06181
+  > [15:33] Step 44501 (epoch 78): loss = 0.23542
+  > [15:37] Step 44751 (epoch 79): loss = 0.33412
+evaluated 635 val images at step 45000: map@0.50 = 0.42648 - map@0.75 = 0.06533
+  > [15:43] Step 45001 (epoch 79): loss = 0.27572
+  > [15:47] Step 45251 (epoch 80): loss = 0.25853
+evaluated 635 val images at step 45500: map@0.50 = 0.43191 - map@0.75 = 0.07898
+  > [15:53] Step 45501 (epoch 80): loss = 0.24567
+  > [15:57] Step 45751 (epoch 80): loss = 0.24223
+evaluated 635 val images at step 46000: map@0.50 = 0.41964 - map@0.75 = 0.06755
+  > [16:03] Step 46001 (epoch 81): loss = 0.23554
+  > [16:07] Step 46251 (epoch 81): loss = 0.34329
+evaluated 635 val images at step 46500: map@0.50 = 0.42521 - map@0.75 = 0.06835
+  > [16:13] Step 46501 (epoch 82): loss = 0.22589
+  > [16:17] Step 46751 (epoch 82): loss = 0.19587
+evaluated 635 val images at step 47000: map@0.50 = 0.44177 - map@0.75 = 0.07870
+  > [16:23] Step 47001 (epoch 83): loss = 0.22616
+  > [16:27] Step 47251 (epoch 83): loss = 0.23892
+evaluated 635 val images at step 47500: map@0.50 = 0.42197 - map@0.75 = 0.07596
+  > [16:33] Step 47501 (epoch 83): loss = 0.18719
+  > [16:38] Step 47751 (epoch 84): loss = 0.28154
+evaluated 635 val images at step 48000: map@0.50 = 0.43410 - map@0.75 = 0.07745
+  > [16:43] Step 48001 (epoch 84): loss = 0.24584
+  > [16:48] Step 48251 (epoch 85): loss = 0.24944
+evaluated 635 val images at step 48500: map@0.50 = 0.44469 - map@0.75 = 0.08171
+  > [16:54] Step 48501 (epoch 85): loss = 0.21845
+  > [16:58] Step 48751 (epoch 86): loss = 0.24165
+evaluated 635 val images at step 49000: map@0.50 = 0.44359 - map@0.75 = 0.07993
+  > [17:04] Step 49001 (epoch 86): loss = 0.23036
+  > [17:08] Step 49251 (epoch 86): loss = 0.23333
+evaluated 635 val images at step 49500: map@0.50 = 0.42666 - map@0.75 = 0.07928
+  > [17:14] Step 49501 (epoch 87): loss = 0.26575
+  > [17:18] Step 49751 (epoch 87): loss = 0.20517
+evaluated 635 val images at step 50000: map@0.50 = 0.41622 - map@0.75 = 0.07371
+  > [17:24] Step 50001 (epoch 88): loss = 0.29666
+  > [17:28] Step 50251 (epoch 88): loss = 0.35948
+evaluated 635 val images at step 50500: map@0.50 = 0.43194 - map@0.75 = 0.07994
+  > [17:34] Step 50501 (epoch 89): loss = 0.19665
+  > [17:38] Step 50751 (epoch 89): loss = 0.29372
+evaluated 635 val images at step 51000: map@0.50 = 0.43798 - map@0.75 = 0.08481
+  > [17:44] Step 51001 (epoch 90): loss = 0.19794
+  > [17:49] Step 51251 (epoch 90): loss = 0.28340
+evaluated 635 val images at step 51500: map@0.50 = 0.43745 - map@0.75 = 0.08113
+  > [17:54] Step 51501 (epoch 90): loss = 0.19764
+  > [17:59] Step 51751 (epoch 91): loss = 0.17701
+evaluated 635 val images at step 52000: map@0.50 = 0.43347 - map@0.75 = 0.08554
+  > [18:05] Step 52001 (epoch 91): loss = 0.19429
+  > [18:09] Step 52251 (epoch 92): loss = 0.22658
+evaluated 635 val images at step 52500: map@0.50 = 0.42280 - map@0.75 = 0.07522
+  > [18:15] Step 52501 (epoch 92): loss = 0.20707
+  > [18:19] Step 52751 (epoch 93): loss = 0.20461
+evaluated 635 val images at step 53000: map@0.50 = 0.44197 - map@0.75 = 0.08024
+  > [18:25] Step 53001 (epoch 93): loss = 0.23097
+  > [18:29] Step 53251 (epoch 93): loss = 0.23138
+evaluated 635 val images at step 53500: map@0.50 = 0.44120 - map@0.75 = 0.08475
+  > [18:35] Step 53501 (epoch 94): loss = 0.22529
+  > [18:39] Step 53751 (epoch 94): loss = 0.20843
+evaluated 635 val images at step 54000: map@0.50 = 0.45301 - map@0.75 = 0.08399
+  > [18:45] Step 54001 (epoch 95): loss = 0.19257
+  > [18:50] Step 54251 (epoch 95): loss = 0.19595
+evaluated 635 val images at step 54500: map@0.50 = 0.44230 - map@0.75 = 0.08664
+  > [18:55] Step 54501 (epoch 96): loss = 0.19764
+  > [19:00] Step 54751 (epoch 96): loss = 0.19101
+evaluated 635 val images at step 55000: map@0.50 = 0.44860 - map@0.75 = 0.08345
+  > [19:06] Step 55001 (epoch 97): loss = 0.25667
+  > [19:10] Step 55251 (epoch 97): loss = 0.20548
+evaluated 635 val images at step 55500: map@0.50 = 0.44330 - map@0.75 = 0.08349
+  > [19:16] Step 55501 (epoch 97): loss = 0.25847
+  > [19:20] Step 55751 (epoch 98): loss = 0.19738
+evaluated 635 val images at step 56000: map@0.50 = 0.44046 - map@0.75 = 0.08766
+  > [19:26] Step 56001 (epoch 98): loss = 0.26933
+  > [19:30] Step 56251 (epoch 99): loss = 0.20810
+evaluated 635 val images at step 56500: map@0.50 = 0.44553 - map@0.75 = 0.07925
+  > [19:36] Step 56501 (epoch 99): loss = 0.22843
+  > [19:40] Step 56751 (epoch 100): loss = 0.16106
+evaluated 635 val images at step 57000: map@0.50 = 0.45048 - map@0.75 = 0.09205
+  > [19:46] Step 57001 (epoch 100): loss = 0.16779
+  > [19:51] Step 57251 (epoch 100): loss = 0.27048
+evaluated 635 val images at step 57268: map@0.50 = 0.45510 - map@0.75 = 0.07805
+evaluated 3199 test images at step 57268: map@0.50 = 0.44292 - map@0.75 = 0.07617
