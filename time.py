@@ -32,6 +32,8 @@ from train_odgi import stage_transition, format_final_boxes
 parser = argparse.ArgumentParser(description='Grouped Object Detection (ODGI).')
 parser.add_argument('log_dir', type=str, help='log directory to load from')
 parser.add_argument('--num_iters', type=int, default=500, help='Number of iterations')
+parser.add_argument('--image_size', type=int, help='Change input image size')
+parser.add_argument('--stage2_image_size', type=int, help='Change stage 2 input image size')
 parser.add_argument('--test_num_crops', type=int, help='Number of crops to extract for ODGI')
 parser.add_argument('--device', type=str, default='cpu', help='Device', choices=['cpu', 'gpu'])
 parser.add_argument('--verbose', type=int, default=2, help='Extra verbosity')
@@ -50,7 +52,10 @@ if not odgi_mode:
     forward_fn = tf.make_template(network, getattr(nets, network))
     decode_fn = tf.make_template('decode', nets.get_detection_outputs)
     forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
-    imsize = config['image_size']
+    if args.image_size is not None:
+        config['image_size'] = args.image_size
+        configuration.finalize_grid_offsets(config)
+    imsize = config['image_size']    
     config['batch_size'] = 1
 else:
     stages = []
@@ -68,6 +73,12 @@ else:
             decode_fn = tf.make_template('%s/decode' % base_name, nets.get_detection_outputs)
         forward_pass = partial(nets.forward, forward_fn=forward_fn, decode_fn=decode_fn)
         stages.append((base_name, network_name, forward_pass, config))
+    if args.image_size is not None:
+        stages[0][-1]['image_size'] = args.image_size
+        configuration.finalize_grid_offsets(stages[0][-1])
+    if args.stage2_image_size is not None:
+        stages[1][-1]['image_size'] = args.stage2_image_size
+        configuration.finalize_grid_offsets(stages[1][-1])
     imsize = stages[0][-1]['image_size']
     stages[0][-1]['batch_size'] = 1
     stages[1][-1]['previous_batch_size'] = 1
