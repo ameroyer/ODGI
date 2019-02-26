@@ -217,7 +217,7 @@ def get_tf_dataset(tfrecords_file,
                 w2 = 1. - tf.reduce_sum(obj_i_mask, axis=-1) / tf.to_float(output['num_boxes'])
                 # Assign each ground-truth to one unique group
                 group_mask = w1 * w2
-                group_mask = tf.to_float(group_mask >= tf.reduce_max(group_mask, axis=(0, 1), keep_dims=True))
+                group_mask = tf.to_float(group_mask > 0.) * tf.to_float(group_mask >= tf.reduce_max(group_mask, axis=(0, 1), keep_dims=True))
                 group_mask = tf.expand_dims(group_mask, axis=-1)
             elif grouping_method == 'intersect':
                 group_mask = tf.transpose(obj_i_mask, (0, 1, 3, 2)) # (num_cells, num_cells, num_bbs, 1)
@@ -230,7 +230,7 @@ def get_tf_dataset(tfrecords_file,
             group_bounding_boxes_per_cell = tf.clip_by_value(group_bounding_boxes_per_cell, 0., 1.)
             output["group_bounding_boxes_per_cell"] = group_bounding_boxes_per_cell
             
-            num_bbs_per_cell = tf.reduce_sum(group_mask, axis=2, keep_dims=True)
+            num_bbs_per_cell = tf.reduce_sum(group_mask, axis=2, keep_dims=True) 
             num_group_boxes = tf.reduce_sum(tf.to_int32(num_bbs_per_cell > 0))
             output["num_group_boxes"] = num_group_boxes
             
