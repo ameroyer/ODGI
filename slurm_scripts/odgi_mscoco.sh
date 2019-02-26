@@ -20,9 +20,9 @@ elif [ "$NETWORK" == "mobilenet_100" ] || [ "$NETWORK" == "mobilenet_50" ] || [ 
     then
     NUM_GPUS=4
     BATCH_SIZE=8
-    LEARNING_RATE=2e-4
+    LEARNING_RATE=1e-4
 else
-    echo "Unkown network option \"${NETWORK}\""
+    echo "Unknown network option \"${NETWORK}\""
     exit 1
 fi
 
@@ -46,5 +46,5 @@ module load cudnn
 module load tensorflow/python3/1.12.0
 
 cd ${HOME}/Jupyter/ODGI 
-python3 -u train_odgi.py 'mscoco' --network $NETWORK --image_size $SIZE --stage2_network $STAGE2_NETWORK --stage2_image_size $STAGE2_IMAGE_SIZE --num_epochs $NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE
+python3 -u train_odgi.py 'mscoco' --network $NETWORK --image_size $SIZE --stage2_network $STAGE2_NETWORK --stage2_image_size $STAGE2_IMAGE_SIZE --num_epochs $NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --save_summaries_steps 250
 EOT

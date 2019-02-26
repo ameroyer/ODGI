@@ -22,7 +22,7 @@ elif [ "$NETWORK" == "mobilenet_100" ] || [ "$NETWORK" == "mobilenet_50" ] || [ 
     BATCH_SIZE=8
     LEARNING_RATE=2e-4
 else
-    echo "Unkown network option \"${NETWORK}\""
+    echo "Unknown network option \"${NETWORK}\""
     exit 1
 fi
 
