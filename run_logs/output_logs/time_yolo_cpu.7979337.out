@@ -1,0 +1,1024 @@
+============================================================== YOLO
+==== 1024x1024
+Tensorflow version 1.12.0
+number of parameters 50784197
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06214520025253296
+   Avg. Feed forward: 6.625250062465668
+   Avg. time: 6.6873952627182005
+==== 512x512
+Tensorflow version 1.12.0
+   using grid size [16 16]
+number of parameters 50784197
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06808350706100463
+   Avg. Feed forward: 1.6697679195404054
+   Avg. time: 1.73785142660141
+==== 256x256
+Tensorflow version 1.12.0
+   using grid size [8 8]
+number of parameters 50784197
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06465463876724244
+   Avg. Feed forward: 0.4587843599319458
+   Avg. time: 0.5234389986991882
+==== 128x128
+Tensorflow version 1.12.0
+   using grid size [4 4]
+number of parameters 50784197
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06387290287017822
+   Avg. Feed forward: 0.16498155450820923
+   Avg. time: 0.22885445737838744
+
+
+============================================================== tiny-YOLO
+==== 1024x1024
+Tensorflow version 1.12.0
+number of parameters 11014053
+total graph size: 0.01 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06324734592437745
+   Avg. Feed forward: 1.925779372215271
+   Avg. time: 1.9890267181396484
+==== 512x512
+Tensorflow version 1.12.0
+   using grid size [16 16]
+number of parameters 11014053
+total graph size: 0.01 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.09210389280319214
+   Avg. Feed forward: 0.4689091749191284
+   Avg. time: 0.5610130677223206
+==== 256x256
+Tensorflow version 1.12.0
+   using grid size [8 8]
+number of parameters 11014053
+total graph size: 0.01 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.08577545070648193
+   Avg. Feed forward: 0.1266761951446533
+   Avg. time: 0.21245164585113524
+==== 128x128
+Tensorflow version 1.12.0
+   using grid size [4 4]
+number of parameters 11014053
+total graph size: 0.01 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_standard_1024/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.07442108774185181
+   Avg. Feed forward: 0.04305600881576538
+   Avg. time: 0.11747709655761719
+
+
+============================================================== ODGI yolo-tiny
+==== 512x256
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.09162476778030396
+   Avg. Feed forward: 1.7653947496414184
+   Avg. time: 1.8570195174217223
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.08587549352645873
+   Avg. Feed forward: 1.8761861371994017
+   Avg. time: 1.9620616307258605
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.08927655458450318
+   Avg. Feed forward: 1.9899659485816956
+   Avg. time: 2.0792425031661987
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.07544326019287109
+   Avg. Feed forward: 2.1119658885002135
+   Avg. time: 2.1874091486930847
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06731103563308716
+   Avg. Feed forward: 2.2127389726638795
+   Avg. time: 2.280050008296967
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06641734552383423
+   Avg. Feed forward: 2.3510772438049314
+   Avg. time: 2.417494589328766
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06576891660690308
+   Avg. Feed forward: 2.427455852508545
+   Avg. time: 2.493224769115448
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06715505456924438
+   Avg. Feed forward: 2.5511736559867857
+   Avg. time: 2.61832871055603
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06664467525482178
+   Avg. Feed forward: 2.6852486786842347
+   Avg. time: 2.7518933539390567
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0657686595916748
+   Avg. Feed forward: 2.8240145139694213
+   Avg. time: 2.889783173561096
+==== 256x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06352756929397584
+   Avg. Feed forward: 0.4621216278076172
+   Avg. time: 0.525649197101593
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06364424324035645
+   Avg. Feed forward: 0.49114347124099733
+   Avg. time: 0.5547877144813538
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06363966846466064
+   Avg. Feed forward: 0.5206723027229309
+   Avg. time: 0.5843119711875915
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06362478065490723
+   Avg. Feed forward: 0.5502777800559998
+   Avg. time: 0.613902560710907
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0809553632736206
+   Avg. Feed forward: 0.5737363929748536
+   Avg. time: 0.6546917562484742
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.15716575002670288
+   Avg. Feed forward: 0.6018312706947326
+   Avg. time: 0.7589970207214355
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06360538578033448
+   Avg. Feed forward: 0.6389889488220215
+   Avg. time: 0.702594334602356
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06336335992813111
+   Avg. Feed forward: 0.6650905923843384
+   Avg. time: 0.7284539523124696
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06338351488113403
+   Avg. Feed forward: 0.6954333877563477
+   Avg. time: 0.7588169026374817
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06340401649475097
+   Avg. Feed forward: 0.7248353219032287
+   Avg. time: 0.7882393383979798
+==== 128x64
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06185047769546509
+   Avg. Feed forward: 0.16524547433853148
+   Avg. time: 0.22709595203399657
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06218011999130249
+   Avg. Feed forward: 0.17491292190551758
+   Avg. time: 0.23709304189682007
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.062291823387146
+   Avg. Feed forward: 0.1826648540496826
+   Avg. time: 0.2449566774368286
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06228962993621826
+   Avg. Feed forward: 0.19094600534439088
+   Avg. time: 0.25323563528060916
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.062190856456756594
+   Avg. Feed forward: 0.1979351239204407
+   Avg. time: 0.26012598037719725
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.062172120571136476
+   Avg. Feed forward: 0.2058452582359314
+   Avg. time: 0.2680173788070679
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.062381664276123044
+   Avg. Feed forward: 0.2147633399963379
+   Avg. time: 0.2771450042724609
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06240733194351196
+   Avg. Feed forward: 0.2220389623641968
+   Avg. time: 0.28444629430770874
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06238161039352417
+   Avg. Feed forward: 0.2294851336479187
+   Avg. time: 0.29186674404144286
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 61801325
+total graph size: 0.03 MB
+Launch session from run_logs/sdd/yolo_v2_odgi_512_256/02-21_15-09
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.062460943698883054
+   Avg. Feed forward: 0.23639667320251465
+   Avg. time: 0.29885761690139767
+
+
+============================================================== ODGI teeny-tiny
+==== 512x256
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06690588331222534
+   Avg. Feed forward: 0.6055105471611023
+   Avg. time: 0.6724164304733277
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0667376971244812
+   Avg. Feed forward: 0.7187154788970948
+   Avg. time: 0.7854531760215759
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06683307790756225
+   Avg. Feed forward: 0.8341810755729675
+   Avg. time: 0.9010141534805297
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06863998413085938
+   Avg. Feed forward: 0.9533839945793152
+   Avg. time: 1.0220239787101746
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06722256851196289
+   Avg. Feed forward: 1.049538893699646
+   Avg. time: 1.1167614622116089
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06801372957229614
+   Avg. Feed forward: 1.165521921157837
+   Avg. time: 1.2335356507301332
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06887048864364624
+   Avg. Feed forward: 1.2866056480407715
+   Avg. time: 1.3554761366844177
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06762283849716187
+   Avg. Feed forward: 1.458058430671692
+   Avg. time: 1.5256812691688537
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06708700275421142
+   Avg. Feed forward: 1.6022343645095825
+   Avg. time: 1.6693213672637939
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06713105583190918
+   Avg. Feed forward: 1.7047037873268127
+   Avg. time: 1.7718348431587219
+==== 512x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06774175119400025
+   Avg. Feed forward: 0.524439260005951
+   Avg. time: 0.5921810111999513
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06708012199401855
+   Avg. Feed forward: 0.5502879524230957
+   Avg. time: 0.6173680744171143
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06691050338745118
+   Avg. Feed forward: 0.5767931804656983
+   Avg. time: 0.6437036838531495
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06715037822723388
+   Avg. Feed forward: 0.6079598817825317
+   Avg. time: 0.6751102600097656
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06721203184127808
+   Avg. Feed forward: 0.6368708672523499
+   Avg. time: 0.704082899093628
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06707978296279907
+   Avg. Feed forward: 0.6661440706253052
+   Avg. time: 0.7332238535881043
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06693076229095458
+   Avg. Feed forward: 0.6920294570922851
+   Avg. time: 0.7589602193832398
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06740766906738281
+   Avg. Feed forward: 0.7238557562828064
+   Avg. time: 0.7912634253501892
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06727267122268676
+   Avg. Feed forward: 0.7525467391014099
+   Avg. time: 0.8198194103240967
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [16 16]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06700764560699463
+   Avg. Feed forward: 0.7821960005760192
+   Avg. time: 0.8492036461830139
+==== 256x128
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06396795129776
+   Avg. Feed forward: 0.16387702322006226
+   Avg. time: 0.22784497451782226
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06401460886001586
+   Avg. Feed forward: 0.192771005153656
+   Avg. time: 0.25678561401367184
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06424959993362427
+   Avg. Feed forward: 0.22131854724884034
+   Avg. time: 0.2855681471824646
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06403136730194092
+   Avg. Feed forward: 0.2498029236793518
+   Avg. time: 0.31383429098129273
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06404021978378296
+   Avg. Feed forward: 0.2784902563095093
+   Avg. time: 0.34253047609329224
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06398756456375122
+   Avg. Feed forward: 0.3076455993652344
+   Avg. time: 0.3716331639289856
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06402940320968628
+   Avg. Feed forward: 0.336698429107666
+   Avg. time: 0.4007278323173523
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06405017709732055
+   Avg. Feed forward: 0.3654371008872986
+   Avg. time: 0.42948727798461916
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06392586326599121
+   Avg. Feed forward: 0.39447541761398314
+   Avg. time: 0.45840128087997434
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [4 4]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06407045078277587
+   Avg. Feed forward: 0.4248630347251892
+   Avg. time: 0.4889334855079651
+==== 256x64
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06401435899734496
+   Avg. Feed forward: 0.14353197240829468
+   Avg. time: 0.20754633140563966
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06491425037384033
+   Avg. Feed forward: 0.1552101674079895
+   Avg. time: 0.22012441778182984
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.065261625289917
+   Avg. Feed forward: 0.16251267147064208
+   Avg. time: 0.22777429676055908
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0651708517074585
+   Avg. Feed forward: 0.16907487678527833
+   Avg. time: 0.23424572849273684
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06484157228469849
+   Avg. Feed forward: 0.1766195034980774
+   Avg. time: 0.24146107578277587
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06517521286010743
+   Avg. Feed forward: 0.18425965547561646
+   Avg. time: 0.24943486833572387
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06493250226974487
+   Avg. Feed forward: 0.19127882528305054
+   Avg. time: 0.2562113275527954
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06495168542861939
+   Avg. Feed forward: 0.19896471166610719
+   Avg. time: 0.2639163970947266
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06463555908203125
+   Avg. Feed forward: 0.2050363883972168
+   Avg. time: 0.26967194747924805
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [8 8]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06476971197128296
+   Avg. Feed forward: 0.21257338047027588
+   Avg. time: 0.27734309244155886
+==== 128x64
+> Using 1 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06405349588394164
+   Avg. Feed forward: 0.06442873907089233
+   Avg. time: 0.12848223495483396
+> Using 2 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.0638268232345581
+   Avg. Feed forward: 0.07167664432525635
+   Avg. time: 0.13550346755981446
+> Using 3 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06346507501602174
+   Avg. Feed forward: 0.0785076880455017
+   Avg. time: 0.14197276306152345
+> Using 4 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06467266464233398
+   Avg. Feed forward: 0.0857708420753479
+   Avg. time: 0.15044350671768186
+> Using 5 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06370434522628785
+   Avg. Feed forward: 0.09324579381942749
+   Avg. time: 0.15695013904571534
+> Using 6 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06373061990737915
+   Avg. Feed forward: 0.10079370880126953
+   Avg. time: 0.1645243287086487
+> Using 7 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06382784271240234
+   Avg. Feed forward: 0.10792515707015991
+   Avg. time: 0.17175299978256225
+> Using 8 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06348105907440185
+   Avg. Feed forward: 0.11466576623916626
+   Avg. time: 0.17814682531356812
+> Using 9 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06373000764846802
+   Avg. Feed forward: 0.12235255718231201
+   Avg. time: 0.18608256483078003
+> Using 10 crops----------------------
+Tensorflow version 1.12.0
+   using grid size [4 4]
+   using grid size [2 2]
+number of parameters 22029645
+total graph size: 0.02 MB
+Launch session from run_logs/sdd/tiny_yolo_v2_odgi_512_256/02-21_15-10
+Evaluated 500 samples
+Timings:
+   Avg. Loading Time: 0.06381606483459473
+   Avg. Feed forward: 0.1294249005317688
+   Avg. time: 0.19324096536636354
