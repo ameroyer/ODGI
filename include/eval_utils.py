@@ -63,7 +63,7 @@ def append_detection_outputs(file_path,
             for c in range(num_classes):
                 output = non_max_suppression(
                     pred_boxes_flat, pred_c_flat[:, c], iou_threshold=iou_threshold, score_threshold=score_threshold)
-                f.write('%s-pred-%d\t%d\t%s\n' % (im_id, c, pred_boxes_flat.shape[0], '\t'.join(
+                f.write('%s-pred-%d\t%d\t%s\n' % (im_id, c, output.shape[0], '\t'.join(
                     '%.6f,%.6f,%.6f,%.6f,%.3f,%d' % tuple(x) for x in output)))          
                 
                 
@@ -184,13 +184,18 @@ def detect_eval(output_file_path, **kwargs):
             elif '-pred-' in header:
                 # check that we've parsed the associated ground-truth already
                 im_id, class_index = header.split('-pred-')
-                assert current_image_id == im_id             
+                assert current_image_id == im_id          
+                aux = content.split('\t')      
                 # skip images without gorund-truth or predictions, (0 precision)
-                if gt_boxes is None:
+                if gt_boxes is None or int(aux[0]) == 0:
                     continue       
-                # otherwise, normally parse boxes  
-                aux = content.split('\t')  
-                pred_boxes = np.array([list(map(float, box.split(',')[:4])) for box in aux[1:] if int(box[-1])], dtype=np.float32)
+                # otherwise, normally parse boxes
+                try:
+                    pred_boxes = np.array([list(map(float, box.split(',')[:4])) 
+                                           for box in aux[1:] if int(box[-1])], 
+                                          dtype=np.float32)
+                except IndexError as e:
+                    raise IndexError('Error with box id %s: %s' % (im_id, str(e)))
                 
                 ## Match current best predictions to ground-truth
                 ## until all ground-truth have been matched
