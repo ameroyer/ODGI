@@ -170,7 +170,8 @@ def build_base_config_from_args(args, verbose=0):
         configuration['test_patch_confidence_threshold'] = 0.1
         configuration['test_patch_strong_confidence_threshold'] = 0.6
     elif args.data == 'mscoco':
-        configuration['grouping_method'] = 'intersect_with_density'
+        configuration['grouping_method'] = 'intersect'
+        configuration["offsets_margin"] = 0.01
         # [Final inference] Cross-validated hyperparameters for ODGI 512-256
         configuration['test_num_crops'] = 5
         configuration['test_patch_nms_threshold'] = 0.25
