@@ -207,6 +207,10 @@ def get_tf_dataset(tfrecords_file,
             ## Define group_mask: (num_cells, num_cells, num_bbs, 1)
             ## Maps each gt bounding box to a grid cell to be merged into a group
             if grouping_method == 'intersect_with_density':
+                obj_i_mask = tf.expand_dims(tf.to_float(inters > 0.) , axis=-2)
+                obj_i_mask *= tf.expand_dims(tf.to_float(inters < 1. / (num_cells[0] * num_cells[1])) , axis=-2)
+                group_mask = tf.transpose(obj_i_mask, (0, 1, 3, 2)) # (num_cells, num_cells, num_bbs, 1)
+            elif grouping_method == 'unique_intersect':
                 # weight 1: Intersection between gt boxes and cells
                 # Upper bounded by 1
                 # (num_cells, num_cells, num_bbs)
