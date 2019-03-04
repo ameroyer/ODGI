@@ -130,8 +130,16 @@ if __name__ == '__main__':
         eval_test = partial(run_eval, mode='test', results_path=test_results_path)
             
 
-    ########################################################################## Start Session
-    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))
+    ########################################################################## Start Session            
+    total_parameters = 0
+    for variable in tf.trainable_variables():
+        variable_parameters = 1
+        for dim in variable.get_shape():
+            variable_parameters *= dim.value
+        total_parameters += variable_parameters
+        
+    print('number of parameters', total_parameters) 
+    print('total graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))
     log_run()            
     
     try:        
