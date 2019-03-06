@@ -289,7 +289,7 @@ def add_losses_to_graph(loss_fn, inputs, outputs, configuration, is_chief=False,
         tf.add_to_collection(key, loss)
         
         
-def get_total_loss(splits=[''], collection='outputs', with_summaries=True, verbose=0):
+def get_total_loss(splits=[''], collection='outputs', with_summaries=True, shared_scope=None, verbose=0):
     """Retrieve the total loss over all collections and all devices.
     All collections ending with '_loss' will be taken as a loss function
     
@@ -304,10 +304,13 @@ def get_total_loss(splits=[''], collection='outputs', with_summaries=True, verbo
         A list of tuples (tensor containing the loss, list of variables to optimize)
     """      
     losses = []
+    all_losses = [x for x in tf.get_default_graph().get_all_collection_keys() if x.endswith('_loss')]
+    shared_losses = [] if shared_scope is None else [x for x in all_losses if x.startswith(shared_scope)]
+    shared_vars = [] if shared_scope is None else tf.trainable_variables(scope=shared_scope)
+    
     for split in splits:
         full_loss = 0.
-        loss_collections = [x for x in tf.get_default_graph().get_all_collection_keys() if 
-                            x.endswith('_loss') and x.startswith(split)]
+        loss_collections = [x for x in all_losses if x.startswith(split)] + shared_losses
         ## sum losses
         for key in loss_collections:
             collected = tf.get_collection(key)
@@ -330,7 +333,7 @@ def get_total_loss(splits=[''], collection='outputs', with_summaries=True, verbo
             tf.summary.scalar('%stotal_loss' % split, full_loss, collections=[collection]) 
             
         ## Add losses and corresponding variables
-        train_vars = tf.trainable_variables(scope=split)
+        train_vars = tf.trainable_variables(scope=split) + shared_vars
         losses.append((full_loss, train_vars, split))
         if verbose == 2:
             print(' > \033[33min %s scope:\033[0m' % (split if split else "global"))

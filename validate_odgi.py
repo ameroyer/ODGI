@@ -50,7 +50,9 @@ for i, base_name in enumerate(['stage1', 'stage2']):
         config = pickle.load(f)
     network_name = configuration.get_defaults(config, ['network'], verbose=True)[0]
     ## Templates
-    forward_fn = tf.make_template('%s/%s' % (base_name, network_name), getattr(nets, network_name)) 
+    if i == 0:
+        forward_fn = tf.make_template(network_name, getattr(nets, network_name)) 
+    #forward_fn = tf.make_template('%s/%s' % (base_name, network_name), getattr(nets, network_name)) 
     if i == 0:
         decode_fn = tf.make_template('%s/decode' % base_name, nets.get_detection_outputs_with_groups)
     else:

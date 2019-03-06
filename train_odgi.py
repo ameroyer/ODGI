@@ -18,7 +18,7 @@ from include import viz
 
 
 ########################################################################## Convenience functions     
-def stage_transition(stage_inputs, stage_outputs, mode, config, verbose=False): 
+def stage_transition(stage_inputs, stage_outputs, mode, config, add_summaries=False, verbose=False): 
     """Create inputs for the next stage based on the output of the current stage"""
     assert mode in ['train', 'test']
     with tf.name_scope('extract_patches'):
@@ -31,9 +31,13 @@ def stage_transition(stage_inputs, stage_outputs, mode, config, verbose=False):
         
     if mode == 'train':
         del stage_outputs['kept_out_filter']
+        if add_summaries:
+            with tf.name_scope('4_crops'): 
+                tf.summary.image('image', viz.draw_bounding_boxes(stage_inputs['image'], stage_outputs['crop_boxes']),
+                                 max_outputs=3, collections=['outputs'], family=None)
         
     return graph_manager.get_stage2_inputs(stage_inputs, 
-                                           stage_outputs['crop_boxes'], 
+                                           tf.stop_gradient(stage_outputs['crop_boxes']), 
                                            mode=mode, 
                                            verbose=verbose, 
                                            **config)
@@ -96,6 +100,7 @@ if __name__ == '__main__':
                             'tiny_yolo_v2', 'yolo_v2', 'mobilenet_100', 'mobilenet_50', 'mobilenet_35'])
     parser.add_argument('--stage2_starting_epoch', default=0, type=int,
                         help='Start training stage 2 after the given number of epochs.')
+    parser.add_argument('--share_variables', action='store_true', help='Share variables across stages.')
     args = parser.parse_args()
     if args.stage2_image_size is None:
         args.stage2_image_size = args.image_size // 2
@@ -139,10 +144,21 @@ if __name__ == '__main__':
     ### templates for each stage
     stages = []
     stages_configs = [stage1_config, stage2_config]
+    shared_scope = None
+    
+    if args.share_variables:
+        network_name = configuration.get_defaults(stage1_config, ['network'], verbose=True)[0]
+        for config in stages_configs:
+            assert network_name == configuration.get_defaults(config, ['network'], verbose=True)[0]
+        forward_fn = tf.make_template(network_name, getattr(nets, network_name)) 
+        shared_scope = network_name
+        
+        
     for i, config in enumerate(stages_configs):
         base_name = 'stage%d' % (i + 1)
         network_name = configuration.get_defaults(config, ['network'], verbose=True)[0]
-        forward_fn = tf.make_template('%s/%s' % (base_name, network_name), getattr(nets, network_name)) 
+        if not args.share_variables:
+            forward_fn = tf.make_template('%s/%s' % (base_name, network_name), getattr(nets, network_name)) 
 
         # intermediate stages
         if i < len(stages_configs) - 1:
@@ -182,7 +198,8 @@ if __name__ == '__main__':
                             with tf.name_scope('stage_transition'):
                                 print((' > %s' if verbose == 1 else ' \033[33m> %s\033[0m') % 'Stage transition')
                                 stage_inputs = stage_transition(
-                                    stage_inputs, stage_outputs, 'train', stage_config, verbose=verbose)
+                                    stage_inputs, stage_outputs, 'train', stage_config, 
+                                    add_summaries=with_summaries * (i == 0), verbose=verbose)
 
                         ### Feed forward
                         with tf.name_scope(name):
@@ -210,17 +227,26 @@ if __name__ == '__main__':
         # Training Objective
         print('\nLosses:')
         with tf.name_scope('losses'):
-            losses = graph_manager.get_total_loss(
-                splits=[x[0] for x in stages], with_summaries=with_summaries, verbose=args.verbose)
-            assert len(losses) == 2
+            if False:
+                losses = graph_manager.get_total_loss(with_summaries=with_summaries, verbose=args.verbose)
+                assert len(losses) == 1
+            else:
+                losses = graph_manager.get_total_loss(splits=[x[0] for x in stages],
+                                                      shared_scope=shared_scope,
+                                                      with_summaries=with_summaries,
+                                                      verbose=args.verbose)
+                assert len(losses) == 2
             full_loss = [x[0] for x in losses]
 
         # Train op    
         with tf.name_scope('train_op'):   
             global_step, train_ops = graph_manager.get_train_op(losses, verbose=args.verbose, **base_config)
-            assert len(train_ops) == 2
-            train_stage1_op = train_ops[0]
-            train_stage2_op = train_ops[1]
+            assert len(train_ops) == len(losses)
+            if False:
+                train_stage1_op = train_ops[0]
+            else:
+                train_stage1_op = train_ops[0]
+                train_stage2_op = train_ops[1]
 
 
     ############################### Eval
@@ -287,8 +313,16 @@ if __name__ == '__main__':
         eval_test = partial(run_eval, mode='test', results_path=test_results_path)
 
     
-    ########################################################################## Start Session
-    print('\ntotal graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))
+    ########################################################################## Start Session            
+    total_parameters = 0
+    for variable in tf.trainable_variables():
+        variable_parameters = 1
+        for dim in variable.get_shape():
+            variable_parameters *= dim.value
+        total_parameters += variable_parameters
+        
+    print('number of parameters', total_parameters) 
+    print('total graph size: %.2f MB' % (tf.get_default_graph().as_graph_def().ByteSize() / 10e6))
     log_run()            
     
     try:        
@@ -314,8 +348,12 @@ if __name__ == '__main__':
                             
                     # Train       
                     if train_stage2:
-                        global_step_, full_loss_, _, _ = sess.run([
-                            global_step, full_loss, train_stage1_op, train_stage2_op])
+                        if False:
+                            global_step_, full_loss_, _ = sess.run([
+                                global_step, full_loss, train_stage1_op])
+                        else:
+                            global_step_, full_loss_, _, _ = sess.run([
+                                global_step, full_loss, train_stage1_op, train_stage2_op])
                     else:
                         global_step_, full_loss_, _ = sess.run([
                             global_step, full_loss[:-1], train_stage1_op])
