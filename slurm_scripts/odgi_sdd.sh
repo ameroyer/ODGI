@@ -37,14 +37,14 @@ sbatch <<EOT
 #SBATCH --partition=gpu10cards          # partition (our new GPU servers)
 #SBATCH --gres=gpu:$NUM_GPUS                    # how many GPUs to reserve
 #SBATCH --constraint=GTX1080Ti          # GPU type (unnecessary here)
-#SBATCH --job-name=sdd_odgi_${NETWORK}_${SIZE}_${STAGE2_IMAGE_SIZE}
-#SBATCH -o ./run_logs/output_logs/sdd_odgi_${NETWORK}_${SIZE}_${STAGE2_IMAGE_SIZE}.%j.out     # logfile for stdout
-#SBATCH -e ./run_logs/error_logs/sdd_odgi_${NETWORK}_${SIZE}_${STAGE2_IMAGE_SIZE}.%j.err      # logfile for stderr
+#SBATCH --job-name=sdd_odgi_${NETWORK}_${SIZE}_${STAGE2_IMAGE_SIZE}_joint_delay15
+#SBATCH -o ./run_logs/output_logs/sdd_odgi_${NETWORK}_${SIZE}_${STAGE2_IMAGE_SIZE}_joint_delay15.%j.out     # logfile for stdout
+#SBATCH -e ./run_logs/error_logs/sdd_odgi_${NETWORK}_${SIZE}_${STAGE2_IMAGE_SIZE}_joint_delay15.%j.err      # logfile for stderr
 
 module load cuda/9.0
 module load cudnn
 module load tensorflow/python3/1.12.0
 
 cd ${HOME}/Jupyter/ODGI 
-python3 -u train_odgi.py 'sdd' --network $NETWORK --image_size $SIZE --stage2_network $STAGE2_NETWORK --stage2_image_size $STAGE2_IMAGE_SIZE --num_epochs $NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE
+python3 -u train_odgi.py 'sdd' --network $NETWORK --image_size $SIZE --stage2_network $STAGE2_NETWORK --stage2_image_size $STAGE2_IMAGE_SIZE --num_epochs $NUM_EPOCHS --num_gpus=$NUM_GPUS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --share_variables --stage2_starting_epoch 15
 EOT
