@@ -160,7 +160,7 @@ def get_tf_dataset(tfrecords_file,
     Returns: 
       A tf.Data.dataset iterator (and its initializer if initializable_iterator)
     """
-    assert grouping_method in ['intersect', 'intersect_with_density']
+    assert grouping_method in ['intersect', 'intersect_with_density', 'unique_intersect']
     assert not (with_classes and num_classes is None)
     assert len(record_keys)
     assert batch_size > 0
