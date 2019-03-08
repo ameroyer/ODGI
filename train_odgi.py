@@ -228,25 +228,35 @@ if __name__ == '__main__':
         print('\nLosses:')
         with tf.name_scope('losses'):
             if False:
+                stage1_losses = graph_manager.get_total_loss(
+                    splits=['stage1'], with_summaries=with_summaries, verbose=args.verbose)
+                assert len(stage1_losses) == 1
+                stage1_loss = [x[0] for x in stage1_losses]
                 losses = graph_manager.get_total_loss(with_summaries=with_summaries, verbose=args.verbose)
                 assert len(losses) == 1
+                full_loss = [x[0] for x in losses]
             else:
                 losses = graph_manager.get_total_loss(splits=[x[0] for x in stages],
                                                       shared_scope=shared_scope,
                                                       with_summaries=with_summaries,
                                                       verbose=args.verbose)
                 assert len(losses) == 2
-            full_loss = [x[0] for x in losses]
+                full_loss = [x[0] for x in losses]
+
 
         # Train op    
         with tf.name_scope('train_op'):   
-            global_step, train_ops = graph_manager.get_train_op(losses, verbose=args.verbose, **base_config)
-            assert len(train_ops) == len(losses)
             if False:
+                global_step, train_ops = graph_manager.get_train_op(stage1_losses, verbose=args.verbose, **base_config)
                 train_stage1_op = train_ops[0]
+                _, train_ops = graph_manager.get_train_op(losses, verbose=args.verbose, **base_config)
+                train_op = train_ops[0]
             else:
+                global_step, train_ops = graph_manager.get_train_op(losses, verbose=args.verbose, **base_config)
+                assert len(train_ops) == len(losses)
                 train_stage1_op = train_ops[0]
                 train_stage2_op = train_ops[1]
+
 
 
     ############################### Eval
@@ -350,7 +360,7 @@ if __name__ == '__main__':
                     if train_stage2:
                         if False:
                             global_step_, full_loss_, _ = sess.run([
-                                global_step, full_loss, train_stage1_op])
+                                global_step, full_loss, train_op])
                         else:
                             global_step_, full_loss_, _, _ = sess.run([
                                 global_step, full_loss, train_stage1_op, train_stage2_op])
