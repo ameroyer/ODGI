@@ -165,7 +165,7 @@ def detect_eval(output_file_path, **kwargs):
     
     # For each image in stored results
     with open(output_file_path, 'r') as f:
-        for line in f.read().splitlines()[1:]:
+        for line in f.read().splitlines():#[1:]:
             header, content = line.split('\t', 1)
             # Parse ground-truth boxes: 
             if header.endswith('-gt'):

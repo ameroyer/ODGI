@@ -105,7 +105,7 @@ def get_defaults(kwargs, args, verbose=0):
 def build_base_parser(parser):
     """Base parser for common line arguments"""
     parser.add_argument('data', type=str, help='Dataset.', choices=[
-        'vedai_fold%02d' % i for i in range(1, 11)] + ['sdd', 'mscoco'])
+        'vedai_fold%02d' % i for i in range(1, 11)] + ['sdd', 'mscoco', 'dota'])
     parser.add_argument('--network', type=str, default="tiny_yolo_v2", help='Architecture."',
                         choices=['tiny_yolo_v2', 'yolo_v2', 'mobilenet_100', 'mobilenet_50', 'mobilenet_35'])
     parser.add_argument('--image_size', default=1024, type=int, help='Size of input images')
@@ -174,6 +174,13 @@ def build_base_config_from_args(args, verbose=0):
         configuration["offsets_margin"] = 0.01
         # [Final inference] Cross-validated hyperparameters for ODGI 512-256
         configuration['test_num_crops'] = 5
+        configuration['test_patch_nms_threshold'] = 0.25
+        configuration['test_patch_confidence_threshold'] = 0.1
+        configuration['test_patch_strong_confidence_threshold'] = 0.6
+    elif args.data == 'dota':
+        configuration['grouping_method'] = 'intersect'
+        # [Final inference] Cross-validated hyperparameters for ODGI 512-256
+        configuration['test_num_crops'] = 6
         configuration['test_patch_nms_threshold'] = 0.25
         configuration['test_patch_confidence_threshold'] = 0.1
         configuration['test_patch_strong_confidence_threshold'] = 0.6

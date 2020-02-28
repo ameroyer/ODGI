@@ -164,6 +164,14 @@ def get_inputs(mode='train',
     else:
         raise NotImplementedError("Unknown mode for `get_inputs`:", mode)
         
+    ### Handle the DOTA-case: no val split
+    if image_format == 'dota':
+        if mode in ['train', 'val']:
+            image_folder = image_folder % 'train'
+        else:
+            image_folder = image_folder % 'test'
+    ### Handle the DOTA-case: no val split
+        
     try:
         image_folder = image_folder % mode        
     except TypeError:

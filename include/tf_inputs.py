@@ -26,6 +26,9 @@ def load_image(im_id, image_size, image_folder, image_format):
     elif image_format == 'mscoco':    # MSCOCO-2017
         filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=12) + '.jpg'
         img_type = 'jpg'
+    elif image_format == 'dota':    # DOTA
+        filename = image_folder  + '/' + tf.as_string(im_id, fill='0', width=7) + '.jpg'
+        img_type = 'jpg'
     else:
         raise NotImplementedError("Unrecognized image format `%s`" % image_format)
 
@@ -183,6 +186,7 @@ def get_tf_dataset(tfrecords_file,
         grid_offsets_maxs = (grid_offsets + 1.) / num_cells 
     
     # Create TFRecords feature
+    record_keys = [x for x in record_keys if x != 'classes']
     features = read_tfrecords(record_keys, max_num_bbs=max_num_bbs)
     
     def parsing_function(example_proto):
