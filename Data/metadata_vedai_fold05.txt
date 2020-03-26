@@ -1,0 +1,12 @@
+train_tfrecords	Data/vedai_fold05_train
+train_max_num_bbs	19
+train_num_samples	968
+val_tfrecords	Data/vedai_fold05_val
+val_max_num_bbs	19
+val_num_samples	121
+test_tfrecords	Data/vedai_fold05_test
+test_max_num_bbs	19
+test_num_samples	121
+data_classes	camping car,car,others,pick-up,plane,ship,tractor,truck,van
+feature_keys	im_id,num_boxes,bounding_boxes,classes
+image_folder	/nfs/scistore12/chlgrp/aroyer/Datasets/VEDAI/Vehicules1024/
